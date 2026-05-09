@@ -2,7 +2,6 @@ let modo = "pintar";
 let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
-let estiloTraco = "continuo"; // padrão
 
 function inicializarCanvas() {
   const canvasBase = document.getElementById("canvasBase");
@@ -15,8 +14,8 @@ function inicializarCanvas() {
   img.onload = () => {
     const proporcao = img.height / img.width;
 
-    // largura máxima para caber na página
-    const larguraMax = 600;
+    // largura máxima para caber na página A4
+    const larguraMax = 595;
     let largura = window.innerWidth * 0.8;
     if (largura > larguraMax) largura = larguraMax;
 
@@ -29,6 +28,10 @@ function inicializarCanvas() {
 
     ctxBase.clearRect(0, 0, largura, altura);
     ctxBase.drawImage(img, 0, 0, largura, altura);
+
+    // alinhar canvas de pintura sobre o base
+    canvasPaint.style.left = canvasBase.offsetLeft + "px";
+    canvasPaint.style.top = canvasBase.offsetTop + "px";
   };
 
   habilitarPintura(canvasPaint);
@@ -39,37 +42,36 @@ function habilitarPintura(canvas) {
 
   canvas.addEventListener("mousedown", (e) => {
     desenhando = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.clientX - rect.left;
+    lastY = e.clientY - rect.top;
   });
 
   canvas.addEventListener("mouseup", () => desenhando = false);
 
   canvas.addEventListener("mousemove", (e) => {
     if (!desenhando) return;
-    const pixel = ctxBase.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const pixel = ctxBase.getImageData(x, y, 1, 1).data;
     if (pixel[3] > 0) {
       if (modo === "pintar") {
-        ctxPaint.strokeStyle = "black";
-        ctxPaint.lineWidth = 3;      // traço fixo de 3px
-        ctxPaint.lineCap = "round";
-
-        // aplica estilo do traço
-        if (estiloTraco === "pontilhado") {
-          ctxPaint.setLineDash([5, 5]);
-        } else {
-          ctxPaint.setLineDash([]);
-        }
+        ctxPaint.strokeStyle = "black";   // sempre preto
+        ctxPaint.lineWidth = 3;           // traço fixo de 3px
+        ctxPaint.lineCap = "round";       // ponta arredondada
+        ctxPaint.setLineDash([]);         // nunca pontilhado
 
         ctxPaint.beginPath();
         ctxPaint.moveTo(lastX, lastY);
-        ctxPaint.lineTo(e.offsetX, e.offsetY);
+        ctxPaint.lineTo(x, y);
         ctxPaint.stroke();
 
-        lastX = e.offsetX;
-        lastY = e.offsetY;
+        lastX = x;
+        lastY = y;
       } else if (modo === "apagar") {
-        ctxPaint.clearRect(e.offsetX - 3, e.offsetY - 3, 6, 6);
+        ctxPaint.clearRect(x - 3, y - 3, 6, 6);
       }
     }
   });
@@ -104,19 +106,11 @@ function adicionarCaixaTexto() {
   document.getElementById("formulario").appendChild(div);
 }
 
-function alternarTraco() {
-  if (estiloTraco === "continuo") {
-    estiloTraco = "pontilhado";
-  } else {
-    estiloTraco = "continuo";
-  }
-}
-
 async function salvarPDF() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'mm', 'a4');
-  const largura = pdf.internal.pageSize.getWidth();
-  const altura = pdf.internal.pageSize.getHeight();
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
 
   const nomePaciente = document.getElementById('nomePaciente').value || "Paciente não informado";
   const textoD = document.getElementById('textoD').value || "";
@@ -125,15 +119,22 @@ async function salvarPDF() {
 
   const formulario = document.getElementById('formulario');
   const canvasForm = await html2canvas(formulario, { scale: 2 });
-  pdf.addImage(canvasForm.toDataURL('image/png'), 'PNG', 0, 0, largura, altura);
+
+  // centralizar com margens fixas
+  const imgWidth = pageWidth - 40; // margem 20mm cada lado
+  const imgHeight = (canvasForm.height * imgWidth) / canvasForm.width;
+  const posX = 20;
+  const posY = (pageHeight - imgHeight) / 2;
+
+  pdf.addImage(canvasForm.toDataURL('image/png'), 'PNG', posX, posY, imgWidth, imgHeight);
 
   pdf.setFontSize(12);
-  pdf.text(`D: ${textoD}`, 10, altura - 30);
-  pdf.text(`I: ${textoI}`, 10, altura - 20);
+  pdf.text(`D: ${textoD}`, 10, pageHeight - 30);
+  pdf.text(`I: ${textoI}`, 10, pageHeight - 20);
 
   pdf.setFontSize(10);
-  pdf.text(`Paciente: ${nomePaciente}`, largura - 10, altura - 15, { align: "right" });
-  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, largura - 10, altura - 10, { align: "right" });
+  pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
+  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "right" });
 
   pdf.save(`formulario_dor_${nomePaciente}.pdf`);
 }
