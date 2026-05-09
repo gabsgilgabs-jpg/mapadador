@@ -1,6 +1,8 @@
 let modo = "pintar";
 let img;
 let ctxBase, ctxPaint;
+let lastX, lastY;
+let estiloTraco = "continuo"; // padrão
 
 function inicializarCanvas() {
   const canvasBase = document.getElementById("canvasBase");
@@ -9,10 +11,7 @@ function inicializarCanvas() {
   ctxPaint = canvasPaint.getContext("2d");
 
   img = new Image();
-  // ajuste o caminho conforme onde está seu arquivo
-  img.src = "./img/pessoa.png"; // se estiver na pasta /img
-  // img.src = "./pessoa.png";   // se estiver na raiz
-
+  img.src = "./img/pessoa.png"; // ajuste conforme o caminho real
   img.onload = () => {
     const proporcao = img.height / img.width;
     const largura = window.innerWidth * 0.8;
@@ -33,17 +32,39 @@ function inicializarCanvas() {
 function habilitarPintura(canvas) {
   let desenhando = false;
 
-  canvas.addEventListener("mousedown", () => desenhando = true);
+  canvas.addEventListener("mousedown", (e) => {
+    desenhando = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+  });
+
   canvas.addEventListener("mouseup", () => desenhando = false);
+
   canvas.addEventListener("mousemove", (e) => {
     if (!desenhando) return;
     const pixel = ctxBase.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-    if (pixel[3] > 0) { // só dentro da figura
+    if (pixel[3] > 0) {
       if (modo === "pintar") {
-        ctxPaint.fillStyle = "black";
-        ctxPaint.fillRect(e.offsetX, e.offsetY, 3, 3);
+        ctxPaint.strokeStyle = "black";
+        ctxPaint.lineWidth = 3;      // traço fixo de 3px
+        ctxPaint.lineCap = "round";
+
+        // aplica estilo do traço
+        if (estiloTraco === "pontilhado") {
+          ctxPaint.setLineDash([5, 5]);
+        } else {
+          ctxPaint.setLineDash([]);
+        }
+
+        ctxPaint.beginPath();
+        ctxPaint.moveTo(lastX, lastY);
+        ctxPaint.lineTo(e.offsetX, e.offsetY);
+        ctxPaint.stroke();
+
+        lastX = e.offsetX;
+        lastY = e.offsetY;
       } else if (modo === "apagar") {
-        ctxPaint.clearRect(e.offsetX, e.offsetY, 6, 6); // só apaga pintura
+        ctxPaint.clearRect(e.offsetX - 3, e.offsetY - 3, 6, 6);
       }
     }
   });
@@ -76,6 +97,14 @@ function adicionarCaixaTexto() {
   };
 
   document.getElementById("formulario").appendChild(div);
+}
+
+function alternarTraco() {
+  if (estiloTraco === "continuo") {
+    estiloTraco = "pontilhado";
+  } else {
+    estiloTraco = "continuo";
+  }
 }
 
 async function salvarPDF() {
