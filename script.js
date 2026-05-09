@@ -38,47 +38,53 @@ const estado = {
 
 const areasTexto = [
 
+  // =================================
   // ESQUERDA
+  // =================================
 
-  { tipo:"D", x:30,  y:74  },
-  { tipo:"I", x:30,  y:92  },
+  { tipo:"D", x:72,  y:108 },
+  { tipo:"I", x:72,  y:132 },
 
-  { tipo:"D", x:30,  y:194 },
-  { tipo:"I", x:30,  y:212 },
+  { tipo:"D", x:72,  y:230 },
+  { tipo:"I", x:72,  y:254 },
 
-  { tipo:"D", x:30,  y:314 },
-  { tipo:"I", x:30,  y:332 },
+  { tipo:"D", x:72,  y:352 },
+  { tipo:"I", x:72,  y:376 },
 
-  { tipo:"D", x:30,  y:434 },
-  { tipo:"I", x:30,  y:452 },
+  { tipo:"D", x:72,  y:474 },
+  { tipo:"I", x:72,  y:498 },
 
+  // =================================
   // CENTRO
+  // =================================
 
-  { tipo:"D", x:238, y:74  },
-  { tipo:"I", x:238, y:92  },
+  { tipo:"D", x:279, y:108 },
+  { tipo:"I", x:279, y:132 },
 
-  { tipo:"D", x:238, y:194 },
-  { tipo:"I", x:238, y:212 },
+  { tipo:"D", x:279, y:230 },
+  { tipo:"I", x:279, y:254 },
 
-  { tipo:"D", x:238, y:314 },
-  { tipo:"I", x:238, y:332 },
+  { tipo:"D", x:279, y:352 },
+  { tipo:"I", x:279, y:376 },
 
-  { tipo:"D", x:238, y:434 },
-  { tipo:"I", x:238, y:452 },
+  { tipo:"D", x:279, y:474 },
+  { tipo:"I", x:279, y:498 },
 
+  // =================================
   // DIREITA
+  // =================================
 
-  { tipo:"D", x:445, y:74  },
-  { tipo:"I", x:445, y:92  },
+  { tipo:"D", x:486, y:108 },
+  { tipo:"I", x:486, y:132 },
 
-  { tipo:"D", x:445, y:194 },
-  { tipo:"I", x:445, y:212 },
+  { tipo:"D", x:486, y:230 },
+  { tipo:"I", x:486, y:254 },
 
-  { tipo:"D", x:445, y:314 },
-  { tipo:"I", x:445, y:332 },
+  { tipo:"D", x:486, y:352 },
+  { tipo:"I", x:486, y:376 },
 
-  { tipo:"D", x:445, y:434 },
-  { tipo:"I", x:445, y:452 }
+  { tipo:"D", x:486, y:474 },
+  { tipo:"I", x:486, y:498 }
 
 ];
 
@@ -433,8 +439,8 @@ function criarCampos(){
     elementos.canvasBase.height /
     alturaOriginal;
 
-  const offsetY = 168;
-  const offsetX = 28;
+  const offsetY = 0;
+  const offsetX = 0;
 
   areasTexto.forEach(area=>{
 
