@@ -1,0 +1,54 @@
+!DOCTYPE html
+html lang=pt-BR
+head
+  meta charset=UTF-8
+  titleFormulário Interativotitle
+  style
+    body { text-align center; }
+    #formulario {
+      position relative;
+      display inline-block;
+    }
+    #formulario img {
+      width 600px;
+    }
+    #formulario input {
+      position absolute;
+      width 80px;
+    }
+    #campoD { top 200px; left 100px; }
+    #campoI { top 200px; left 200px; }
+    canvas {
+      position absolute;
+      top 0; left 0;
+    }
+  style
+head
+body
+  h2Formulário de Dorh2
+  div id=formulario
+    img src=formulario.png alt=Formulário
+    input id=campoD type=text placeholder=D
+    input id=campoI type=text placeholder=I
+    canvas id=canvas width=600 height=800canvas
+  div
+
+  script
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let desenhando = false;
+
+    canvas.addEventListener('mousedown', () = desenhando = true);
+    canvas.addEventListener('mouseup', () = desenhando = false);
+    canvas.addEventListener('mousemove', desenhar);
+
+    function desenhar(e) {
+      if (!desenhando) return;
+      ctx.fillStyle = red;
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI  2);
+      ctx.fill();
+    }
+  script
+body
+html
