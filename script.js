@@ -1,6 +1,28 @@
 // script.js
 
 // =====================================
+// DEBUG POSIÇÃO
+// =====================================
+
+elementos.canvasBase.addEventListener("click", e => {
+
+  const rect =
+    elementos.canvasBase.getBoundingClientRect();
+
+  const x =
+    (e.clientX - rect.left) /
+    rect.width;
+
+  const y =
+    (e.clientY - rect.top) /
+    rect.height;
+
+  console.log(
+    `x:${x.toFixed(3)} y:${y.toFixed(3)}`
+  );
+});
+
+// =====================================
 // CONFIG
 // =====================================
 
