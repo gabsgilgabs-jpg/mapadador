@@ -1,3 +1,5 @@
+/* style.css */
+
 *{
   box-sizing:border-box;
 }
@@ -71,10 +73,6 @@ button{
   font-size:14px;
 }
 
-button:hover{
-  opacity:0.9;
-}
-
 #mapaContainer{
 
   position:relative;
@@ -138,33 +136,37 @@ button:hover{
 }
 
 .campoData{
-  width:68px;
-}
 
-  height:18px;
+  width:120px;
 
-  font-size:10px;
+  height:28px;
+
+  font-size:16px;
 
   background:white;
 
-  border:1px solid #bbb;
+  border:1px solid #999;
 
-  border-radius:2px;
+  border-radius:4px;
+
+  padding-left:4px;
 }
 
 .campoIntensidade{
 
-  width:38px;
+  width:55px;
 
-  height:18px;
+  height:28px;
 
-  font-size:10px;
+  font-size:16px;
 
   background:white;
 
-  border:1px solid #bbb;
+  border:1px solid #999;
 
-  border-radius:2px;
+  border-radius:4px;
+
+  text-align:center;
 }
 
 @media(max-width:600px){
