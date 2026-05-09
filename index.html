@@ -1,35 +1,86 @@
-<div class="botoes">
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-  <button
-    id="pintar"
-    class="acaoBtn"
-    onclick="definirModo('pintar')"
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
   >
-    Pintar
-  </button>
 
-  <button
-    id="apagar"
-    class="acaoBtn"
-    onclick="definirModo('apagar')"
-  >
-    Apagar
-  </button>
+  <title>Mapa da Dor</title>
 
-  <button
-    id="limparBtn"
-    class="acaoBtn"
-    onclick="limparTudo()"
-  >
-    Limpar
-  </button>
+  <link rel="stylesheet" href="style.css">
 
-  <button
-    id="pdfBtn"
-    class="acaoBtn"
-    onclick="salvarPDF()"
-  >
-    PDF
-  </button>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+  <div class="app">
+
+    <h1>Mapa da Dor</h1>
+
+    <input
+      type="text"
+      id="nomePaciente"
+      placeholder="Nome do paciente"
+    >
+
+    <div class="botoes">
+
+      <button
+        id="pintar"
+        class="acaoBtn"
+        onclick="definirModo('pintar')"
+      >
+        Pintar
+      </button>
+
+      <button
+        id="apagar"
+        class="acaoBtn"
+        onclick="definirModo('apagar')"
+      >
+        Apagar
+      </button>
+
+      <button
+        id="limparBtn"
+        class="acaoBtn"
+        onclick="limparTudo()"
+      >
+        Limpar
+      </button>
+
+      <button
+        id="pdfBtn"
+        class="acaoBtn"
+        onclick="salvarPDF()"
+      >
+        PDF
+      </button>
+
+    </div>
+
+    <div id="mapaContainer">
+
+      <canvas id="canvasBase"></canvas>
+
+      <canvas id="canvasPaint"></canvas>
+
+      <div id="formulario"></div>
+
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
