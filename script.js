@@ -3,13 +3,12 @@ let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
 
-// áreas válidas definidas em proporções (0 a 1)
-// ajuste conforme a posição real das caixas na imagem
-const areasValidas = [
-  { x: 0.05, y: 0.25, w: 0.20, h: 0.15 }, // caixa D esquerda
-  { x: 0.75, y: 0.25, w: 0.20, h: 0.15 }, // caixa D direita
-  { x: 0.05, y: 0.55, w: 0.20, h: 0.15 }, // caixa I esquerda
-  { x: 0.75, y: 0.55, w: 0.20, h: 0.15 }  // caixa I direita
+// áreas de texto definidas em proporções (0 a 1)
+const areasTexto = [
+  { tipo: "D", x: 0.05, y: 0.25, w: 0.20, h: 0.08 },
+  { tipo: "I", x: 0.75, y: 0.25, w: 0.20, h: 0.08 },
+  { tipo: "D", x: 0.05, y: 0.55, w: 0.20, h: 0.08 },
+  { tipo: "I", x: 0.75, y: 0.55, w: 0.20, h: 0.08 }
 ];
 
 function inicializarCanvas() {
@@ -37,20 +36,11 @@ function inicializarCanvas() {
 
     canvasPaint.style.left = canvasBase.offsetLeft + "px";
     canvasPaint.style.top = canvasBase.offsetTop + "px";
+
+    inicializarCamposTexto(canvasBase);
   };
 
   habilitarPintura(canvasPaint);
-}
-
-// verifica se ponto está dentro de alguma área válida
-function dentroAreaValida(x, y, canvas) {
-  return areasValidas.some(area => {
-    const ax = area.x * canvas.width;
-    const ay = area.y * canvas.height;
-    const aw = area.w * canvas.width;
-    const ah = area.h * canvas.height;
-    return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
-  });
 }
 
 function habilitarPintura(canvas) {
@@ -96,8 +86,14 @@ function habilitarPintura(canvas) {
 }
 
 function desenhar({ x, y }) {
-  // só desenha se estiver dentro das áreas válidas
-  if (!dentroAreaValida(x, y, ctxBase.canvas)) return;
+  // bloqueia pintura nas áreas de texto
+  if (areasTexto.some(area => {
+    const ax = area.x * ctxBase.canvas.width;
+    const ay = area.y * ctxBase.canvas.height;
+    const aw = area.w * ctxBase.canvas.width;
+    const ah = area.h * ctxBase.canvas.height;
+    return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
+  })) return;
 
   const pixel = ctxBase.getImageData(x, y, 1, 1).data;
   if (pixel[3] > 0) {
@@ -121,58 +117,37 @@ function limparCanvas() {
   ctxPaint.clearRect(0, 0, ctxPaint.canvas.width, ctxPaint.canvas.height);
 }
 
-function adicionarCaixaTexto() {
-  const div = document.createElement("div");
-  div.style.left = "50px";
-  div.style.top = "50px";
-  div.style.position = "absolute";
-  div.style.background = "rgba(255,255,255,0.7)";
-  div.style.border = "1px solid #000";
-  div.style.padding = "5px";
-  div.style.cursor = "move";
+function inicializarCamposTexto(canvas) {
+  const formulario = document.getElementById("formulario");
+  areasTexto.forEach(area => {
+    let campo;
 
-  const texto = document.createElement("div");
-  texto.contentEditable = true;
-  texto.innerText = "Digite aqui...";
-  texto.style.minWidth = "100px";
-  texto.style.minHeight = "30px";
-
-  const btn = document.createElement("span");
-  btn.innerText = "✖";
-  btn.style.position = "absolute";
-  btn.style.top = "2px";
-  btn.style.right = "5px";
-  btn.style.cursor = "pointer";
-  btn.style.color = "red";
-  btn.style.fontWeight = "bold";
-  btn.onclick = () => div.remove();
-
-  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (isTouch) {
-    btn.style.display = "block";
-  } else {
-    btn.style.display = "none";
-    div.onmouseenter = () => btn.style.display = "block";
-    div.onmouseleave = () => btn.style.display = "none";
-  }
-
-  div.appendChild(texto);
-  div.appendChild(btn);
-
-  div.onmousedown = (e) => {
-    if (e.target === btn) return;
-    if (e.button === 0) {
-      const offsetX = e.offsetX;
-      const offsetY = e.offsetY;
-      document.onmousemove = (ev) => {
-        div.style.left = (ev.pageX - offsetX) + "px";
-        div.style.top = (ev.pageY - offsetY) + "px";
-      };
-      document.onmouseup = () => document.onmousemove = null;
+    if (area.tipo === "D") {
+      campo = document.createElement("input");
+      campo.type = "text";
+      campo.placeholder = "dd/mm/aaaa";
+      campo.pattern = "\\d{2}/\\d{2}/\\d{4}";
+    } else if (area.tipo === "I") {
+      campo = document.createElement("select");
+      for (let i = 1; i <= 10; i++) {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.text = i;
+        campo.appendChild(opt);
+      }
     }
-  };
 
-  document.getElementById("formulario").appendChild(div);
+    campo.style.position = "absolute";
+    campo.style.left = (area.x * canvas.width + canvas.offsetLeft) + "px";
+    campo.style.top = (area.y * canvas.height + canvas.offsetTop) + "px";
+    campo.style.width = (area.w * canvas.width) + "px";
+    campo.style.height = (area.h * canvas.height) + "px";
+    campo.style.border = "1px solid #000";
+    campo.style.background = "rgba(255,255,255,0.8)";
+    campo.style.textAlign = "center";
+
+    formulario.appendChild(campo);
+  });
 }
 
 async function salvarPDF() {
@@ -182,8 +157,6 @@ async function salvarPDF() {
   const pageHeight = pdf.internal.pageSize.getHeight();
 
   const nomePaciente = document.getElementById('nomePaciente').value || "Paciente não informado";
-  const textoD = document.getElementById('textoD').value || "";
-  const textoI = document.getElementById('textoI').value || "";
   const agora = new Date();
 
   const formulario = document.getElementById('formulario');
@@ -195,10 +168,6 @@ async function salvarPDF() {
   const posY = (pageHeight - imgHeight) / 2;
 
   pdf.addImage(canvasForm.toDataURL('image/png'), 'PNG', posX, posY, imgWidth, imgHeight);
-
-  pdf.setFontSize(12);
-  pdf.text(`D: ${textoD}`, 10, pageHeight - 30);
-  pdf.text(`I: ${textoI}`, 10, pageHeight - 20);
 
   pdf.setFontSize(10);
   pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
