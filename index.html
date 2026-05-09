@@ -10,25 +10,24 @@
       display: inline-block;
     }
     #formulario img {
-      width: 600px; /* ajuste conforme o tamanho da sua imagem */
+      width: 600px;
     }
     #formulario input {
       position: absolute;
-      width: 80px;
+      width: 100px;
       padding: 4px;
       border: 1px solid #333;
       border-radius: 4px;
+      background-color: #fff;
     }
-    /* Ajuste a posição dos campos conforme necessário */
-    #campoD { top: 200px; left: 100px; }
-    #campoI { top: 200px; left: 200px; }
+    /* Ajuste as posições conforme necessário */
+    #campoD { top: 720px; left: 120px; }
+    #campoI { top: 720px; left: 400px; }
     canvas {
       position: absolute;
       top: 0; left: 0;
     }
-    #botoes {
-      margin-top: 20px;
-    }
+    #botoes { margin-top: 20px; }
     button {
       margin: 5px;
       padding: 10px 20px;
@@ -42,10 +41,9 @@
   <p>Digite nos campos e desenhe sobre o corpo para indicar a dor.</p>
 
   <div id="formulario">
-    <!-- Substitua pelo nome correto da sua imagem -->
     <img src="formulario.png" alt="Formulário de Dor">
     
-    <!-- Campos de texto -->
+    <!-- Campos editáveis -->
     <input id="campoD" type="text" placeholder="D:">
     <input id="campoI" type="text" placeholder="I:">
     
@@ -73,18 +71,16 @@
 
     function desenhar(e) {
       if (!desenhando) return;
-      ctx.fillStyle = "red"; // cor do desenho
+      ctx.fillStyle = "black"; // cor preta
       ctx.beginPath();
       ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Função para limpar o desenho
     function limparCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Função para salvar em PDF
     async function salvarPDF() {
       const { jsPDF } = window.jspdf;
       const formulario = document.getElementById('formulario');
