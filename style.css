@@ -149,3 +149,16 @@ canvas{
 
   width:70px;
 }
+.acaoBtn{
+
+  color:#000;
+
+  transition:0.2s;
+}
+
+.acaoBtn.ativo{
+
+  color:red;
+
+  font-weight:bold;
+}
