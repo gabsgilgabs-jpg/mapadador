@@ -521,17 +521,23 @@ function atualizarBotaoAtivo(){
     .querySelectorAll(".acaoBtn")
     .forEach(btn=>{
 
-      btn.style.color = "#000";
+      btn.classList.remove(
+        "ativo"
+      );
     });
 
-  const ativo =
-    document.getElementById(
-      estado.modo
-    );
+  if(estado.modo === "pintar"){
 
-  if(ativo){
+    document
+      .getElementById("pintar")
+      .classList.add("ativo");
+  }
 
-    ativo.style.color = "red";
+  if(estado.modo === "apagar"){
+
+    document
+      .getElementById("apagar")
+      .classList.add("ativo");
   }
 }
 
