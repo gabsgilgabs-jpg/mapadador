@@ -3,18 +3,14 @@ let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
 
-// 12 áreas de texto (frente e costas juntas)
-// ⚠️ Ajuste os valores x, y, w, h conforme a posição real dos rótulos na sua imagem
+// 12 caixas D/I (placeholders ajustáveis)
 const areasTexto = [
-  // frente - lado esquerdo
   { tipo: "D", x: 0.08, y: 0.18, w: 0.12, h: 0.05 },
   { tipo: "I", x: 0.22, y: 0.18, w: 0.10, h: 0.05 },
   { tipo: "D", x: 0.08, y: 0.33, w: 0.12, h: 0.05 },
   { tipo: "I", x: 0.22, y: 0.33, w: 0.10, h: 0.05 },
   { tipo: "D", x: 0.08, y: 0.48, w: 0.12, h: 0.05 },
   { tipo: "I", x: 0.22, y: 0.48, w: 0.10, h: 0.05 },
-
-  // costas - lado direito
   { tipo: "D", x: 0.65, y: 0.18, w: 0.12, h: 0.05 },
   { tipo: "I", x: 0.79, y: 0.18, w: 0.10, h: 0.05 },
   { tipo: "D", x: 0.65, y: 0.33, w: 0.12, h: 0.05 },
@@ -98,7 +94,6 @@ function habilitarPintura(canvas) {
 }
 
 function desenhar({ x, y }) {
-  // bloqueia pintura apenas dentro das caixas D/I
   const dentroTexto = areasTexto.some(area => {
     const ax = area.x * ctxBase.canvas.width;
     const ay = area.y * ctxBase.canvas.height;
@@ -108,22 +103,17 @@ function desenhar({ x, y }) {
   });
   if (dentroTexto) return;
 
-  // pintura liberada no corpo da figura
-  const pixel = ctxBase.getImageData(x, y, 1, 1).data;
-  if (pixel[3] > 0) {
-    if (modo === "pintar") {
-      ctxPaint.strokeStyle = "black";
-      ctxPaint.lineWidth = 3;
-      ctxPaint.lineCap = "round";
-      ctxPaint.setLineDash([]);
-      ctxPaint.beginPath();
-      ctxPaint.moveTo(lastX, lastY);
-      ctxPaint.lineTo(x, y);
-      ctxPaint.stroke();
-      lastX = x; lastY = y;
-    } else if (modo === "apagar") {
-      ctxPaint.clearRect(x - 3, y - 3, 6, 6);
-    }
+  if (modo === "pintar") {
+    ctxPaint.strokeStyle = "black";
+    ctxPaint.lineWidth = 3;
+    ctxPaint.lineCap = "round";
+    ctxPaint.beginPath();
+    ctxPaint.moveTo(lastX, lastY);
+    ctxPaint.lineTo(x, y);
+    ctxPaint.stroke();
+    lastX = x; lastY = y;
+  } else if (modo === "apagar") {
+    ctxPaint.clearRect(x - 3, y - 3, 6, 6);
   }
 }
 
@@ -180,15 +170,4 @@ async function salvarPDF() {
   const imgWidth = pageWidth - 40;
   const imgHeight = (canvasForm.height * imgWidth) / canvasForm.width;
   const posX = 20;
-  const posY = (pageHeight - imgHeight) / 2;
-
-  pdf.addImage(canvasForm.toDataURL('image/png'), 'PNG', posX, posY, imgWidth, imgHeight);
-
-  pdf.setFontSize(10);
-  pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
-  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "right" });
-
-  pdf.save(`formulario_dor_${nomePaciente}.pdf`);
-}
-
-window
+  const posY = (pageHeight - imgHeight
