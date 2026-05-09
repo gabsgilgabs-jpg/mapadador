@@ -4,25 +4,28 @@
   <meta charset="UTF-8">
   <title>Formulário de Dor</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Bibliotecas necessárias -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <!-- Campo para nome do paciente -->
   <div id="dados-paciente">
     <label for="nomePaciente">Nome do Paciente:</label>
     <input type="text" id="nomePaciente" placeholder="Digite o nome">
     <button onclick="salvarPDF()">Salvar PDF</button>
   </div>
 
-  <!-- Área única -->
   <div id="formulario">
     <h2>Formulário de Dor</h2>
-    <p>Observações:</p>
-    <textarea id="observacoes" placeholder="Digite suas observações"></textarea>
+
+    <label for="textoD">D:</label>
+    <textarea id="textoD" placeholder="Digite observações para D:"></textarea>
+
+    <label for="textoI">I:</label>
+    <textarea id="textoI" placeholder="Digite observações para I:"></textarea>
 
     <h3>Imagem para pintura (Pessoa)</h3>
+    <button onclick="modo='pintar'">Pintar</button>
+    <button onclick="modo='apagar'">Borracha</button>
     <canvas id="canvasPessoa" width="400" height="600"></canvas>
   </div>
 
