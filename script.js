@@ -31,7 +31,7 @@ const estado = {
 };
 
 // =====================================
-// ÁREAS DOS CAMPOS
+// CAMPOS
 // =====================================
 
 const areasTexto = [
@@ -40,108 +40,108 @@ const areasTexto = [
 
   {
     tipo:"D",
-    x:0.045,
-    y:0.12,
-    w:0.16,
-    h:0.04
+    x:0.055,
+    y:0.115,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.045,
-    y:0.155,
-    w:0.12,
-    h:0.04
+    x:0.055,
+    y:0.145,
+    w:0.08,
+    h:0.032
   },
 
   // ESQUERDA MEIO
 
   {
     tipo:"D",
-    x:0.045,
-    y:0.285,
-    w:0.16,
-    h:0.04
+    x:0.055,
+    y:0.287,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.045,
-    y:0.32,
-    w:0.12,
-    h:0.04
+    x:0.055,
+    y:0.317,
+    w:0.08,
+    h:0.032
   },
 
   // ESQUERDA INFERIOR
 
   {
     tipo:"D",
-    x:0.045,
-    y:0.45,
-    w:0.16,
-    h:0.04
+    x:0.055,
+    y:0.458,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.045,
-    y:0.485,
-    w:0.12,
-    h:0.04
+    x:0.055,
+    y:0.488,
+    w:0.08,
+    h:0.032
   },
 
   // DIREITA SUPERIOR
 
   {
     tipo:"D",
-    x:0.79,
-    y:0.12,
-    w:0.16,
-    h:0.04
+    x:0.77,
+    y:0.115,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.83,
-    y:0.155,
-    w:0.10,
-    h:0.04
+    x:0.86,
+    y:0.145,
+    w:0.08,
+    h:0.032
   },
 
   // DIREITA MEIO
 
   {
     tipo:"D",
-    x:0.79,
-    y:0.285,
-    w:0.16,
-    h:0.04
+    x:0.77,
+    y:0.287,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.83,
-    y:0.32,
-    w:0.10,
-    h:0.04
+    x:0.86,
+    y:0.317,
+    w:0.08,
+    h:0.032
   },
 
   // DIREITA INFERIOR
 
   {
     tipo:"D",
-    x:0.79,
-    y:0.45,
-    w:0.16,
-    h:0.04
+    x:0.77,
+    y:0.458,
+    w:0.17,
+    h:0.032
   },
 
   {
     tipo:"I",
-    x:0.83,
-    y:0.485,
-    w:0.10,
-    h:0.04
+    x:0.86,
+    y:0.488,
+    w:0.08,
+    h:0.032
   }
 ];
 
@@ -216,9 +216,14 @@ async function iniciarSistema(){
 
 async function recriarInterface(){
 
+  const desenhoAtual =
+    elementos.canvasPaint.toDataURL();
+
   limparCampos();
 
   await carregarImagem();
+
+  restaurarDesenho(desenhoAtual);
 
   carregarLocalStorage();
 }
@@ -346,7 +351,8 @@ function configurarEventos(){
 
   canvas.addEventListener(
     "touchmove",
-    desenharTouch
+    desenharTouch,
+    { passive:false }
   );
 
   canvas.addEventListener(
@@ -534,19 +540,19 @@ function estaSobreCampo(x,y){
 
     const ax =
       area.x *
-      elementos.canvasBase.width;
+      elementos.canvasPaint.width;
 
     const ay =
       area.y *
-      elementos.canvasBase.height;
+      elementos.canvasPaint.height;
 
     const aw =
       area.w *
-      elementos.canvasBase.width;
+      elementos.canvasPaint.width;
 
     const ah =
       area.h *
-      elementos.canvasBase.height;
+      elementos.canvasPaint.height;
 
     return (
       x >= ax &&
@@ -688,6 +694,31 @@ function limparTudo(){
 }
 
 // =====================================
+// DESENHO STORAGE
+// =====================================
+
+function restaurarDesenho(base64){
+
+  if(!base64) return;
+
+  const img =
+    new Image();
+
+  img.onload = ()=>{
+
+    ctxPaint.drawImage(
+      img,
+      0,
+      0,
+      elementos.canvasPaint.width,
+      elementos.canvasPaint.height
+    );
+  };
+
+  img.src = base64;
+}
+
+// =====================================
 // LOCAL STORAGE
 // =====================================
 
@@ -754,31 +785,9 @@ function carregarLocalStorage(){
     }
   });
 
-  if(dados.desenho){
-
-    const img =
-      new Image();
-
-    img.onload = ()=>{
-
-      ctxPaint.clearRect(
-        0,
-        0,
-        elementos.canvasPaint.width,
-        elementos.canvasPaint.height
-      );
-
-      ctxPaint.drawImage(
-        img,
-        0,
-        0,
-        elementos.canvasPaint.width,
-        elementos.canvasPaint.height
-      );
-    };
-
-    img.src = dados.desenho;
-  }
+  restaurarDesenho(
+    dados.desenho
+  );
 
   if(dados.modo){
 
