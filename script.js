@@ -34,57 +34,58 @@ const estado = {
 
 // =====================================
 // POSIÇÕES DOS CAMPOS
+// RESPONSIVO REAL
 // =====================================
 
 const areasTexto = [
 
-  // =================================
+  // =========================
   // ESQUERDA
-  // =================================
+  // =========================
 
-  { tipo:"D", x:72,  y:108 },
-  { tipo:"I", x:72,  y:132 },
+  { tipo:"D", x:0.105, y:0.325 },
+  { tipo:"I", x:0.105, y:0.355 },
 
-  { tipo:"D", x:72,  y:230 },
-  { tipo:"I", x:72,  y:254 },
+  { tipo:"D", x:0.105, y:0.470 },
+  { tipo:"I", x:0.105, y:0.500 },
 
-  { tipo:"D", x:72,  y:352 },
-  { tipo:"I", x:72,  y:376 },
+  { tipo:"D", x:0.105, y:0.615 },
+  { tipo:"I", x:0.105, y:0.645 },
 
-  { tipo:"D", x:72,  y:474 },
-  { tipo:"I", x:72,  y:498 },
+  { tipo:"D", x:0.105, y:0.760 },
+  { tipo:"I", x:0.105, y:0.790 },
 
-  // =================================
+  // =========================
   // CENTRO
-  // =================================
+  // =========================
 
-  { tipo:"D", x:279, y:108 },
-  { tipo:"I", x:279, y:132 },
+  { tipo:"D", x:0.455, y:0.325 },
+  { tipo:"I", x:0.455, y:0.355 },
 
-  { tipo:"D", x:279, y:230 },
-  { tipo:"I", x:279, y:254 },
+  { tipo:"D", x:0.455, y:0.470 },
+  { tipo:"I", x:0.455, y:0.500 },
 
-  { tipo:"D", x:279, y:352 },
-  { tipo:"I", x:279, y:376 },
+  { tipo:"D", x:0.455, y:0.615 },
+  { tipo:"I", x:0.455, y:0.645 },
 
-  { tipo:"D", x:279, y:474 },
-  { tipo:"I", x:279, y:498 },
+  { tipo:"D", x:0.455, y:0.760 },
+  { tipo:"I", x:0.455, y:0.790 },
 
-  // =================================
+  // =========================
   // DIREITA
-  // =================================
+  // =========================
 
-  { tipo:"D", x:486, y:108 },
-  { tipo:"I", x:486, y:132 },
+  { tipo:"D", x:0.805, y:0.325 },
+  { tipo:"I", x:0.805, y:0.355 },
 
-  { tipo:"D", x:486, y:230 },
-  { tipo:"I", x:486, y:254 },
+  { tipo:"D", x:0.805, y:0.470 },
+  { tipo:"I", x:0.805, y:0.500 },
 
-  { tipo:"D", x:486, y:352 },
-  { tipo:"I", x:486, y:376 },
+  { tipo:"D", x:0.805, y:0.615 },
+  { tipo:"I", x:0.805, y:0.645 },
 
-  { tipo:"D", x:486, y:474 },
-  { tipo:"I", x:486, y:498 }
+  { tipo:"D", x:0.805, y:0.760 },
+  { tipo:"I", x:0.805, y:0.790 }
 
 ];
 
@@ -428,23 +429,13 @@ function criarCampos(){
 
   limparCampos();
 
-  const larguraOriginal = 595;
-  const alturaOriginal  = 842;
-
-  const escalaX =
-    elementos.canvasBase.width /
-    larguraOriginal;
-
-  const escalaY =
-    elementos.canvasBase.height /
-    alturaOriginal;
-
-  const offsetY = 0;
-  const offsetX = 0;
-
   areasTexto.forEach(area=>{
 
     let campo;
+
+    // =========================
+    // DATA
+    // =========================
 
     if(area.tipo === "D"){
 
@@ -458,6 +449,10 @@ function criarCampos(){
         "campoData"
       );
     }
+
+    // =========================
+    // INTENSIDADE
+    // =========================
 
     if(area.tipo === "I"){
 
@@ -482,11 +477,21 @@ function criarCampos(){
       }
     }
 
+    // =========================
+    // POSICIONAMENTO RESPONSIVO
+    // =========================
+
     campo.style.left =
-      ((area.x * escalaX) + offsetX) + "px";
+      (
+        area.x *
+        elementos.canvasBase.width
+      ) + "px";
 
     campo.style.top =
-      ((area.y * escalaY) + offsetY) + "px";
+      (
+        area.y *
+        elementos.canvasBase.height
+      ) + "px";
 
     campo.addEventListener(
       "input",
