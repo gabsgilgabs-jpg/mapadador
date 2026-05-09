@@ -1,5 +1,5 @@
 // =====================================
-// CONFIGURAÇÕES
+// CONFIG
 // =====================================
 
 const CONFIG = {
@@ -31,7 +31,8 @@ const estado = {
 };
 
 // =====================================
-// CAMPOS
+// POSIÇÕES EXATAS
+// LOGO APÓS O "D:" E "I:"
 // =====================================
 
 const areasTexto = [
@@ -41,17 +42,13 @@ const areasTexto = [
   {
     tipo:"D",
     x:0.055,
-    y:0.115,
-    w:0.17,
-    h:0.032
+    y:0.118
   },
 
   {
     tipo:"I",
     x:0.055,
-    y:0.145,
-    w:0.08,
-    h:0.032
+    y:0.147
   },
 
   // ESQUERDA MEIO
@@ -59,17 +56,13 @@ const areasTexto = [
   {
     tipo:"D",
     x:0.055,
-    y:0.287,
-    w:0.17,
-    h:0.032
+    y:0.288
   },
 
   {
     tipo:"I",
     x:0.055,
-    y:0.317,
-    w:0.08,
-    h:0.032
+    y:0.318
   },
 
   // ESQUERDA INFERIOR
@@ -77,71 +70,55 @@ const areasTexto = [
   {
     tipo:"D",
     x:0.055,
-    y:0.458,
-    w:0.17,
-    h:0.032
+    y:0.458
   },
 
   {
     tipo:"I",
     x:0.055,
-    y:0.488,
-    w:0.08,
-    h:0.032
+    y:0.488
   },
 
   // DIREITA SUPERIOR
 
   {
     tipo:"D",
-    x:0.77,
-    y:0.115,
-    w:0.17,
-    h:0.032
+    x:0.815,
+    y:0.118
   },
 
   {
     tipo:"I",
-    x:0.86,
-    y:0.145,
-    w:0.08,
-    h:0.032
+    x:0.885,
+    y:0.147
   },
 
   // DIREITA MEIO
 
   {
     tipo:"D",
-    x:0.77,
-    y:0.287,
-    w:0.17,
-    h:0.032
+    x:0.815,
+    y:0.288
   },
 
   {
     tipo:"I",
-    x:0.86,
-    y:0.317,
-    w:0.08,
-    h:0.032
+    x:0.885,
+    y:0.318
   },
 
   // DIREITA INFERIOR
 
   {
     tipo:"D",
-    x:0.77,
-    y:0.458,
-    w:0.17,
-    h:0.032
+    x:0.815,
+    y:0.458
   },
 
   {
     tipo:"I",
-    x:0.86,
-    y:0.488,
-    w:0.08,
-    h:0.032
+    x:0.885,
+    y:0.488
   }
 ];
 
@@ -178,7 +155,7 @@ const ctxPaint =
   elementos.canvasPaint.getContext("2d");
 
 // =====================================
-// INICIAR
+// INIT
 // =====================================
 
 window.addEventListener(
@@ -188,11 +165,6 @@ window.addEventListener(
 
 window.addEventListener(
   "resize",
-  recriarInterface
-);
-
-window.addEventListener(
-  "orientationchange",
   recriarInterface
 );
 
@@ -223,7 +195,9 @@ async function recriarInterface(){
 
   await carregarImagem();
 
-  restaurarDesenho(desenhoAtual);
+  restaurarDesenho(
+    desenhoAtual
+  );
 
   carregarLocalStorage();
 }
@@ -278,15 +252,6 @@ function configurarCanvas(){
     canvas.width = largura;
 
     canvas.height = altura;
-
-    canvas.style.width =
-      largura + "px";
-
-    canvas.style.height =
-      altura + "px";
-
-    canvas.style.touchAction =
-      "none";
   });
 
   elementos.container.style.height =
@@ -320,8 +285,6 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
-  // mouse
-
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -332,21 +295,15 @@ function configurarEventos(){
     desenhar
   );
 
-  canvas.addEventListener(
+  window.addEventListener(
     "mouseup",
     pararDesenho
   );
 
   canvas.addEventListener(
-    "mouseleave",
-    pararDesenho
-  );
-
-  // touch
-
-  canvas.addEventListener(
     "touchstart",
-    iniciarDesenho
+    iniciarDesenho,
+    { passive:false }
   );
 
   canvas.addEventListener(
@@ -355,7 +312,7 @@ function configurarEventos(){
     { passive:false }
   );
 
-  canvas.addEventListener(
+  window.addEventListener(
     "touchend",
     pararDesenho
   );
@@ -397,13 +354,6 @@ function desenhar(e){
 
   const pos =
     obterPosicao(e);
-
-  if(
-    estaSobreCampo(
-      pos.x,
-      pos.y
-    )
-  ) return;
 
   if(estado.modo === "pintar"){
 
@@ -490,10 +440,7 @@ function obterPosicao(e){
   let clientX;
   let clientY;
 
-  if(
-    e.touches &&
-    e.touches.length > 0
-  ){
+  if(e.touches){
 
     clientX =
       e.touches[0].clientX;
@@ -533,35 +480,6 @@ function obterPosicao(e){
 // =====================================
 // CAMPOS
 // =====================================
-
-function estaSobreCampo(x,y){
-
-  return areasTexto.some(area=>{
-
-    const ax =
-      area.x *
-      elementos.canvasPaint.width;
-
-    const ay =
-      area.y *
-      elementos.canvasPaint.height;
-
-    const aw =
-      area.w *
-      elementos.canvasPaint.width;
-
-    const ah =
-      area.h *
-      elementos.canvasPaint.height;
-
-    return (
-      x >= ax &&
-      x <= ax + aw &&
-      y >= ay &&
-      y <= ay + ah
-    );
-  });
-}
 
 function criarCampos(){
 
@@ -617,12 +535,6 @@ function criarCampos(){
     campo.style.top =
       (area.y * 100) + "%";
 
-    campo.style.width =
-      (area.w * 100) + "%";
-
-    campo.style.height =
-      (area.h * 100) + "%";
-
     campo.addEventListener(
       "input",
       salvarLocalStorage
@@ -633,7 +545,9 @@ function criarCampos(){
       salvarLocalStorage
     );
 
-    elementos.formulario.appendChild(campo);
+    elementos.formulario.appendChild(
+      campo
+    );
   });
 }
 
@@ -649,8 +563,6 @@ function limparCampos(){
 function definirModo(modo){
 
   estado.modo = modo;
-
-  salvarLocalStorage();
 }
 
 // =====================================
@@ -694,7 +606,7 @@ function limparTudo(){
 }
 
 // =====================================
-// DESENHO STORAGE
+// STORAGE
 // =====================================
 
 function restaurarDesenho(base64){
@@ -718,10 +630,6 @@ function restaurarDesenho(base64){
   img.src = base64;
 }
 
-// =====================================
-// LOCAL STORAGE
-// =====================================
-
 function salvarLocalStorage(){
 
   const campos =
@@ -729,16 +637,13 @@ function salvarLocalStorage(){
       ...document.querySelectorAll(".campoMapa")
     ];
 
-  const dadosCampos =
-    campos.map(c=>c.value);
-
   const dados = {
 
     nomePaciente:
       elementos.nomePaciente.value,
 
     campos:
-      dadosCampos,
+      campos.map(c=>c.value),
 
     desenho:
       elementos.canvasPaint.toDataURL(),
@@ -775,10 +680,7 @@ function carregarLocalStorage(){
 
   campos.forEach((campo,index)=>{
 
-    if(
-      dados.campos &&
-      dados.campos[index] !== undefined
-    ){
+    if(dados.campos){
 
       campo.value =
         dados.campos[index];
@@ -788,12 +690,6 @@ function carregarLocalStorage(){
   restaurarDesenho(
     dados.desenho
   );
-
-  if(dados.modo){
-
-    estado.modo =
-      dados.modo;
-  }
 }
 
 // =====================================
@@ -830,8 +726,6 @@ async function salvarPDF(){
     ) /
     captura.width;
 
-  pdf.setFontSize(16);
-
   pdf.text(
     `Mapa da Dor - ${
       elementos.nomePaciente.value || ""
@@ -853,12 +747,3 @@ async function salvarPDF(){
     "mapa-da-dor.pdf"
   );
 }
-
-// =====================================
-// AUTOSAVE
-// =====================================
-
-setInterval(
-  salvarLocalStorage,
-  5000
-);
