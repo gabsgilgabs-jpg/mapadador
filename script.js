@@ -4,8 +4,6 @@
 
 const CONFIG = {
 
-  larguraMaxima:595,
-
   imagemBase:"./img/pessoa.png",
 
   pincelCor:"#000",
@@ -33,28 +31,118 @@ const estado = {
 };
 
 // =====================================
-// CAMPOS
+// ÁREAS DOS CAMPOS
 // =====================================
 
 const areasTexto = [
 
-  { tipo:"D", x:0.08, y:0.18, w:0.12, h:0.05 },
-  { tipo:"I", x:0.22, y:0.18, w:0.10, h:0.05 },
+  // ESQUERDA SUPERIOR
 
-  { tipo:"D", x:0.08, y:0.33, w:0.12, h:0.05 },
-  { tipo:"I", x:0.22, y:0.33, w:0.10, h:0.05 },
+  {
+    tipo:"D",
+    x:0.045,
+    y:0.12,
+    w:0.16,
+    h:0.04
+  },
 
-  { tipo:"D", x:0.08, y:0.48, w:0.12, h:0.05 },
-  { tipo:"I", x:0.22, y:0.48, w:0.10, h:0.05 },
+  {
+    tipo:"I",
+    x:0.045,
+    y:0.155,
+    w:0.12,
+    h:0.04
+  },
 
-  { tipo:"D", x:0.65, y:0.18, w:0.12, h:0.05 },
-  { tipo:"I", x:0.79, y:0.18, w:0.10, h:0.05 },
+  // ESQUERDA MEIO
 
-  { tipo:"D", x:0.65, y:0.33, w:0.12, h:0.05 },
-  { tipo:"I", x:0.79, y:0.33, w:0.10, h:0.05 },
+  {
+    tipo:"D",
+    x:0.045,
+    y:0.285,
+    w:0.16,
+    h:0.04
+  },
 
-  { tipo:"D", x:0.65, y:0.48, w:0.12, h:0.05 },
-  { tipo:"I", x:0.79, y:0.48, w:0.10, h:0.05 }
+  {
+    tipo:"I",
+    x:0.045,
+    y:0.32,
+    w:0.12,
+    h:0.04
+  },
+
+  // ESQUERDA INFERIOR
+
+  {
+    tipo:"D",
+    x:0.045,
+    y:0.45,
+    w:0.16,
+    h:0.04
+  },
+
+  {
+    tipo:"I",
+    x:0.045,
+    y:0.485,
+    w:0.12,
+    h:0.04
+  },
+
+  // DIREITA SUPERIOR
+
+  {
+    tipo:"D",
+    x:0.79,
+    y:0.12,
+    w:0.16,
+    h:0.04
+  },
+
+  {
+    tipo:"I",
+    x:0.83,
+    y:0.155,
+    w:0.10,
+    h:0.04
+  },
+
+  // DIREITA MEIO
+
+  {
+    tipo:"D",
+    x:0.79,
+    y:0.285,
+    w:0.16,
+    h:0.04
+  },
+
+  {
+    tipo:"I",
+    x:0.83,
+    y:0.32,
+    w:0.10,
+    h:0.04
+  },
+
+  // DIREITA INFERIOR
+
+  {
+    tipo:"D",
+    x:0.79,
+    y:0.45,
+    w:0.16,
+    h:0.04
+  },
+
+  {
+    tipo:"I",
+    x:0.83,
+    y:0.485,
+    w:0.10,
+    h:0.04
+  }
 ];
 
 // =====================================
@@ -192,7 +280,8 @@ function configurarCanvas(){
     canvas.style.height =
       altura + "px";
 
-    canvas.style.touchAction = "none";
+    canvas.style.touchAction =
+      "none";
   });
 
   elementos.container.style.height =
@@ -226,6 +315,8 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
+  // mouse
+
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -245,6 +336,8 @@ function configurarEventos(){
     "mouseleave",
     pararDesenho
   );
+
+  // touch
 
   canvas.addEventListener(
     "touchstart",
@@ -270,7 +363,8 @@ function iniciarDesenho(e){
 
   estado.desenhando = true;
 
-  const pos = obterPosicao(e);
+  const pos =
+    obterPosicao(e);
 
   estado.ultimoX = pos.x;
 
@@ -295,7 +389,8 @@ function desenhar(e){
 
   if(!estado.desenhando) return;
 
-  const pos = obterPosicao(e);
+  const pos =
+    obterPosicao(e);
 
   if(
     estaSobreCampo(
@@ -470,20 +565,32 @@ function criarCampos(){
 
     let campo;
 
+    // DATA
+
     if(area.tipo === "D"){
 
       campo =
         document.createElement("input");
 
-      campo.type = "text";
+      campo.type = "date";
 
-      campo.placeholder =
-        "dd/mm/aaaa";
+      campo.classList.add(
+        "campoMapa",
+        "campoData"
+      );
+    }
 
-    }else{
+    // INTENSIDADE
+
+    if(area.tipo === "I"){
 
       campo =
         document.createElement("select");
+
+      campo.classList.add(
+        "campoMapa",
+        "campoIntensidade"
+      );
 
       for(let i=0;i<=10;i++){
 
@@ -492,13 +599,11 @@ function criarCampos(){
 
         opt.value = i;
 
-        opt.text = i;
+        opt.textContent = i;
 
         campo.appendChild(opt);
       }
     }
-
-    campo.classList.add("campoMapa");
 
     campo.style.left =
       (area.x * 100) + "%";
@@ -651,7 +756,8 @@ function carregarLocalStorage(){
 
   if(dados.desenho){
 
-    const img = new Image();
+    const img =
+      new Image();
 
     img.onload = ()=>{
 
