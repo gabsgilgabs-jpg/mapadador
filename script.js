@@ -1,4 +1,4 @@
-let modo = "pintar"; // padrão inicial
+let modo = "pintar"; 
 let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
@@ -10,15 +10,12 @@ function inicializarCanvas() {
   ctxPaint = canvasPaint.getContext("2d");
 
   img = new Image();
-  img.src = "./img/pessoa.png"; // ajuste conforme o caminho real
+  img.src = "./img/pessoa.png"; 
   img.onload = () => {
     const proporcao = img.height / img.width;
-
-    // largura máxima para caber na página A4
     const larguraMax = 595;
     let largura = window.innerWidth * 0.8;
     if (largura > larguraMax) largura = larguraMax;
-
     const altura = largura * proporcao;
 
     canvasBase.width = largura;
@@ -29,7 +26,6 @@ function inicializarCanvas() {
     ctxBase.clearRect(0, 0, largura, altura);
     ctxBase.drawImage(img, 0, 0, largura, altura);
 
-    // alinhar canvas de pintura sobre o base
     canvasPaint.style.left = canvasBase.offsetLeft + "px";
     canvasPaint.style.top = canvasBase.offsetTop + "px";
   };
@@ -40,41 +36,62 @@ function inicializarCanvas() {
 function habilitarPintura(canvas) {
   let desenhando = false;
 
+  function getCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const x = (clientX - rect.left) * (canvas.width / rect.width);
+    const y = (clientY - rect.top) * (canvas.height / rect.height);
+    return { x, y };
+  }
+
   canvas.addEventListener("mousedown", (e) => {
     desenhando = true;
-    const rect = canvas.getBoundingClientRect();
-    lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
-    lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+    const { x, y } = getCoords(e);
+    lastX = x; lastY = y;
   });
-
   canvas.addEventListener("mouseup", () => desenhando = false);
-
   canvas.addEventListener("mousemove", (e) => {
     if (!desenhando) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    desenhar(getCoords(e));
+  });
 
+  canvas.addEventListener("touchstart", (e) => {
+    desenhando = true;
+    const { x, y } = getCoords(e);
+    lastX = x; lastY = y;
+  });
+  canvas.addEventListener("touchend", () => desenhando = false);
+  canvas.addEventListener("touchmove", (e) => {
+    if (!desenhando) return;
+    desenhar(getCoords(e));
+    e.preventDefault();
+  });
+
+  function desenhar({ x, y }) {
     const pixel = ctxBase.getImageData(x, y, 1, 1).data;
     if (pixel[3] > 0) {
       if (modo === "pintar") {
-        ctxPaint.strokeStyle = "black";   // sempre preto
-        ctxPaint.lineWidth = 3;           // traço fixo de 3px
+        ctxPaint.strokeStyle = "black";
+        ctxPaint.lineWidth = 3;
         ctxPaint.lineCap = "round";
         ctxPaint.setLineDash([]);
-
         ctxPaint.beginPath();
         ctxPaint.moveTo(lastX, lastY);
         ctxPaint.lineTo(x, y);
         ctxPaint.stroke();
-
-        lastX = x;
-        lastY = y;
+        lastX = x; lastY = y;
       } else if (modo === "apagar") {
         ctxPaint.clearRect(x - 3, y - 3, 6, 6);
       }
     }
-  });
+  }
 }
 
 function limparCanvas() {
@@ -93,9 +110,26 @@ function adicionarCaixaTexto() {
   div.style.padding = "5px";
   div.style.cursor = "move";
 
-  // arrastar
+  // botão X (inicialmente oculto)
+  const btn = document.createElement("span");
+  btn.innerText = "✖";
+  btn.style.position = "absolute";
+  btn.style.top = "2px";
+  btn.style.right = "5px";
+  btn.style.cursor = "pointer";
+  btn.style.color = "red";
+  btn.style.fontWeight = "bold";
+  btn.style.display = "none";
+  btn.onclick = () => div.remove();
+
+  div.appendChild(btn);
+
+  div.onmouseenter = () => btn.style.display = "block";
+  div.onmouseleave = () => btn.style.display = "none";
+
   div.onmousedown = (e) => {
-    if (e.button === 0) { // botão esquerdo para arrastar
+    if (e.target === btn) return;
+    if (e.button === 0) {
       const offsetX = e.offsetX;
       const offsetY = e.offsetY;
       document.onmousemove = (ev) => {
@@ -104,12 +138,6 @@ function adicionarCaixaTexto() {
       };
       document.onmouseup = () => document.onmousemove = null;
     }
-  };
-
-  // remover ao clicar com botão direito
-  div.oncontextmenu = (e) => {
-    e.preventDefault();
-    div.remove();
   };
 
   document.getElementById("formulario").appendChild(div);
@@ -129,8 +157,7 @@ async function salvarPDF() {
   const formulario = document.getElementById('formulario');
   const canvasForm = await html2canvas(formulario, { scale: 2 });
 
-  // centralizar com margens fixas
-  const imgWidth = pageWidth - 40; // margem 20mm cada lado
+  const imgWidth = pageWidth - 40;
   const imgHeight = (canvasForm.height * imgWidth) / canvasForm.width;
   const posX = 20;
   const posY = (pageHeight - imgHeight) / 2;
