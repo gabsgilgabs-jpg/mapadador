@@ -1,27 +1,3 @@
-// script.js
-
-// =====================================
-// DEBUG POSIÇÃO
-// =====================================
-
-elementos.canvasBase.addEventListener("click", e => {
-
-  const rect =
-    elementos.canvasBase.getBoundingClientRect();
-
-  const x =
-    (e.clientX - rect.left) /
-    rect.width;
-
-  const y =
-    (e.clientY - rect.top) /
-    rect.height;
-
-  console.log(
-    `x:${x.toFixed(3)} y:${y.toFixed(3)}`
-  );
-});
-
 // =====================================
 // CONFIG
 // =====================================
@@ -55,59 +31,58 @@ const estado = {
 };
 
 // =====================================
-// POSIÇÕES DOS CAMPOS
-// RESPONSIVO REAL
+// POSIÇÕES RESPONSIVAS
 // =====================================
 
 const areasTexto = [
 
-  // =========================
+  // =================================
   // ESQUERDA
-  // =========================
+  // =================================
 
-  { tipo:"D", x:0.105, y:0.325 },
-  { tipo:"I", x:0.105, y:0.355 },
+  { tipo:"D", x:0.11, y:0.33 },
+  { tipo:"I", x:0.11, y:0.37 },
 
-  { tipo:"D", x:0.105, y:0.470 },
-  { tipo:"I", x:0.105, y:0.500 },
+  { tipo:"D", x:0.11, y:0.48 },
+  { tipo:"I", x:0.11, y:0.52 },
 
-  { tipo:"D", x:0.105, y:0.615 },
-  { tipo:"I", x:0.105, y:0.645 },
+  { tipo:"D", x:0.11, y:0.63 },
+  { tipo:"I", x:0.11, y:0.67 },
 
-  { tipo:"D", x:0.105, y:0.760 },
-  { tipo:"I", x:0.105, y:0.790 },
+  { tipo:"D", x:0.11, y:0.78 },
+  { tipo:"I", x:0.11, y:0.82 },
 
-  // =========================
+  // =================================
   // CENTRO
-  // =========================
+  // =================================
 
-  { tipo:"D", x:0.455, y:0.325 },
-  { tipo:"I", x:0.455, y:0.355 },
+  { tipo:"D", x:0.46, y:0.33 },
+  { tipo:"I", x:0.46, y:0.37 },
 
-  { tipo:"D", x:0.455, y:0.470 },
-  { tipo:"I", x:0.455, y:0.500 },
+  { tipo:"D", x:0.46, y:0.48 },
+  { tipo:"I", x:0.46, y:0.52 },
 
-  { tipo:"D", x:0.455, y:0.615 },
-  { tipo:"I", x:0.455, y:0.645 },
+  { tipo:"D", x:0.46, y:0.63 },
+  { tipo:"I", x:0.46, y:0.67 },
 
-  { tipo:"D", x:0.455, y:0.760 },
-  { tipo:"I", x:0.455, y:0.790 },
+  { tipo:"D", x:0.46, y:0.78 },
+  { tipo:"I", x:0.46, y:0.82 },
 
-  // =========================
+  // =================================
   // DIREITA
-  // =========================
+  // =================================
 
-  { tipo:"D", x:0.805, y:0.325 },
-  { tipo:"I", x:0.805, y:0.355 },
+  { tipo:"D", x:0.81, y:0.33 },
+  { tipo:"I", x:0.81, y:0.37 },
 
-  { tipo:"D", x:0.805, y:0.470 },
-  { tipo:"I", x:0.805, y:0.500 },
+  { tipo:"D", x:0.81, y:0.48 },
+  { tipo:"I", x:0.81, y:0.52 },
 
-  { tipo:"D", x:0.805, y:0.615 },
-  { tipo:"I", x:0.805, y:0.645 },
+  { tipo:"D", x:0.81, y:0.63 },
+  { tipo:"I", x:0.81, y:0.67 },
 
-  { tipo:"D", x:0.805, y:0.760 },
-  { tipo:"I", x:0.805, y:0.790 }
+  { tipo:"D", x:0.81, y:0.78 },
+  { tipo:"I", x:0.81, y:0.82 }
 
 ];
 
@@ -158,7 +133,7 @@ window.addEventListener(
 );
 
 // =====================================
-// SISTEMA
+// INICIAR
 // =====================================
 
 async function iniciarSistema(){
@@ -174,6 +149,10 @@ async function iniciarSistema(){
     salvarLocalStorage
   );
 }
+
+// =====================================
+// RESIZE
+// =====================================
 
 async function recriarInterface(){
 
@@ -274,6 +253,8 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
+  // Mouse
+
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -288,6 +269,8 @@ function configurarEventos(){
     "mouseup",
     pararDesenho
   );
+
+  // Touch
 
   canvas.addEventListener(
     "touchstart",
@@ -455,9 +438,9 @@ function criarCampos(){
 
     let campo;
 
-    // =========================
+    // =================================
     // DATA
-    // =========================
+    // =================================
 
     if(area.tipo === "D"){
 
@@ -472,9 +455,9 @@ function criarCampos(){
       );
     }
 
-    // =========================
+    // =================================
     // INTENSIDADE
-    // =========================
+    // =================================
 
     if(area.tipo === "I"){
 
@@ -499,21 +482,31 @@ function criarCampos(){
       }
     }
 
-    // =========================
-    // POSICIONAMENTO RESPONSIVO
-    // =========================
+    // =================================
+    // POSIÇÃO RESPONSIVA
+    // =================================
+
+    campo.style.position =
+      "absolute";
 
     campo.style.left =
-      (
-        area.x *
-        elementos.canvasBase.width
-      ) + "px";
+      (area.x * 100) + "%";
 
     campo.style.top =
-      (
-        area.y *
-        elementos.canvasBase.height
-      ) + "px";
+      (area.y * 100) + "%";
+
+    // =================================
+    // TAMANHOS
+    // =================================
+
+    if(area.tipo === "D"){
+
+      campo.style.width = "18%";
+
+    }else{
+
+      campo.style.width = "8%";
+    }
 
     campo.addEventListener(
       "input",
@@ -531,6 +524,10 @@ function criarCampos(){
   });
 }
 
+// =====================================
+// LIMPAR CAMPOS
+// =====================================
+
 function limparCampos(){
 
   elementos.formulario.innerHTML = "";
@@ -546,7 +543,7 @@ function definirModo(modo){
 }
 
 // =====================================
-// LIMPAR
+// LIMPAR TUDO
 // =====================================
 
 function limparTudo(){
@@ -655,6 +652,30 @@ function carregarLocalStorage(){
 
     img.src = dados.desenho;
   }
+}
+
+// =====================================
+// RESTAURAR DESENHO
+// =====================================
+
+function restaurarDesenho(base64){
+
+  if(!base64) return;
+
+  const img = new Image();
+
+  img.onload = ()=>{
+
+    ctxPaint.drawImage(
+      img,
+      0,
+      0,
+      elementos.canvasPaint.width,
+      elementos.canvasPaint.height
+    );
+  };
+
+  img.src = base64;
 }
 
 // =====================================
