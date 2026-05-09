@@ -3,6 +3,15 @@ let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
 
+// áreas válidas definidas em proporções (0 a 1)
+// ajuste conforme a posição real das caixas na imagem
+const areasValidas = [
+  { x: 0.05, y: 0.25, w: 0.20, h: 0.15 }, // caixa D esquerda
+  { x: 0.75, y: 0.25, w: 0.20, h: 0.15 }, // caixa D direita
+  { x: 0.05, y: 0.55, w: 0.20, h: 0.15 }, // caixa I esquerda
+  { x: 0.75, y: 0.55, w: 0.20, h: 0.15 }  // caixa I direita
+];
+
 function inicializarCanvas() {
   const canvasBase = document.getElementById("canvasBase");
   const canvasPaint = document.getElementById("canvasPaint");
@@ -31,6 +40,17 @@ function inicializarCanvas() {
   };
 
   habilitarPintura(canvasPaint);
+}
+
+// verifica se ponto está dentro de alguma área válida
+function dentroAreaValida(x, y, canvas) {
+  return areasValidas.some(area => {
+    const ax = area.x * canvas.width;
+    const ay = area.y * canvas.height;
+    const aw = area.w * canvas.width;
+    const ah = area.h * canvas.height;
+    return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
+  });
 }
 
 function habilitarPintura(canvas) {
@@ -73,23 +93,26 @@ function habilitarPintura(canvas) {
     desenhar(getCoords(e));
     e.preventDefault();
   });
+}
 
-  function desenhar({ x, y }) {
-    const pixel = ctxBase.getImageData(x, y, 1, 1).data;
-    if (pixel[3] > 0) {
-      if (modo === "pintar") {
-        ctxPaint.strokeStyle = "black";
-        ctxPaint.lineWidth = 3;
-        ctxPaint.lineCap = "round";
-        ctxPaint.setLineDash([]);
-        ctxPaint.beginPath();
-        ctxPaint.moveTo(lastX, lastY);
-        ctxPaint.lineTo(x, y);
-        ctxPaint.stroke();
-        lastX = x; lastY = y;
-      } else if (modo === "apagar") {
-        ctxPaint.clearRect(x - 3, y - 3, 6, 6);
-      }
+function desenhar({ x, y }) {
+  // só desenha se estiver dentro das áreas válidas
+  if (!dentroAreaValida(x, y, ctxBase.canvas)) return;
+
+  const pixel = ctxBase.getImageData(x, y, 1, 1).data;
+  if (pixel[3] > 0) {
+    if (modo === "pintar") {
+      ctxPaint.strokeStyle = "black";
+      ctxPaint.lineWidth = 3;
+      ctxPaint.lineCap = "round";
+      ctxPaint.setLineDash([]);
+      ctxPaint.beginPath();
+      ctxPaint.moveTo(lastX, lastY);
+      ctxPaint.lineTo(x, y);
+      ctxPaint.stroke();
+      lastX = x; lastY = y;
+    } else if (modo === "apagar") {
+      ctxPaint.clearRect(x - 3, y - 3, 6, 6);
     }
   }
 }
@@ -100,8 +123,6 @@ function limparCanvas() {
 
 function adicionarCaixaTexto() {
   const div = document.createElement("div");
-  div.contentEditable = true;
-  div.innerText = "Digite aqui...";
   div.style.left = "50px";
   div.style.top = "50px";
   div.style.position = "absolute";
@@ -110,7 +131,12 @@ function adicionarCaixaTexto() {
   div.style.padding = "5px";
   div.style.cursor = "move";
 
-  // botão X (inicialmente oculto)
+  const texto = document.createElement("div");
+  texto.contentEditable = true;
+  texto.innerText = "Digite aqui...";
+  texto.style.minWidth = "100px";
+  texto.style.minHeight = "30px";
+
   const btn = document.createElement("span");
   btn.innerText = "✖";
   btn.style.position = "absolute";
@@ -119,13 +145,19 @@ function adicionarCaixaTexto() {
   btn.style.cursor = "pointer";
   btn.style.color = "red";
   btn.style.fontWeight = "bold";
-  btn.style.display = "none";
   btn.onclick = () => div.remove();
 
-  div.appendChild(btn);
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (isTouch) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+    div.onmouseenter = () => btn.style.display = "block";
+    div.onmouseleave = () => btn.style.display = "none";
+  }
 
-  div.onmouseenter = () => btn.style.display = "block";
-  div.onmouseleave = () => btn.style.display = "none";
+  div.appendChild(texto);
+  div.appendChild(btn);
 
   div.onmousedown = (e) => {
     if (e.target === btn) return;
