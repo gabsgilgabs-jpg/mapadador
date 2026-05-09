@@ -14,7 +14,12 @@ function inicializarCanvas() {
   img.src = "./img/pessoa.png"; // ajuste conforme o caminho real
   img.onload = () => {
     const proporcao = img.height / img.width;
-    const largura = window.innerWidth * 0.8;
+
+    // largura máxima para caber na página
+    const larguraMax = 600;
+    let largura = window.innerWidth * 0.8;
+    if (largura > larguraMax) largura = larguraMax;
+
     const altura = largura * proporcao;
 
     canvasBase.width = largura;
