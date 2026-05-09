@@ -9,7 +9,10 @@ function inicializarCanvas() {
   ctxPaint = canvasPaint.getContext("2d");
 
   img = new Image();
-  img.src = "img/pessoa.png"; // ajuste o caminho conforme onde está seu arquivo
+  // ajuste o caminho conforme onde está seu arquivo
+  img.src = "./img/pessoa.png"; // se estiver na pasta /img
+  // img.src = "./pessoa.png";   // se estiver na raiz
+
   img.onload = () => {
     const proporcao = img.height / img.width;
     const largura = window.innerWidth * 0.8;
