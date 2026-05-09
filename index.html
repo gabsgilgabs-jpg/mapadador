@@ -2,97 +2,40 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Formulário de Dor Interativo</title>
-  <style>
-    body { text-align: center; font-family: Arial, sans-serif; }
-    #formulario {
-      position: relative;
-      display: inline-block;
-    }
-    #formulario img {
-      width: 600px;
-    }
-    #formulario input {
-      position: absolute;
-      width: 100px;
-      padding: 4px;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background-color: #fff;
-    }
-    /* Ajuste as posições conforme necessário */
-    #campoD { top: 720px; left: 120px; }
-    #campoI { top: 720px; left: 400px; }
-    canvas {
-      position: absolute;
-      top: 0; left: 0;
-    }
-    #botoes { margin-top: 20px; }
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
+  <title>Formulário de Dor</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Bibliotecas necessárias -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <h2>Formulário de Avaliação da Dor</h2>
-  <p>Digite nos campos e desenhe sobre o corpo para indicar a dor.</p>
-
-  <div id="formulario">
-    <img src="formulario.png" alt="Formulário de Dor">
-    
-    <!-- Campos editáveis -->
-    <input id="campoD" type="text" placeholder="D:">
-    <input id="campoI" type="text" placeholder="I:">
-    
-    <!-- Área de desenho -->
-    <canvas id="canvas" width="600" height="800"></canvas>
+  <!-- Campo para nome do paciente -->
+  <div id="dados-paciente">
+    <label for="nomePaciente">Nome do Paciente:</label>
+    <input type="text" id="nomePaciente" placeholder="Digite o nome">
+    <button onclick="salvarPDF()">Salvar PDF</button>
   </div>
 
-  <div id="botoes">
-    <button onclick="limparCanvas()">Limpar desenho</button>
-    <button onclick="salvarPDF()">Salvar em PDF</button>
+  <!-- Área frente -->
+  <div id="frente">
+    <h2>Formulário - Frente</h2>
+    <p>Observações:</p>
+    <textarea id="observacoesFrente" placeholder="Digite suas observações"></textarea>
+
+    <h3>Imagem para pintura (Pessoa - Frente)</h3>
+    <canvas id="canvasFrente" width="400" height="600"></canvas>
   </div>
 
-  <!-- Bibliotecas externas -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Área costas -->
+  <div id="costas">
+    <h2>Formulário - Costas</h2>
+    <p>Observações:</p>
+    <textarea id="observacoesCostas" placeholder="Digite suas observações"></textarea>
 
-  <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let desenhando = false;
+    <h3>Imagem para pintura (Pessoa - Costas)</h3>
+    <canvas id="canvasCostas" width="400" height="600"></canvas>
+  </div>
 
-    canvas.addEventListener('mousedown', () => desenhando = true);
-    canvas.addEventListener('mouseup', () => desenhando = false);
-    canvas.addEventListener('mousemove', desenhar);
-
-    function desenhar(e) {
-      if (!desenhando) return;
-      ctx.fillStyle = "black"; // cor preta
-      ctx.beginPath();
-      ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function limparCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    async function salvarPDF() {
-      const { jsPDF } = window.jspdf;
-      const formulario = document.getElementById('formulario');
-      const canvasImagem = await html2canvas(formulario);
-      const imgData = canvasImagem.toDataURL('image/png');
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const largura = pdf.internal.pageSize.getWidth();
-      const altura = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'PNG', 0, 0, largura, altura);
-      pdf.save("formulario_dor.pdf");
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
