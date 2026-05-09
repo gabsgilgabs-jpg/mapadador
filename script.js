@@ -1,704 +1,156 @@
-// =====================================
-// CONFIG
-// =====================================
-
-const CONFIG = {
-
-  imagemBase:"./img/pessoa.png",
-
-  pincelCor:"#000",
-
-  pincelTamanho:3,
-
-  borrachaTamanho:12
-};
-
-// =====================================
-// ESTADO
-// =====================================
-
-const estado = {
-
-  modo:"pintar",
-
-  desenhando:false,
-
-  ultimoX:0,
-
-  ultimoY:0,
-
-  imagem:null
-};
-
-// =====================================
-// POSIÇÕES
-// =====================================
-
-const areasTexto = [
-
-  { tipo:"D", x:0.12, y:0.30 },
-  { tipo:"I", x:0.06946428571428571, y:0.3295376385173863 },
-
-  { tipo:"D", x:0.11232142857142857, y:0.40573577620014883 },
-  { tipo:"I", x:0.060892857142857144, y:0.4345675039720049 },
-
-  { tipo:"D", x:0.12517857142857142, y:0.642567825754681 },
-  { tipo:"I", x:0.07517857142857143, y:0.6724292580898176 },
-
-  { tipo:"D", x:0.12517857142857142, y:0.7702511916014722 },
-  { tipo:"I", x:0.07517857142857143, y:0.7970235102467671 },
-
-  { tipo:"D", x:0.47, y:0.30 },
-  { tipo:"I", x:0.42232142857142857, y:0.3295376385173863 },
-
-  { tipo:"D", x:0.4680357142857143, y:0.43662691309856605 },
-  { tipo:"I", x:0.4180357142857143, y:0.4664883454337027 },
-
-  { tipo:"D", x:0.48660714285714285, y:0.5540132333125516 },
-  { tipo:"I", x:0.43660714285714286, y:0.5818152565211271 },
-
-  { tipo:"D", x:0.44089285714285714, y:0.6569836896406089 },
-  { tipo:"I", x:0.39089285714285715, y:0.6847857128491844 },
-
-  { tipo:"D", x:0.8680357142857142, y:0.29143856967600507 },
-  { tipo:"I", x:0.8180357142857143, y:0.3223297065744223 },
-
-  { tipo:"D", x:0.8808928571428571, y:0.3944090260040625 },
-  { tipo:"I", x:0.8366071428571429, y:0.42530016290247974 },
-
-  { tipo:"D", x:0.8580357142857142, y:0.5632805743820767 },
-  { tipo:"I", x:0.8080357142857143, y:0.5952014158437745 },
-
-  { tipo:"D", x:0.8523214285714286, y:0.6930233493554291 },
-  { tipo:"I", x:0.8023214285714285, y:0.7228847816905657 }
-
-];
-
-// =====================================
-// ELEMENTOS
-// =====================================
-
-const elementos = {
-
-  canvasBase:
-    document.getElementById("canvasBase"),
-
-  canvasPaint:
-    document.getElementById("canvasPaint"),
-
-  formulario:
-    document.getElementById("formulario"),
-
-  nomePaciente:
-    document.getElementById("nomePaciente"),
-
-  container:
-    document.getElementById("mapaContainer")
-};
-
-// =====================================
-// CONTEXTOS
-// =====================================
-
-const ctxBase =
-  elementos.canvasBase.getContext("2d");
-
-const ctxPaint =
-  elementos.canvasPaint.getContext("2d");
-
-// =====================================
-// INIT
-// =====================================
-
-window.addEventListener(
-  "load",
-  iniciarSistema
-);
-
-window.addEventListener(
-  "resize",
-  recriarInterface
-);
-
-// =====================================
-// SISTEMA
-// =====================================
-
-async function iniciarSistema(){
-
-  await carregarImagem();
-
-  configurarEventos();
-
-  carregarLocalStorage();
-
-  atualizarBotaoAtivo();
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-// =====================================
-// RECRIAR
-// =====================================
+body{
 
-async function recriarInterface(){
+  font-family:Arial,sans-serif;
 
-  const desenhoAtual =
-    elementos.canvasPaint.toDataURL();
+  background:#f5f5f5;
 
-  limparCampos();
+  padding:20px;
 
-  await carregarImagem();
+  display:flex;
 
-  restaurarDesenho(
-    desenhoAtual
-  );
-
-  carregarLocalStorage();
+  justify-content:center;
 }
 
-// =====================================
-// IMAGEM
-// =====================================
+.app{
 
-function carregarImagem(){
+  width:100%;
 
-  return new Promise(resolve=>{
-
-    estado.imagem = new Image();
-
-    estado.imagem.src =
-      CONFIG.imagemBase;
-
-    estado.imagem.onload = ()=>{
-
-      configurarCanvas();
-
-      desenharImagem();
-
-      criarCampos();
-
-      resolve();
-    };
-  });
+  max-width:900px;
 }
 
-// =====================================
-// CANVAS
-// =====================================
+h1{
 
-function configurarCanvas(){
+  text-align:center;
 
-  const proporcao =
-    estado.imagem.height /
-    estado.imagem.width;
-
-  const largura =
-    elementos.container.clientWidth;
-
-  const altura =
-    largura * proporcao;
-
-  [
-    elementos.canvasBase,
-    elementos.canvasPaint
-  ].forEach(canvas=>{
-
-    canvas.width = largura;
-
-    canvas.height = altura;
-  });
-
-  elementos.container.style.height =
-    altura + "px";
+  margin-bottom:20px;
 }
 
-function desenharImagem(){
+#nomePaciente{
 
-  ctxBase.clearRect(
-    0,
-    0,
-    elementos.canvasBase.width,
-    elementos.canvasBase.height
-  );
+  width:100%;
 
-  ctxBase.drawImage(
-    estado.imagem,
-    0,
-    0,
-    elementos.canvasBase.width,
-    elementos.canvasBase.height
-  );
+  padding:12px;
+
+  font-size:16px;
+
+  margin-bottom:20px;
 }
 
-// =====================================
-// EVENTOS
-// =====================================
+.botoes{
 
-function configurarEventos(){
+  display:flex;
 
-  const canvas =
-    elementos.canvasPaint;
+  gap:10px;
 
-  canvas.addEventListener(
-    "mousedown",
-    iniciarDesenho
-  );
+  flex-wrap:wrap;
 
-  canvas.addEventListener(
-    "mousemove",
-    desenhar
-  );
-
-  window.addEventListener(
-    "mouseup",
-    pararDesenho
-  );
-
-  canvas.addEventListener(
-    "touchstart",
-    iniciarDesenho,
-    { passive:false }
-  );
-
-  canvas.addEventListener(
-    "touchmove",
-    desenharTouch,
-    { passive:false }
-  );
-
-  window.addEventListener(
-    "touchend",
-    pararDesenho
-  );
+  margin-bottom:20px;
 }
 
-// =====================================
-// DESENHO
-// =====================================
+button{
 
-function iniciarDesenho(e){
+  padding:10px 16px;
 
-  estado.desenhando = true;
+  border:none;
 
-  const pos =
-    obterPosicao(e);
+  border-radius:6px;
 
-  estado.ultimoX = pos.x;
-  estado.ultimoY = pos.y;
+  background:#fff;
+
+  border:1px solid #ccc;
+
+  cursor:pointer;
+
+  font-size:15px;
 }
 
-function pararDesenho(){
+.botaoAtivo{
 
-  estado.desenhando = false;
+  color:red;
 
-  salvarLocalStorage();
+  font-weight:bold;
+
+  border-color:red;
 }
 
-function desenharTouch(e){
+#mapaContainer{
 
-  e.preventDefault();
+  position:relative;
 
-  desenhar(e);
+  width:100%;
+
+  max-width:700px;
+
+  margin:auto;
 }
 
-function desenhar(e){
+canvas{
 
-  if(!estado.desenhando) return;
+  width:100%;
 
-  const pos =
-    obterPosicao(e);
-
-  if(estado.modo === "pintar"){
-
-    ctxPaint.strokeStyle =
-      CONFIG.pincelCor;
-
-    ctxPaint.lineWidth =
-      CONFIG.pincelTamanho;
-
-    ctxPaint.lineCap =
-      "round";
-
-    ctxPaint.beginPath();
-
-    ctxPaint.moveTo(
-      estado.ultimoX,
-      estado.ultimoY
-    );
-
-    ctxPaint.lineTo(
-      pos.x,
-      pos.y
-    );
-
-    ctxPaint.stroke();
-
-  }else{
-
-    ctxPaint.save();
-
-    ctxPaint.globalCompositeOperation =
-      "destination-out";
-
-    ctxPaint.beginPath();
-
-    ctxPaint.arc(
-      pos.x,
-      pos.y,
-      CONFIG.borrachaTamanho,
-      0,
-      Math.PI * 2
-    );
-
-    ctxPaint.fill();
-
-    ctxPaint.restore();
-  }
-
-  estado.ultimoX = pos.x;
-  estado.ultimoY = pos.y;
+  display:block;
 }
 
-// =====================================
-// POSIÇÃO
-// =====================================
+#canvasBase{
 
-function obterPosicao(e){
+  position:relative;
 
-  const rect =
-    elementos.canvasPaint.getBoundingClientRect();
-
-  let clientX;
-  let clientY;
-
-  if(e.touches){
-
-    clientX =
-      e.touches[0].clientX;
-
-    clientY =
-      e.touches[0].clientY;
-
-  }else{
-
-    clientX = e.clientX;
-    clientY = e.clientY;
-  }
-
-  return {
-
-    x:
-      (
-        clientX - rect.left
-      ) *
-      (
-        elementos.canvasPaint.width /
-        rect.width
-      ),
-
-    y:
-      (
-        clientY - rect.top
-      ) *
-      (
-        elementos.canvasPaint.height /
-        rect.height
-      )
-  };
+  z-index:1;
 }
 
-// =====================================
-// CAMPOS
-// =====================================
+#canvasPaint{
 
-function criarCampos(){
+  position:absolute;
 
-  limparCampos();
+  left:0;
 
-  areasTexto.forEach(area=>{
+  top:0;
 
-    let campo;
-
-    if(area.tipo === "D"){
-
-      campo =
-        document.createElement("input");
-
-      campo.type = "date";
-
-      campo.classList.add(
-        "campoMapa",
-        "campoData"
-      );
-    }
-
-    if(area.tipo === "I"){
-
-      campo =
-        document.createElement("select");
-
-      campo.classList.add(
-        "campoMapa",
-        "campoIntensidade"
-      );
-
-      for(let i=0;i<=10;i++){
-
-        const opt =
-          document.createElement("option");
-
-        opt.value = i;
-
-        opt.textContent = i;
-
-        campo.appendChild(opt);
-      }
-    }
-
-    campo.style.left =
-      (area.x * 100) + "%";
-
-    campo.style.top =
-      (area.y * 100) + "%";
-
-    campo.addEventListener(
-      "input",
-      salvarLocalStorage
-    );
-
-    campo.addEventListener(
-      "change",
-      salvarLocalStorage
-    );
-
-    elementos.formulario.appendChild(
-      campo
-    );
-  });
+  z-index:2;
 }
 
-function limparCampos(){
+#formulario{
 
-  elementos.formulario.innerHTML = "";
+  position:absolute;
+
+  left:0;
+
+  top:0;
+
+  width:100%;
+
+  height:100%;
+
+  z-index:3;
 }
 
-// =====================================
-// BOTÃO ATIVO
-// =====================================
+.campoMapa{
 
-function atualizarBotaoAtivo(){
+  position:absolute;
 
-  document
-    .querySelectorAll(".acaoBtn")
-    .forEach(btn=>{
+  transform:translate(-50%,-50%);
 
-      btn.classList.remove(
-        "ativo"
-      );
-    });
+  font-size:12px;
 
-  if(estado.modo === "pintar"){
+  border:1px solid #ccc;
 
-    document
-      .getElementById("pintar")
-      .classList.add("ativo");
-  }
+  background:white;
 
-  if(estado.modo === "apagar"){
-
-    document
-      .getElementById("apagar")
-      .classList.add("ativo");
-  }
+  z-index:999;
 }
 
-// =====================================
-// MODOS
-// =====================================
+.campoData{
 
-function definirModo(modo){
-
-  estado.modo = modo;
-
-  atualizarBotaoAtivo();
+  width:105px;
 }
 
-// =====================================
-// LIMPAR
-// =====================================
+.campoIntensidade{
 
-function limparTudo(){
-
-  ctxPaint.clearRect(
-    0,
-    0,
-    elementos.canvasPaint.width,
-    elementos.canvasPaint.height
-  );
-
-  localStorage.removeItem(
-    "mapaDorDados"
-  );
-
-  document
-    .querySelectorAll(".campoMapa")
-    .forEach(campo=>{
-
-      if(campo.tagName === "SELECT"){
-
-        campo.selectedIndex = 0;
-
-      }else{
-
-        campo.value = "";
-      }
-    });
-
-  elementos.nomePaciente.value =
-    "";
-}
-
-// =====================================
-// STORAGE
-// =====================================
-
-function salvarLocalStorage(){
-
-  const campos =
-    [
-      ...document.querySelectorAll(".campoMapa")
-    ];
-
-  const dados = {
-
-    nomePaciente:
-      elementos.nomePaciente.value,
-
-    campos:
-      campos.map(c=>c.value),
-
-    desenho:
-      elementos.canvasPaint.toDataURL()
-  };
-
-  localStorage.setItem(
-    "mapaDorDados",
-    JSON.stringify(dados)
-  );
-}
-
-function carregarLocalStorage(){
-
-  const dadosSalvos =
-    localStorage.getItem(
-      "mapaDorDados"
-    );
-
-  if(!dadosSalvos) return;
-
-  const dados =
-    JSON.parse(dadosSalvos);
-
-  elementos.nomePaciente.value =
-    dados.nomePaciente || "";
-
-  const campos =
-    [
-      ...document.querySelectorAll(".campoMapa")
-    ];
-
-  campos.forEach((campo,index)=>{
-
-    if(dados.campos){
-
-      campo.value =
-        dados.campos[index];
-    }
-  });
-
-  if(dados.desenho){
-
-    restaurarDesenho(
-      dados.desenho
-    );
-  }
-}
-
-// =====================================
-// RESTAURAR
-// =====================================
-
-function restaurarDesenho(base64){
-
-  if(!base64) return;
-
-  const img = new Image();
-
-  img.onload = ()=>{
-
-    ctxPaint.drawImage(
-      img,
-      0,
-      0,
-      elementos.canvasPaint.width,
-      elementos.canvasPaint.height
-    );
-  };
-
-  img.src = base64;
-}
-
-// =====================================
-// PDF
-// =====================================
-
-async function salvarPDF(){
-
-  const { jsPDF } =
-    window.jspdf;
-
-  const pdf =
-    new jsPDF(
-      "p",
-      "mm",
-      "a4"
-    );
-
-  const captura =
-    await html2canvas(
-      elementos.container,
-      {
-        scale:4,
-        useCORS:true
-      }
-    );
-
-  const larguraPDF = 190;
-
-  const alturaPDF =
-    (
-      captura.height *
-      larguraPDF
-    ) /
-    captura.width;
-
-  pdf.text(
-    `Mapa da Dor - ${
-      elementos.nomePaciente.value || ""
-    }`,
-    10,
-    10
-  );
-
-  pdf.addImage(
-    captura.toDataURL("image/png"),
-    "PNG",
-    10,
-    20,
-    larguraPDF,
-    alturaPDF
-  );
-
-  pdf.save(
-    "mapa-da-dor.pdf"
-  );
+  width:55px;
 }
