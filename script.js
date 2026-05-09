@@ -1,4 +1,4 @@
-let modo = "pintar";
+let modo = "pintar"; // padrão inicial
 let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
