@@ -12,6 +12,7 @@
     <label for="nomePaciente">Nome do Paciente:</label>
     <input type="text" id="nomePaciente" placeholder="Digite o nome">
     <button onclick="salvarPDF()">Salvar PDF</button>
+    <button onclick="resetZoomPan()">Resetar Zoom/Pan</button>
   </div>
 
   <div id="formulario">
@@ -26,7 +27,11 @@
     <h3>Imagem para pintura (Pessoa)</h3>
     <button onclick="modo='pintar'">Pintar</button>
     <button onclick="modo='apagar'">Borracha</button>
-    <canvas id="canvasPessoa" width="400" height="600"></canvas>
+    <button onclick="limparCanvas()">Limpar tudo</button>
+    <canvas id="canvasPessoa"></canvas>
+
+    <h3>Lupa</h3>
+    <canvas id="lupaCanvas" width="200" height="200"></canvas>
   </div>
 
   <script src="script.js"></script>
