@@ -31,204 +31,52 @@ const estado = {
 };
 
 // =====================================
-// POSIÇÕES EXATAS
-// LOGO APÓS O "D:" E "I:"
+// POSIÇÕES DOS CAMPOS
 // =====================================
 
 const areasTexto = [
 
-  // =====================================
-  // ESQUERDA 1
-  // =====================================
+  // ESQUERDA
 
-  {
-    tipo:"D",
-    x:0.055,
-    y:0.08
-  },
+  { tipo:"D", x:38,  y:74  },
+  { tipo:"I", x:38,  y:92  },
 
-  {
-    tipo:"I",
-    x:0.055,
-    y:0.115
-  },
+  { tipo:"D", x:38,  y:194 },
+  { tipo:"I", x:38,  y:212 },
 
-  // =====================================
-  // ESQUERDA 2
-  // =====================================
+  { tipo:"D", x:38,  y:314 },
+  { tipo:"I", x:38,  y:332 },
 
-  {
-    tipo:"D",
-    x:0.055,
-    y:0.255
-  },
+  { tipo:"D", x:38,  y:434 },
+  { tipo:"I", x:38,  y:452 },
 
-  {
-    tipo:"I",
-    x:0.055,
-    y:0.29
-  },
+  // CENTRO
 
-  // =====================================
-  // ESQUERDA 3
-  // =====================================
+  { tipo:"D", x:245, y:74  },
+  { tipo:"I", x:245, y:92  },
 
-  {
-    tipo:"D",
-    x:0.055,
-    y:0.43
-  },
+  { tipo:"D", x:245, y:194 },
+  { tipo:"I", x:245, y:212 },
 
-  {
-    tipo:"I",
-    x:0.055,
-    y:0.465
-  },
+  { tipo:"D", x:245, y:314 },
+  { tipo:"I", x:245, y:332 },
 
-  // =====================================
-  // ESQUERDA 4
-  // =====================================
+  { tipo:"D", x:245, y:434 },
+  { tipo:"I", x:245, y:452 },
 
-  {
-    tipo:"D",
-    x:0.055,
-    y:0.605
-  },
+  // DIREITA
 
-  {
-    tipo:"I",
-    x:0.055,
-    y:0.64
-  },
+  { tipo:"D", x:452, y:74  },
+  { tipo:"I", x:452, y:92  },
 
-  // =====================================
-  // CENTRO 1
-  // =====================================
+  { tipo:"D", x:452, y:194 },
+  { tipo:"I", x:452, y:212 },
 
-  {
-    tipo:"D",
-    x:0.405,
-    y:0.08
-  },
+  { tipo:"D", x:452, y:314 },
+  { tipo:"I", x:452, y:332 },
 
-  {
-    tipo:"I",
-    x:0.405,
-    y:0.115
-  },
-
-  // =====================================
-  // CENTRO 2
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.405,
-    y:0.255
-  },
-
-  {
-    tipo:"I",
-    x:0.405,
-    y:0.29
-  },
-
-  // =====================================
-  // CENTRO 3
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.405,
-    y:0.43
-  },
-
-  {
-    tipo:"I",
-    x:0.405,
-    y:0.465
-  },
-
-  // =====================================
-  // CENTRO 4
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.405,
-    y:0.605
-  },
-
-  {
-    tipo:"I",
-    x:0.405,
-    y:0.64
-  },
-
-  // =====================================
-  // DIREITA 1
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.765,
-    y:0.08
-  },
-
-  {
-    tipo:"I",
-    x:0.845,
-    y:0.115
-  },
-
-  // =====================================
-  // DIREITA 2
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.765,
-    y:0.255
-  },
-
-  {
-    tipo:"I",
-    x:0.845,
-    y:0.29
-  },
-
-  // =====================================
-  // DIREITA 3
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.765,
-    y:0.43
-  },
-
-  {
-    tipo:"I",
-    x:0.845,
-    y:0.465
-  },
-
-  // =====================================
-  // DIREITA 4
-  // =====================================
-
-  {
-    tipo:"D",
-    x:0.765,
-    y:0.605
-  },
-
-  {
-    tipo:"I",
-    x:0.845,
-    y:0.64
-  }
-
+  { tipo:"D", x:452, y:434 },
+  { tipo:"I", x:452, y:452 }
 ];
 
 // =====================================
@@ -394,6 +242,8 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
+  // mouse
+
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -408,6 +258,8 @@ function configurarEventos(){
     "mouseup",
     pararDesenho
   );
+
+  // touch
 
   canvas.addEventListener(
     "touchstart",
@@ -594,6 +446,17 @@ function criarCampos(){
 
   limparCampos();
 
+  const larguraOriginal = 595;
+  const alturaOriginal  = 842;
+
+  const escalaX =
+    elementos.canvasBase.width /
+    larguraOriginal;
+
+  const escalaY =
+    elementos.canvasBase.height /
+    alturaOriginal;
+
   areasTexto.forEach(area=>{
 
     let campo;
@@ -630,19 +493,19 @@ function criarCampos(){
         const opt =
           document.createElement("option");
 
-        opt.value = i;
+          opt.value = i;
 
-        opt.textContent = i;
+          opt.textContent = i;
 
-        campo.appendChild(opt);
+          campo.appendChild(opt);
       }
     }
 
     campo.style.left =
-      (area.x * 100) + "%";
+      (area.x * escalaX) + "px";
 
     campo.style.top =
-      (area.y * 100) + "%";
+      (area.y * escalaY) + "px";
 
     campo.addEventListener(
       "input",
