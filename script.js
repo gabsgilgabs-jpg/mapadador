@@ -31,58 +31,46 @@ const estado = {
 };
 
 // =====================================
-// POSIÇÕES RESPONSIVAS
+// POSIÇÕES
 // =====================================
 
 const areasTexto = [
 
-  // =================================
-  // ESQUERDA
-  // =================================
+  { tipo:"D", x:0.12, y:0.30 },
+  { tipo:"I", x:0.12, y:0.35 },
 
-  { tipo:"D", x:0.11, y:0.30 },
-  { tipo:"I", x:0.11, y:0.33 },
+  { tipo:"D", x:0.12, y:0.45 },
+  { tipo:"I", x:0.12, y:0.50 },
 
-  { tipo:"D", x:0.11, y:0.45 },
-  { tipo:"I", x:0.11, y:0.47 },
+  { tipo:"D", x:0.12, y:0.60 },
+  { tipo:"I", x:0.12, y:0.65 },
 
-  { tipo:"D", x:0.11, y:0.60 },
-  { tipo:"I", x:0.11, y:0.64 },
+  { tipo:"D", x:0.12, y:0.75 },
+  { tipo:"I", x:0.12, y:0.80 },
 
-  { tipo:"D", x:0.11, y:0.75 },
-  { tipo:"I", x:0.11, y:0.79 },
+  { tipo:"D", x:0.47, y:0.30 },
+  { tipo:"I", x:0.47, y:0.35 },
 
-  // =================================
-  // CENTRO
-  // =================================
+  { tipo:"D", x:0.47, y:0.45 },
+  { tipo:"I", x:0.47, y:0.50 },
 
-  { tipo:"D", x:0.46, y:0.30 },
-  { tipo:"I", x:0.46, y:0.33 },
+  { tipo:"D", x:0.47, y:0.60 },
+  { tipo:"I", x:0.47, y:0.65 },
 
-  { tipo:"D", x:0.46, y:0.45 },
-  { tipo:"I", x:0.46, y:0.47 },
+  { tipo:"D", x:0.47, y:0.75 },
+  { tipo:"I", x:0.47, y:0.80 },
 
-  { tipo:"D", x:0.46, y:0.60 },
-  { tipo:"I", x:0.46, y:0.64 },
+  { tipo:"D", x:0.82, y:0.30 },
+  { tipo:"I", x:0.82, y:0.35 },
 
-  { tipo:"D", x:0.46, y:0.75 },
-  { tipo:"I", x:0.46, y:0.79 },
+  { tipo:"D", x:0.82, y:0.45 },
+  { tipo:"I", x:0.82, y:0.50 },
 
-  // =================================
-  // DIREITA
-  // =================================
+  { tipo:"D", x:0.82, y:0.60 },
+  { tipo:"I", x:0.82, y:0.65 },
 
-  { tipo:"D", x:0.81, y:0.30 },
-  { tipo:"I", x:0.81, y:0.35 },
-
-  { tipo:"D", x:0.81, y:0.45 },
-  { tipo:"I", x:0.81, y:0.47 },
-
-  { tipo:"D", x:0.81, y:0.60 },
-  { tipo:"I", x:0.81, y:0.64 },
-
-  { tipo:"D", x:0.81, y:0.75 },
-  { tipo:"I", x:0.81, y:0.79 }
+  { tipo:"D", x:0.82, y:0.75 },
+  { tipo:"I", x:0.82, y:0.80 }
 
 ];
 
@@ -133,25 +121,22 @@ window.addEventListener(
 );
 
 // =====================================
-// INICIAR
+// SISTEMA
 // =====================================
 
 async function iniciarSistema(){
+
+  carregarPosicoes();
 
   await carregarImagem();
 
   configurarEventos();
 
   carregarLocalStorage();
-
-  elementos.nomePaciente.addEventListener(
-    "input",
-    salvarLocalStorage
-  );
 }
 
 // =====================================
-// RESIZE
+// RECRIAR
 // =====================================
 
 async function recriarInterface(){
@@ -253,8 +238,6 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
-  // Mouse
-
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -269,8 +252,6 @@ function configurarEventos(){
     "mouseup",
     pararDesenho
   );
-
-  // Touch
 
   canvas.addEventListener(
     "touchstart",
@@ -296,13 +277,18 @@ function configurarEventos(){
 
 function iniciarDesenho(e){
 
+  if(
+    e.target.classList.contains(
+      "campoMapa"
+    )
+  ) return;
+
   estado.desenhando = true;
 
   const pos =
     obterPosicao(e);
 
   estado.ultimoX = pos.x;
-
   estado.ultimoY = pos.y;
 }
 
@@ -434,13 +420,9 @@ function criarCampos(){
 
   limparCampos();
 
-  areasTexto.forEach(area=>{
+  areasTexto.forEach((area,index)=>{
 
     let campo;
-
-    // =================================
-    // DATA
-    // =================================
 
     if(area.tipo === "D"){
 
@@ -454,10 +436,6 @@ function criarCampos(){
         "campoData"
       );
     }
-
-    // =================================
-    // INTENSIDADE
-    // =================================
 
     if(area.tipo === "I"){
 
@@ -482,31 +460,17 @@ function criarCampos(){
       }
     }
 
-    // =================================
-    // POSIÇÃO RESPONSIVA
-    // =================================
-
-    campo.style.position =
-      "absolute";
-
     campo.style.left =
       (area.x * 100) + "%";
 
     campo.style.top =
       (area.y * 100) + "%";
 
-    // =================================
-    // TAMANHOS
-    // =================================
-
-    if(area.tipo === "D"){
-
-      campo.style.width = "18%";
-
-    }else{
-
-      campo.style.width = "8%";
-    }
+    tornarArrastavel(
+      campo,
+      area,
+      index
+    );
 
     campo.addEventListener(
       "input",
@@ -524,13 +488,109 @@ function criarCampos(){
   });
 }
 
-// =====================================
-// LIMPAR CAMPOS
-// =====================================
-
 function limparCampos(){
 
   elementos.formulario.innerHTML = "";
+}
+
+// =====================================
+// DRAG
+// =====================================
+
+function tornarArrastavel(
+  elemento,
+  area
+){
+
+  let arrastando = false;
+
+  elemento.addEventListener(
+    "mousedown",
+    iniciar
+  );
+
+  elemento.addEventListener(
+    "touchstart",
+    iniciar,
+    { passive:false }
+  );
+
+  function iniciar(e){
+
+    arrastando = true;
+
+    e.preventDefault();
+
+    window.addEventListener(
+      "mousemove",
+      mover
+    );
+
+    window.addEventListener(
+      "touchmove",
+      mover,
+      { passive:false }
+    );
+
+    window.addEventListener(
+      "mouseup",
+      parar
+    );
+
+    window.addEventListener(
+      "touchend",
+      parar
+    );
+  }
+
+  function mover(e){
+
+    if(!arrastando) return;
+
+    let clientX;
+    let clientY;
+
+    if(e.touches){
+
+      clientX =
+        e.touches[0].clientX;
+
+      clientY =
+        e.touches[0].clientY;
+
+    }else{
+
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const rect =
+      elementos.container.getBoundingClientRect();
+
+    const x =
+      (clientX - rect.left) /
+      rect.width;
+
+    const y =
+      (clientY - rect.top) /
+      rect.height;
+
+    area.x = x;
+    area.y = y;
+
+    elemento.style.left =
+      (x * 100) + "%";
+
+    elemento.style.top =
+      (y * 100) + "%";
+
+    salvarPosicoes();
+  }
+
+  function parar(){
+
+    arrastando = false;
+  }
 }
 
 // =====================================
@@ -543,7 +603,7 @@ function definirModo(modo){
 }
 
 // =====================================
-// LIMPAR TUDO
+// LIMPAR
 // =====================================
 
 function limparTudo(){
@@ -558,23 +618,6 @@ function limparTudo(){
   localStorage.removeItem(
     "mapaDorDados"
   );
-
-  elementos.nomePaciente.value =
-    "";
-
-  document
-    .querySelectorAll(".campoMapa")
-    .forEach(campo=>{
-
-      if(campo.tagName === "SELECT"){
-
-        campo.selectedIndex = 0;
-
-      }else{
-
-        campo.value = "";
-      }
-    });
 }
 
 // =====================================
@@ -637,25 +680,45 @@ function carregarLocalStorage(){
 
   if(dados.desenho){
 
-    const img = new Image();
-
-    img.onload = ()=>{
-
-      ctxPaint.drawImage(
-        img,
-        0,
-        0,
-        elementos.canvasPaint.width,
-        elementos.canvasPaint.height
-      );
-    };
-
-    img.src = dados.desenho;
+    restaurarDesenho(
+      dados.desenho
+    );
   }
 }
 
 // =====================================
-// RESTAURAR DESENHO
+// POSIÇÕES
+// =====================================
+
+function salvarPosicoes(){
+
+  localStorage.setItem(
+    "mapaDorPosicoes",
+    JSON.stringify(areasTexto)
+  );
+}
+
+function carregarPosicoes(){
+
+  const dados =
+    localStorage.getItem(
+      "mapaDorPosicoes"
+    );
+
+  if(!dados) return;
+
+  const posicoes =
+    JSON.parse(dados);
+
+  posicoes.forEach((p,i)=>{
+
+    areasTexto[i].x = p.x;
+    areasTexto[i].y = p.y;
+  });
+}
+
+// =====================================
+// RESTAURAR
 // =====================================
 
 function restaurarDesenho(base64){
@@ -698,8 +761,7 @@ async function salvarPDF(){
     await html2canvas(
       elementos.container,
       {
-        scale:4,
-        useCORS:true
+        scale:4
       }
     );
 
@@ -712,19 +774,11 @@ async function salvarPDF(){
     ) /
     captura.width;
 
-  pdf.text(
-    `Mapa da Dor - ${
-      elementos.nomePaciente.value || ""
-    }`,
-    10,
-    10
-  );
-
   pdf.addImage(
     captura.toDataURL("image/png"),
     "PNG",
     10,
-    20,
+    10,
     larguraPDF,
     alturaPDF
   );
