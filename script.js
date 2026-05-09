@@ -1,3 +1,5 @@
+// script.js
+
 // =====================================
 // CONFIG
 // =====================================
@@ -38,45 +40,45 @@ const areasTexto = [
 
   // ESQUERDA
 
-  { tipo:"D", x:58,  y:74  },
-  { tipo:"I", x:58,  y:92  },
+  { tipo:"D", x:30,  y:74  },
+  { tipo:"I", x:30,  y:92  },
 
-  { tipo:"D", x:58,  y:194 },
-  { tipo:"I", x:58,  y:212 },
+  { tipo:"D", x:30,  y:194 },
+  { tipo:"I", x:30,  y:212 },
 
-  { tipo:"D", x:58,  y:314 },
-  { tipo:"I", x:58,  y:332 },
+  { tipo:"D", x:30,  y:314 },
+  { tipo:"I", x:30,  y:332 },
 
-  { tipo:"D", x:58,  y:434 },
-  { tipo:"I", x:58,  y:452 },
+  { tipo:"D", x:30,  y:434 },
+  { tipo:"I", x:30,  y:452 },
 
   // CENTRO
 
-  { tipo:"D", x:265, y:74  },
-  { tipo:"I", x:265, y:92  },
+  { tipo:"D", x:238, y:74  },
+  { tipo:"I", x:238, y:92  },
 
-  { tipo:"D", x:265, y:194 },
-  { tipo:"I", x:265, y:212 },
+  { tipo:"D", x:238, y:194 },
+  { tipo:"I", x:238, y:212 },
 
-  { tipo:"D", x:265, y:314 },
-  { tipo:"I", x:265, y:332 },
+  { tipo:"D", x:238, y:314 },
+  { tipo:"I", x:238, y:332 },
 
-  { tipo:"D", x:265, y:434 },
-  { tipo:"I", x:265, y:452 },
+  { tipo:"D", x:238, y:434 },
+  { tipo:"I", x:238, y:452 },
 
   // DIREITA
 
-  { tipo:"D", x:472, y:74  },
-  { tipo:"I", x:472, y:92  },
+  { tipo:"D", x:445, y:74  },
+  { tipo:"I", x:445, y:92  },
 
-  { tipo:"D", x:472, y:194 },
-  { tipo:"I", x:472, y:212 },
+  { tipo:"D", x:445, y:194 },
+  { tipo:"I", x:445, y:212 },
 
-  { tipo:"D", x:472, y:314 },
-  { tipo:"I", x:472, y:332 },
+  { tipo:"D", x:445, y:314 },
+  { tipo:"I", x:445, y:332 },
 
-  { tipo:"D", x:472, y:434 },
-  { tipo:"I", x:472, y:452 }
+  { tipo:"D", x:445, y:434 },
+  { tipo:"I", x:445, y:452 }
 
 ];
 
@@ -243,8 +245,6 @@ function configurarEventos(){
   const canvas =
     elementos.canvasPaint;
 
-  // mouse
-
   canvas.addEventListener(
     "mousedown",
     iniciarDesenho
@@ -259,8 +259,6 @@ function configurarEventos(){
     "mouseup",
     pararDesenho
   );
-
-  // touch
 
   canvas.addEventListener(
     "touchstart",
@@ -319,75 +317,53 @@ function desenhar(e){
 
   if(estado.modo === "pintar"){
 
-    pintar(
+    ctxPaint.strokeStyle =
+      CONFIG.pincelCor;
+
+    ctxPaint.lineWidth =
+      CONFIG.pincelTamanho;
+
+    ctxPaint.lineCap =
+      "round";
+
+    ctxPaint.beginPath();
+
+    ctxPaint.moveTo(
+      estado.ultimoX,
+      estado.ultimoY
+    );
+
+    ctxPaint.lineTo(
       pos.x,
       pos.y
     );
+
+    ctxPaint.stroke();
 
   }else{
 
-    apagar(
+    ctxPaint.save();
+
+    ctxPaint.globalCompositeOperation =
+      "destination-out";
+
+    ctxPaint.beginPath();
+
+    ctxPaint.arc(
       pos.x,
-      pos.y
+      pos.y,
+      CONFIG.borrachaTamanho,
+      0,
+      Math.PI * 2
     );
+
+    ctxPaint.fill();
+
+    ctxPaint.restore();
   }
 
   estado.ultimoX = pos.x;
-
   estado.ultimoY = pos.y;
-}
-
-// =====================================
-// PINTAR
-// =====================================
-
-function pintar(x,y){
-
-  ctxPaint.strokeStyle =
-    CONFIG.pincelCor;
-
-  ctxPaint.lineWidth =
-    CONFIG.pincelTamanho;
-
-  ctxPaint.lineCap =
-    "round";
-
-  ctxPaint.beginPath();
-
-  ctxPaint.moveTo(
-    estado.ultimoX,
-    estado.ultimoY
-  );
-
-  ctxPaint.lineTo(x,y);
-
-  ctxPaint.stroke();
-}
-
-// =====================================
-// APAGAR
-// =====================================
-
-function apagar(x,y){
-
-  ctxPaint.save();
-
-  ctxPaint.globalCompositeOperation =
-    "destination-out";
-
-  ctxPaint.beginPath();
-
-  ctxPaint.arc(
-    x,
-    y,
-    CONFIG.borrachaTamanho,
-    0,
-    Math.PI * 2
-  );
-
-  ctxPaint.fill();
-
-  ctxPaint.restore();
 }
 
 // =====================================
@@ -413,7 +389,6 @@ function obterPosicao(e){
   }else{
 
     clientX = e.clientX;
-
     clientY = e.clientY;
   }
 
@@ -458,14 +433,12 @@ function criarCampos(){
     elementos.canvasBase.height /
     alturaOriginal;
 
-  // OFFSET GLOBAL VERTICAL
-  const offsetY = 140;
+  const offsetY = 168;
+  const offsetX = 28;
 
   areasTexto.forEach(area=>{
 
     let campo;
-
-    // DATA
 
     if(area.tipo === "D"){
 
@@ -479,8 +452,6 @@ function criarCampos(){
         "campoData"
       );
     }
-
-    // INTENSIDADE
 
     if(area.tipo === "I"){
 
@@ -506,7 +477,7 @@ function criarCampos(){
     }
 
     campo.style.left =
-      (area.x * escalaX) + "px";
+      ((area.x * escalaX) + offsetX) + "px";
 
     campo.style.top =
       ((area.y * escalaY) + offsetY) + "px";
@@ -545,7 +516,7 @@ function definirModo(modo){
 // LIMPAR
 // =====================================
 
-function limparCanvas(){
+function limparTudo(){
 
   ctxPaint.clearRect(
     0,
@@ -553,11 +524,6 @@ function limparCanvas(){
     elementos.canvasPaint.width,
     elementos.canvasPaint.height
   );
-}
-
-function limparTudo(){
-
-  limparCanvas();
 
   localStorage.removeItem(
     "mapaDorDados"
@@ -585,27 +551,6 @@ function limparTudo(){
 // STORAGE
 // =====================================
 
-function restaurarDesenho(base64){
-
-  if(!base64) return;
-
-  const img =
-    new Image();
-
-  img.onload = ()=>{
-
-    ctxPaint.drawImage(
-      img,
-      0,
-      0,
-      elementos.canvasPaint.width,
-      elementos.canvasPaint.height
-    );
-  };
-
-  img.src = base64;
-}
-
 function salvarLocalStorage(){
 
   const campos =
@@ -622,10 +567,7 @@ function salvarLocalStorage(){
       campos.map(c=>c.value),
 
     desenho:
-      elementos.canvasPaint.toDataURL(),
-
-    modo:
-      estado.modo
+      elementos.canvasPaint.toDataURL()
   };
 
   localStorage.setItem(
@@ -663,9 +605,23 @@ function carregarLocalStorage(){
     }
   });
 
-  restaurarDesenho(
-    dados.desenho
-  );
+  if(dados.desenho){
+
+    const img = new Image();
+
+    img.onload = ()=>{
+
+      ctxPaint.drawImage(
+        img,
+        0,
+        0,
+        elementos.canvasPaint.width,
+        elementos.canvasPaint.height
+      );
+    };
+
+    img.src = dados.desenho;
+  }
 }
 
 // =====================================
