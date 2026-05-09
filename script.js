@@ -3,20 +3,24 @@ let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
 
-// 12 áreas de texto (valores de proporção ajustáveis conforme posição real)
+// 12 áreas de texto (frente e costas juntas)
+// Ajuste os valores conforme a posição real dos rótulos na sua imagem
 const areasTexto = [
-  { tipo: "D", x: 0.05, y: 0.15, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.22, y: 0.15, w: 0.10, h: 0.06 },
-  { tipo: "D", x: 0.05, y: 0.30, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.22, y: 0.30, w: 0.10, h: 0.06 },
-  { tipo: "D", x: 0.05, y: 0.45, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.22, y: 0.45, w: 0.10, h: 0.06 },
-  { tipo: "D", x: 0.65, y: 0.15, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.82, y: 0.15, w: 0.10, h: 0.06 },
-  { tipo: "D", x: 0.65, y: 0.30, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.82, y: 0.30, w: 0.10, h: 0.06 },
-  { tipo: "D", x: 0.65, y: 0.45, w: 0.15, h: 0.06 },
-  { tipo: "I", x: 0.82, y: 0.45, w: 0.10, h: 0.06 }
+  // frente - lado esquerdo
+  { tipo: "D", x: 0.08, y: 0.18, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.22, y: 0.18, w: 0.10, h: 0.05 },
+  { tipo: "D", x: 0.08, y: 0.33, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.22, y: 0.33, w: 0.10, h: 0.05 },
+  { tipo: "D", x: 0.08, y: 0.48, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.22, y: 0.48, w: 0.10, h: 0.05 },
+
+  // costas - lado direito
+  { tipo: "D", x: 0.65, y: 0.18, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.79, y: 0.18, w: 0.10, h: 0.05 },
+  { tipo: "D", x: 0.65, y: 0.33, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.79, y: 0.33, w: 0.10, h: 0.05 },
+  { tipo: "D", x: 0.65, y: 0.48, w: 0.12, h: 0.05 },
+  { tipo: "I", x: 0.79, y: 0.48, w: 0.10, h: 0.05 }
 ];
 
 function inicializarCanvas() {
@@ -152,8 +156,8 @@ function inicializarCamposTexto(canvas) {
     campo.style.top = (area.y * canvas.height + canvas.offsetTop) + "px";
     campo.style.width = (area.w * canvas.width) + "px";
     campo.style.height = (area.h * canvas.height) + "px";
-    campo.style.border = "none";       // sem borda
-    campo.style.background = "transparent"; // fundo transparente
+    campo.style.border = "none";
+    campo.style.background = "transparent";
     campo.style.textAlign = "center";
     campo.style.fontSize = "14px";
 
@@ -182,6 +186,4 @@ async function salvarPDF() {
 
   pdf.setFontSize(10);
   pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
-  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "right" });
-
-  pdf.save(`formulario_d
+  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "
