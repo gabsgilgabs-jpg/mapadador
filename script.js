@@ -4,7 +4,7 @@ let ctxBase, ctxPaint;
 let lastX, lastY;
 
 // 12 áreas de texto (frente e costas juntas)
-// Ajuste os valores conforme a posição real dos rótulos na sua imagem
+// ⚠️ Ajuste os valores x, y, w, h conforme a posição real dos rótulos na sua imagem
 const areasTexto = [
   // frente - lado esquerdo
   { tipo: "D", x: 0.08, y: 0.18, w: 0.12, h: 0.05 },
@@ -186,4 +186,9 @@ async function salvarPDF() {
 
   pdf.setFontSize(10);
   pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
-  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "
+  pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "right" });
+
+  pdf.save(`formulario_dor_${nomePaciente}.pdf`);
+}
+
+window
