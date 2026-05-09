@@ -1,40 +1,15 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Mapa da Dor</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-<body>
-  <div id="dados-paciente">
-    <label for="nomePaciente">Nome do Paciente:</label>
-    <input type="text" id="nomePaciente" placeholder="Digite o nome">
-    <button onclick="salvarPDF()">Salvar PDF</button>
-    <button onclick="adicionarCaixaTexto()">Adicionar Caixa de Texto</button>
-  </div>
+<div id="formulario">
+  <label>Nome do Paciente:</label>
+  <input type="text" id="nomePaciente">
 
-  <div id="formulario" style="position: relative; display: inline-block;">
-    <h2>Formulário de Dor</h2>
+  <button onclick="salvarPDF()">Salvar PDF</button>
 
-    <label for="textoD">D:</label>
-    <textarea id="textoD" placeholder="Digite observações para D:"></textarea>
-
-    <label for="textoI">I:</label>
-    <textarea id="textoI" placeholder="Digite observações para I:"></textarea>
-
-    <h3>Imagem para pintura</h3>
-    <!-- Botões revisados -->
+  <div>
     <button onclick="modo='pintar'">Pintar</button>
     <button onclick="modo='apagar'">Borracha</button>
     <button onclick="limparCanvas()">Limpar tudo</button>
-
-    <!-- Camadas -->
-    <canvas id="canvasBase"></canvas>
-    <canvas id="canvasPaint" style="position:absolute; left:0; top:0;"></canvas>
   </div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <canvas id="canvasBase"></canvas>
+  <canvas id="canvasPaint"></canvas>
+</div>
