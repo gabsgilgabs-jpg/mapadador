@@ -1,6 +1,9 @@
 *{
+
   margin:0;
+
   padding:0;
+
   box-sizing:border-box;
 }
 
@@ -8,13 +11,13 @@ body{
 
   font-family:Arial,sans-serif;
 
-  background:#f5f5f5;
+  background:#f4f4f4;
+
+  padding:20px;
 
   display:flex;
 
   justify-content:center;
-
-  padding:20px;
 }
 
 .app{
@@ -37,9 +40,9 @@ h1{
 
   padding:12px;
 
-  font-size:16px;
+  margin-bottom:20px;
 
-  margin-bottom:15px;
+  font-size:16px;
 }
 
 .botoes{
@@ -55,19 +58,37 @@ h1{
 
 button{
 
-  padding:12px 18px;
+  padding:10px 18px;
 
   border:none;
 
   background:#222;
 
-  color:white;
-
-  cursor:pointer;
+  color:#000;
 
   border-radius:6px;
 
+  cursor:pointer;
+
+  background:white;
+
   font-size:15px;
+
+  border:1px solid #ccc;
+}
+
+.acaoBtn{
+
+  transition:0.2s;
+}
+
+.acaoBtn.ativo{
+
+  color:red;
+
+  font-weight:bold;
+
+  border-color:red;
 }
 
 #mapaContainer{
@@ -127,38 +148,21 @@ canvas{
 
   transform:translate(-50%,-50%);
 
-  font-size:16px;
-
-  padding:3px;
-
-  border:2px dashed red;
-
-  background:rgba(255,255,255,0.9);
+  font-size:12px;
 
   z-index:999;
 
-  cursor:move;
+  border:1px solid #ccc;
+
+  background:rgba(255,255,255,0.95);
 }
 
 .campoData{
 
-  width:140px;
+  width:105px;
 }
 
 .campoIntensidade{
 
-  width:70px;
-}
-.acaoBtn{
-
-  color:#000;
-
-  transition:0.2s;
-}
-
-.acaoBtn.ativo{
-
-  color:red;
-
-  font-weight:bold;
+  width:50px;
 }
