@@ -31,12 +31,10 @@ const estado = {
 };
 
 // =====================================
-// POSIÇÕES DEFINITIVAS
+// POSIÇÕES
 // =====================================
 
 const areasTexto = [
-
-  // ESQUERDA
 
   { tipo:"D", x:0.12, y:0.30 },
   { tipo:"I", x:0.06946428571428571, y:0.3295376385173863 },
@@ -50,8 +48,6 @@ const areasTexto = [
   { tipo:"D", x:0.12517857142857142, y:0.7702511916014722 },
   { tipo:"I", x:0.07517857142857143, y:0.7970235102467671 },
 
-  // CENTRO
-
   { tipo:"D", x:0.47, y:0.30 },
   { tipo:"I", x:0.42232142857142857, y:0.3295376385173863 },
 
@@ -63,8 +59,6 @@ const areasTexto = [
 
   { tipo:"D", x:0.44089285714285714, y:0.6569836896406089 },
   { tipo:"I", x:0.39089285714285715, y:0.6847857128491844 },
-
-  // DIREITA
 
   { tipo:"D", x:0.8680357142857142, y:0.29143856967600507 },
   { tipo:"I", x:0.8180357142857143, y:0.3223297065744223 },
@@ -142,7 +136,7 @@ async function iniciarSistema(){
 }
 
 // =====================================
-// RESIZE
+// RECRIAR
 // =====================================
 
 async function recriarInterface(){
@@ -289,7 +283,6 @@ function iniciarDesenho(e){
     obterPosicao(e);
 
   estado.ultimoX = pos.x;
-
   estado.ultimoY = pos.y;
 }
 
@@ -461,34 +454,11 @@ function criarCampos(){
       }
     }
 
-    campo.style.position =
-      "absolute";
-
     campo.style.left =
       (area.x * 100) + "%";
 
     campo.style.top =
       (area.y * 100) + "%";
-
-    campo.style.transform =
-      "translate(-50%, -50%)";
-
-    campo.style.fontSize =
-      "12px";
-
-    campo.style.zIndex =
-      "999";
-
-    if(area.tipo === "D"){
-
-      campo.style.width =
-        "110px";
-
-    }else{
-
-      campo.style.width =
-        "55px";
-    }
 
     campo.addEventListener(
       "input",
@@ -682,10 +652,6 @@ function restaurarDesenho(base64){
 // =====================================
 
 async function salvarPDF(){
-
-  document.getElementById(
-    "pdfBtn"
-  ).style.color = "red";
 
   const { jsPDF } =
     window.jspdf;
