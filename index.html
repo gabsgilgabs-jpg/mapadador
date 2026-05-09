@@ -1,54 +1,65 @@
-!DOCTYPE html
-html lang=pt-BR
-head
-  meta charset=UTF-8
-  titleFormulário Interativotitle
-  style
-    body { text-align center; }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulário de Dor Interativo</title>
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
     #formulario {
-      position relative;
-      display inline-block;
+      position: relative;
+      display: inline-block;
     }
     #formulario img {
-      width 600px;
+      width: 600px; /* ajuste conforme o tamanho da sua imagem */
     }
     #formulario input {
-      position absolute;
-      width 80px;
+      position: absolute;
+      width: 80px;
+      padding: 4px;
+      border: 1px solid #333;
+      border-radius: 4px;
     }
-    #campoD { top 200px; left 100px; }
-    #campoI { top 200px; left 200px; }
+    /* Ajuste a posição dos campos conforme necessário */
+    #campoD { top: 200px; left: 100px; }
+    #campoI { top: 200px; left: 200px; }
     canvas {
-      position absolute;
-      top 0; left 0;
+      position: absolute;
+      top: 0; left: 0;
     }
-  style
-head
-body
-  h2Formulário de Dorh2
-  div id=formulario
-    img src=formulario.png alt=Formulário
-    input id=campoD type=text placeholder=D
-    input id=campoI type=text placeholder=I
-    canvas id=canvas width=600 height=800canvas
-  div
+  </style>
+</head>
+<body>
+  <h2>Formulário de Avaliação da Dor</h2>
+  <p>Digite nos campos e desenhe sobre o corpo para indicar a dor.</p>
 
-  script
+  <div id="formulario">
+    <!-- Substitua pelo nome correto da sua imagem -->
+    <img src="formulario.png" alt="Formulário de Dor">
+    
+    <!-- Campos de texto -->
+    <input id="campoD" type="text" placeholder="D:">
+    <input id="campoI" type="text" placeholder="I:">
+    
+    <!-- Área de desenho -->
+    <canvas id="canvas" width="600" height="800"></canvas>
+  </div>
+
+  <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let desenhando = false;
 
-    canvas.addEventListener('mousedown', () = desenhando = true);
-    canvas.addEventListener('mouseup', () = desenhando = false);
+    canvas.addEventListener('mousedown', () => desenhando = true);
+    canvas.addEventListener('mouseup', () => desenhando = false);
     canvas.addEventListener('mousemove', desenhar);
 
     function desenhar(e) {
       if (!desenhando) return;
-      ctx.fillStyle = red;
+      ctx.fillStyle = "red"; // cor do desenho
       ctx.beginPath();
-      ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI  2);
+      ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI * 2);
       ctx.fill();
     }
-  script
-body
-html
+  </script>
+</body>
+</html>
