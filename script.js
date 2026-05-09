@@ -9,7 +9,7 @@ function inicializarCanvas() {
   ctxPaint = canvasPaint.getContext("2d");
 
   img = new Image();
-  img.src = "img/pessoa.png"; // PNG transparente
+  img.src = "img/pessoa.png"; // ajuste o caminho conforme onde está seu arquivo
   img.onload = () => {
     const proporcao = img.height / img.width;
     const largura = window.innerWidth * 0.8;
@@ -20,6 +20,7 @@ function inicializarCanvas() {
     canvasPaint.width = largura;
     canvasPaint.height = altura;
 
+    ctxBase.clearRect(0, 0, largura, altura);
     ctxBase.drawImage(img, 0, 0, largura, altura);
   };
 
@@ -55,6 +56,11 @@ function adicionarCaixaTexto() {
   div.innerText = "Digite aqui...";
   div.style.left = "50px";
   div.style.top = "50px";
+  div.style.position = "absolute";
+  div.style.background = "rgba(255,255,255,0.7)";
+  div.style.border = "1px solid #000";
+  div.style.padding = "5px";
+  div.style.cursor = "move";
 
   div.onmousedown = (e) => {
     const offsetX = e.offsetX;
