@@ -43,8 +43,8 @@ function habilitarPintura(canvas) {
   canvas.addEventListener("mousedown", (e) => {
     desenhando = true;
     const rect = canvas.getBoundingClientRect();
-    lastX = e.clientX - rect.left;
-    lastY = e.clientY - rect.top;
+    lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
   });
 
   canvas.addEventListener("mouseup", () => desenhando = false);
@@ -52,16 +52,16 @@ function habilitarPintura(canvas) {
   canvas.addEventListener("mousemove", (e) => {
     if (!desenhando) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     const pixel = ctxBase.getImageData(x, y, 1, 1).data;
     if (pixel[3] > 0) {
       if (modo === "pintar") {
         ctxPaint.strokeStyle = "black";   // sempre preto
         ctxPaint.lineWidth = 3;           // traço fixo de 3px
-        ctxPaint.lineCap = "round";       // ponta arredondada
-        ctxPaint.setLineDash([]);         // nunca pontilhado
+        ctxPaint.lineCap = "round";
+        ctxPaint.setLineDash([]);
 
         ctxPaint.beginPath();
         ctxPaint.moveTo(lastX, lastY);
@@ -93,14 +93,23 @@ function adicionarCaixaTexto() {
   div.style.padding = "5px";
   div.style.cursor = "move";
 
+  // arrastar
   div.onmousedown = (e) => {
-    const offsetX = e.offsetX;
-    const offsetY = e.offsetY;
-    document.onmousemove = (ev) => {
-      div.style.left = (ev.pageX - offsetX) + "px";
-      div.style.top = (ev.pageY - offsetY) + "px";
-    };
-    document.onmouseup = () => document.onmousemove = null;
+    if (e.button === 0) { // botão esquerdo para arrastar
+      const offsetX = e.offsetX;
+      const offsetY = e.offsetY;
+      document.onmousemove = (ev) => {
+        div.style.left = (ev.pageX - offsetX) + "px";
+        div.style.top = (ev.pageY - offsetY) + "px";
+      };
+      document.onmouseup = () => document.onmousemove = null;
+    }
+  };
+
+  // remover ao clicar com botão direito
+  div.oncontextmenu = (e) => {
+    e.preventDefault();
+    div.remove();
   };
 
   document.getElementById("formulario").appendChild(div);
