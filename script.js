@@ -3,12 +3,20 @@ let img;
 let ctxBase, ctxPaint;
 let lastX, lastY;
 
-// áreas de texto definidas em proporções (0 a 1)
+// 12 áreas de texto (valores de proporção ajustáveis conforme posição real)
 const areasTexto = [
-  { tipo: "D", x: 0.05, y: 0.25, w: 0.20, h: 0.08 },
-  { tipo: "I", x: 0.75, y: 0.25, w: 0.20, h: 0.08 },
-  { tipo: "D", x: 0.05, y: 0.55, w: 0.20, h: 0.08 },
-  { tipo: "I", x: 0.75, y: 0.55, w: 0.20, h: 0.08 }
+  { tipo: "D", x: 0.05, y: 0.15, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.22, y: 0.15, w: 0.10, h: 0.06 },
+  { tipo: "D", x: 0.05, y: 0.30, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.22, y: 0.30, w: 0.10, h: 0.06 },
+  { tipo: "D", x: 0.05, y: 0.45, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.22, y: 0.45, w: 0.10, h: 0.06 },
+  { tipo: "D", x: 0.65, y: 0.15, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.82, y: 0.15, w: 0.10, h: 0.06 },
+  { tipo: "D", x: 0.65, y: 0.30, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.82, y: 0.30, w: 0.10, h: 0.06 },
+  { tipo: "D", x: 0.65, y: 0.45, w: 0.15, h: 0.06 },
+  { tipo: "I", x: 0.82, y: 0.45, w: 0.10, h: 0.06 }
 ];
 
 function inicializarCanvas() {
@@ -86,15 +94,17 @@ function habilitarPintura(canvas) {
 }
 
 function desenhar({ x, y }) {
-  // bloqueia pintura nas áreas de texto
-  if (areasTexto.some(area => {
+  // bloqueia pintura apenas dentro das caixas D/I
+  const dentroTexto = areasTexto.some(area => {
     const ax = area.x * ctxBase.canvas.width;
     const ay = area.y * ctxBase.canvas.height;
     const aw = area.w * ctxBase.canvas.width;
     const ah = area.h * ctxBase.canvas.height;
     return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
-  })) return;
+  });
+  if (dentroTexto) return;
 
+  // pintura liberada no corpo da figura
   const pixel = ctxBase.getImageData(x, y, 1, 1).data;
   if (pixel[3] > 0) {
     if (modo === "pintar") {
@@ -129,7 +139,7 @@ function inicializarCamposTexto(canvas) {
       campo.pattern = "\\d{2}/\\d{2}/\\d{4}";
     } else if (area.tipo === "I") {
       campo = document.createElement("select");
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 0; i <= 10; i++) {
         const opt = document.createElement("option");
         opt.value = i;
         opt.text = i;
@@ -142,9 +152,10 @@ function inicializarCamposTexto(canvas) {
     campo.style.top = (area.y * canvas.height + canvas.offsetTop) + "px";
     campo.style.width = (area.w * canvas.width) + "px";
     campo.style.height = (area.h * canvas.height) + "px";
-    campo.style.border = "1px solid #000";
-    campo.style.background = "rgba(255,255,255,0.8)";
+    campo.style.border = "none";       // sem borda
+    campo.style.background = "transparent"; // fundo transparente
     campo.style.textAlign = "center";
+    campo.style.fontSize = "14px";
 
     formulario.appendChild(campo);
   });
@@ -173,7 +184,4 @@ async function salvarPDF() {
   pdf.text(`Paciente: ${nomePaciente}`, pageWidth - 10, pageHeight - 15, { align: "right" });
   pdf.text(`Preenchido em: ${agora.toLocaleString()}`, pageWidth - 10, pageHeight - 10, { align: "right" });
 
-  pdf.save(`formulario_dor_${nomePaciente}.pdf`);
-}
-
-window.onload = inicializarCanvas;
+  pdf.save(`formulario_d
