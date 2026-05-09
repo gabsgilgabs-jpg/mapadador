@@ -36,53 +36,47 @@ const estado = {
 
 const areasTexto = [
 
-  // =====================================
   // ESQUERDA
-  // =====================================
 
-  { tipo:"D", x:58,  y:225 },
-  { tipo:"I", x:58,  y:243 },
+  { tipo:"D", x:58,  y:74  },
+  { tipo:"I", x:58,  y:92  },
 
-  { tipo:"D", x:58,  y:345 },
-  { tipo:"I", x:58,  y:363 },
+  { tipo:"D", x:58,  y:194 },
+  { tipo:"I", x:58,  y:212 },
 
-  { tipo:"D", x:58,  y:465 },
-  { tipo:"I", x:58,  y:483 },
+  { tipo:"D", x:58,  y:314 },
+  { tipo:"I", x:58,  y:332 },
 
-  { tipo:"D", x:58,  y:585 },
-  { tipo:"I", x:58,  y:603 },
+  { tipo:"D", x:58,  y:434 },
+  { tipo:"I", x:58,  y:452 },
 
-  // =====================================
   // CENTRO
-  // =====================================
 
-  { tipo:"D", x:265, y:225 },
-  { tipo:"I", x:265, y:243 },
+  { tipo:"D", x:265, y:74  },
+  { tipo:"I", x:265, y:92  },
 
-  { tipo:"D", x:265, y:345 },
-  { tipo:"I", x:265, y:363 },
+  { tipo:"D", x:265, y:194 },
+  { tipo:"I", x:265, y:212 },
 
-  { tipo:"D", x:265, y:465 },
-  { tipo:"I", x:265, y:483 },
+  { tipo:"D", x:265, y:314 },
+  { tipo:"I", x:265, y:332 },
 
-  { tipo:"D", x:265, y:585 },
-  { tipo:"I", x:265, y:603 },
+  { tipo:"D", x:265, y:434 },
+  { tipo:"I", x:265, y:452 },
 
-  // =====================================
   // DIREITA
-  // =====================================
 
-  { tipo:"D", x:472, y:225 },
-  { tipo:"I", x:472, y:243 },
+  { tipo:"D", x:472, y:74  },
+  { tipo:"I", x:472, y:92  },
 
-  { tipo:"D", x:472, y:345 },
-  { tipo:"I", x:472, y:363 },
+  { tipo:"D", x:472, y:194 },
+  { tipo:"I", x:472, y:212 },
 
-  { tipo:"D", x:472, y:465 },
-  { tipo:"I", x:472, y:483 },
+  { tipo:"D", x:472, y:314 },
+  { tipo:"I", x:472, y:332 },
 
-  { tipo:"D", x:472, y:585 },
-  { tipo:"I", x:472, y:603 }
+  { tipo:"D", x:472, y:434 },
+  { tipo:"I", x:472, y:452 }
 
 ];
 
@@ -464,6 +458,9 @@ function criarCampos(){
     elementos.canvasBase.height /
     alturaOriginal;
 
+  // OFFSET GLOBAL VERTICAL
+  const offsetY = 140;
+
   areasTexto.forEach(area=>{
 
     let campo;
@@ -500,11 +497,11 @@ function criarCampos(){
         const opt =
           document.createElement("option");
 
-          opt.value = i;
+        opt.value = i;
 
-          opt.textContent = i;
+        opt.textContent = i;
 
-          campo.appendChild(opt);
+        campo.appendChild(opt);
       }
     }
 
@@ -512,7 +509,7 @@ function criarCampos(){
       (area.x * escalaX) + "px";
 
     campo.style.top =
-      (area.y * escalaY) + "px";
+      ((area.y * escalaY) + offsetY) + "px";
 
     campo.addEventListener(
       "input",
