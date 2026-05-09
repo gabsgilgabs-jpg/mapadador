@@ -26,6 +26,15 @@
       position: absolute;
       top: 0; left: 0;
     }
+    #botoes {
+      margin-top: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -44,6 +53,15 @@
     <canvas id="canvas" width="600" height="800"></canvas>
   </div>
 
+  <div id="botoes">
+    <button onclick="limparCanvas()">Limpar desenho</button>
+    <button onclick="salvarPDF()">Salvar em PDF</button>
+  </div>
+
+  <!-- Bibliotecas externas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -59,6 +77,25 @@
       ctx.beginPath();
       ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    // Função para limpar o desenho
+    function limparCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Função para salvar em PDF
+    async function salvarPDF() {
+      const { jsPDF } = window.jspdf;
+      const formulario = document.getElementById('formulario');
+      const canvasImagem = await html2canvas(formulario);
+      const imgData = canvasImagem.toDataURL('image/png');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const largura = pdf.internal.pageSize.getWidth();
+      const altura = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, largura, altura);
+      pdf.save("formulario_dor.pdf");
     }
   </script>
 </body>
