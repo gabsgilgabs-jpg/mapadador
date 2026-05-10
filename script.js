@@ -35,10 +35,10 @@ let zoom = 1;
 const imagem = new Image();
 imagem.src = "./img/pessoa.png";
 
-// ================= INICIALIZAÇÃO =================
+// ================= INIT SEGURO =================
 window.addEventListener("load", iniciarSistema);
+
 imagem.onload = iniciarSistema;
-imagem.onerror = iniciarSistema;
 
 function iniciarSistema() {
   configurarCanvas();
@@ -49,20 +49,18 @@ function iniciarSistema() {
 
 // ================= CANVAS =================
 function configurarCanvas() {
-  const largura = 700;
-  const altura = 842;
+  const w = 700;
+  const h = 842;
 
-  canvasBase.width = largura;
-  canvasBase.height = altura;
-  canvasPaint.width = largura;
-  canvasPaint.height = altura;
+  canvasBase.width = w;
+  canvasBase.height = h;
+  canvasPaint.width = w;
+  canvasPaint.height = h;
 
-  ctxBase.clearRect(0, 0, largura, altura);
+  ctxBase.clearRect(0, 0, w, h);
 
-  try {
-    ctxBase.drawImage(imagem, 0, 0, largura, altura);
-  } catch (e) {
-    console.warn("Imagem não carregou");
+  if (imagem.complete) {
+    ctxBase.drawImage(imagem, 0, 0, w, h);
   }
 }
 
@@ -191,10 +189,10 @@ window.addEventListener("touchend", finalizar);
 
 // ================= LIMPAR =================
 function limparTudo() {
-  ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
+  ctxPaint.clearRect(0, 0, canvasPaint.width, canvasPaint.height);
 }
 
-// ================= PDF PROFISSIONAL =================
+// ================= PDF PROFISSIONAL ESTÁVEL =================
 async function salvarPDF() {
 
   const { jsPDF } = window.jspdf;
@@ -218,24 +216,25 @@ async function salvarPDF() {
 
   pdf.line(10, 30, 200, 30);
 
-  // ================= MAPA =================
+  // ================= CAPTURA ESTÁVEL =================
+  const captura = await html2canvas(container, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: "#fff",
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth: container.scrollWidth,
+    windowHeight: container.scrollHeight
+  });
+
+  const img = captura.toDataURL("image/png");
+
   const largura = 190;
-  const alturaMapa = 120;
+  const altura = (captura.height * largura) / captura.width;
 
-  const canvasTemp = document.createElement("canvas");
-  canvasTemp.width = canvasPaint.width;
-  canvasTemp.height = canvasPaint.height;
+  pdf.addImage(img, "PNG", 10, 35, largura, altura);
 
-  const ctxTemp = canvasTemp.getContext("2d");
-
-  ctxTemp.drawImage(canvasBase, 0, 0);
-  ctxTemp.drawImage(canvasPaint, 0, 0);
-
-  const img = canvasTemp.toDataURL("image/png");
-
-  pdf.addImage(img, "PNG", 10, 35, largura, alturaMapa);
-
-  // ================= RODAPÉ =================
+  // ================= RODAPÉ CLÍNICO =================
   const y = 165;
 
   pdf.line(10, y, 200, y);
@@ -273,8 +272,8 @@ async function salvarPDF() {
   );
 
   // ================= SALVAR =================
-  const dataFile = new Date().toISOString().replace(/[:.]/g,"-");
-  pdf.save(`${nome}_mapa_${dataFile}.pdf`);
+  const file = new Date().toISOString().replace(/[:.]/g,"-");
+  pdf.save(`${nome}_mapa_${file}.pdf`);
 }
 
 // ================= GIF =================
