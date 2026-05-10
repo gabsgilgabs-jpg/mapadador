@@ -165,41 +165,39 @@ async function salvarPDF() {
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // 🔥 canvas final
+    // canvas final
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = canvasBase.width;
     finalCanvas.height = canvasBase.height;
 
     const ctx = finalCanvas.getContext("2d");
-
     ctx.drawImage(canvasBase, 0, 0);
     ctx.drawImage(canvasPaint, 0, 0);
 
-    // 🔥 CONVERTE PARA BLOB (NÃO BASE64)
-    finalCanvas.toBlob(async (blob) => {
+    const blob = await new Promise(resolve =>
+      finalCanvas.toBlob(resolve, "image/png")
+    );
 
-      const formData = new FormData();
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("data", data);
+    formData.append("file", blob, "mapa.png");
 
-      formData.append("file", blob, `mapa_${nome}.png`);
-      formData.append("nome", nome);
-      formData.append("data", data);
+    const URL = "https://script.google.com/macros/s/SEU_DEPLOY_ID/exec";
 
-      const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+    const resposta = await fetch(URL, {
+      method: "POST",
+      body: formData
+    });
 
-      const resposta = await fetch(URL, {
-        method: "POST",
-        body: formData
-      });
+    const resultado = await resposta.json();
 
-      const resultado = await resposta.json();
-
-      if (resultado.status === "ok") {
-        alert("✔ Salvo com sucesso!\n" + resultado.url);
-      } else {
-        alert("Erro ao salvar");
-      }
-
-    }, "image/png");
+    if (resultado.status === "ok") {
+      alert("✔ Salvo no Drive!");
+      console.log(resultado.url);
+    } else {
+      alert("Erro: " + resultado.message);
+    }
 
   } catch (err) {
     console.error(err);
