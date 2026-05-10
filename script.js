@@ -162,11 +162,10 @@ window.addEventListener("touchend", up);
 // ================= PDF (ISOLADO E SEGURO) =================
 async function salvarPDF() {
   try {
-
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // cria canvas final
+    // canvas final
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = canvasBase.width;
     finalCanvas.height = canvasBase.height;
@@ -175,43 +174,21 @@ async function salvarPDF() {
     ctx.drawImage(canvasBase, 0, 0);
     ctx.drawImage(canvasPaint, 0, 0);
 
-    // transforma em arquivo (SEM base64)
-    const blob = await new Promise(resolve =>
-      finalCanvas.toBlob(resolve, "image/png")
-    );
+    const img = finalCanvas.toDataURL("image/png");
 
-    const formData = new FormData();
-    formData.append("nome", nome);
-    formData.append("data", data);
-    formData.append("file", blob, "mapa.png");
+    // download local imediato
+    const link = document.createElement("a");
+    link.href = img;
+    link.download = `mapa_dor_${nome}.png`;
+    link.click();
 
-    const URL = "https://script.google.com/macros/s/SEU_DEPLOY_ID/exec";
+    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
     const resposta = await fetch(URL, {
       method: "POST",
-      body: formData,
-      redirect: "follow"
+      body: JSON.stringify({
+        nome,
+        data,
+        imagem: img
+      })
     });
-
-    const texto = await resposta.text();
-
-    let resultado;
-    try {
-      resultado = JSON.parse(texto);
-    } catch {
-      console.log("Resposta bruta:", texto);
-      throw new Error("Servidor não retornou JSON válido");
-    }
-
-    if (resultado.status === "ok") {
-      alert("✔ Salvo com sucesso!");
-      console.log("Arquivo:", resultado.url);
-    } else {
-      alert("Erro: " + resultado.message);
-    }
-
-  } catch (err) {
-    console.error("Erro salvarPDF:", err);
-    alert("Falha ao salvar");
-  }
-}
