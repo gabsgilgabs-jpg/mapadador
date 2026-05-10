@@ -222,4 +222,4 @@ async function salvarPDF() {
     alert("Falha de comunicação com o servidor");
   }
 }
-}
+
