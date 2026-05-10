@@ -534,6 +534,11 @@ function resetZoom(){
 }
 // ================= ZOOM TOUCH =================
 
+const mapaContainer =
+  document.getElementById("mapaContainer");
+
+// ================= ZOOM TOUCH =================
+
 let distanciaInicial = 0;
 let zoomInicial = 1;
 let pinchZoomAtivo = false;
@@ -548,7 +553,15 @@ function distanciaToque(t1, t2) {
 }
 
 // inicia pinch zoom
-window.addEventListener("touchstart", function(e){
+mapaContainer.addEventListener("touchstart", function(e){
+
+  // NÃO ativa zoom em inputs/selects
+  if(
+    e.target.tagName === "INPUT" ||
+    e.target.tagName === "SELECT"
+  ){
+    return;
+  }
 
   if(e.touches.length === 2){
 
@@ -566,9 +579,17 @@ window.addEventListener("touchstart", function(e){
 }, { passive:false });
 
 // movimento pinch
-window.addEventListener("touchmove", function(e){
+mapaContainer.addEventListener("touchmove", function(e){
 
-  // só ativa com 2 dedos
+  // NÃO interfere em campos
+  if(
+    e.target.tagName === "INPUT" ||
+    e.target.tagName === "SELECT"
+  ){
+    return;
+  }
+
+  // pinch zoom somente com 2 dedos
   if(
     pinchZoomAtivo &&
     e.touches.length === 2
@@ -585,6 +606,7 @@ window.addEventListener("touchmove", function(e){
       zoomInicial *
       (novaDistancia / distanciaInicial);
 
+    // limites
     zoom = Math.max(
       0.5,
       Math.min(3, zoom)
@@ -597,7 +619,7 @@ window.addEventListener("touchmove", function(e){
 }, { passive:false });
 
 // finaliza pinch
-window.addEventListener("touchend", function(e){
+mapaContainer.addEventListener("touchend", function(e){
 
   if(e.touches.length < 2){
 
