@@ -247,3 +247,11 @@ button{
 
   font-size:14px;
 }
+#btnGIF.botaoAtivo{
+
+  color:red;
+
+  border-color:red;
+
+  font-weight:bold;
+}
