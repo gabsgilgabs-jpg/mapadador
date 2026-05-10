@@ -8,31 +8,35 @@
 
 <body>
 
-<div id="containerPai">
+<div id="app">
 
-  <div id="mapaContainer">
+  <div id="containerPai">
 
-    <canvas id="canvasBase"></canvas>
-    <canvas id="canvasPaint"></canvas>
+    <div id="mapaContainer">
 
-    <div id="formulario"></div>
+      <canvas id="canvasBase"></canvas>
+      <canvas id="canvasPaint"></canvas>
+
+      <div id="formulario"></div>
+
+    </div>
 
   </div>
 
-</div>
+  <!-- BOTÕES -->
+  <div class="botoes">
+    <button id="btnPintar" onclick="definirModo('pintar')">Pintar</button>
+    <button id="btnApagar" onclick="definirModo('apagar')">Apagar</button>
+    <button onclick="limparTudo()">Limpar</button>
+    <button onclick="salvarPDF()">PDF</button>
+  </div>
 
-<!-- BOTÕES (se tiver) -->
-<div class="botoes">
-  <button id="btnPintar" onclick="definirModo('pintar')">Pintar</button>
-  <button id="btnApagar" onclick="definirModo('apagar')">Apagar</button>
-  <button onclick="limparTudo()">Limpar</button>
-  <button onclick="salvarPDF()">PDF</button>
-</div>
+  <!-- RODAPÉ -->
+  <footer id="rodape">
+    Sistema Mapa Dor
+  </footer>
 
-<!-- RODAPÉ FORA DO MAPA -->
-<footer id="rodape">
-  Sistema Mapa Dor
-</footer>
+</div>
 
 <script src="script.js"></script>
 
