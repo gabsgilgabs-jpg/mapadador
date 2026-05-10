@@ -1,40 +1,19 @@
-const areasTexto = [
+const grupos = [
 
-  { tipo:"D", x:0.12, y:0.30 },
-  { tipo:"I", x:0.069, y:0.329 },
+  { x:0.12, y:0.31 },
+  { x:0.112, y:0.41 },
+  { x:0.125, y:0.65 },
+  { x:0.125, y:0.78 },
 
-  { tipo:"D", x:0.112, y:0.405 },
-  { tipo:"I", x:0.060, y:0.434 },
+  { x:0.47, y:0.31 },
+  { x:0.468, y:0.44 },
+  { x:0.486, y:0.56 },
+  { x:0.440, y:0.67 },
 
-  { tipo:"D", x:0.125, y:0.642 },
-  { tipo:"I", x:0.075, y:0.672 },
-
-  { tipo:"D", x:0.125, y:0.770 },
-  { tipo:"I", x:0.075, y:0.797 },
-
-  { tipo:"D", x:0.47, y:0.30 },
-  { tipo:"I", x:0.422, y:0.329 },
-
-  { tipo:"D", x:0.468, y:0.436 },
-  { tipo:"I", x:0.418, y:0.466 },
-
-  { tipo:"D", x:0.486, y:0.554 },
-  { tipo:"I", x:0.436, y:0.581 },
-
-  { tipo:"D", x:0.440, y:0.656 },
-  { tipo:"I", x:0.390, y:0.684 },
-
-  { tipo:"D", x:0.868, y:0.291 },
-  { tipo:"I", x:0.818, y:0.322 },
-
-  { tipo:"D", x:0.880, y:0.394 },
-  { tipo:"I", x:0.836, y:0.425 },
-
-  { tipo:"D", x:0.858, y:0.563 },
-  { tipo:"I", x:0.808, y:0.595 },
-
-  { tipo:"D", x:0.852, y:0.693 },
-  { tipo:"I", x:0.802, y:0.722 }
+  { x:0.868, y:0.30 },
+  { x:0.880, y:0.41 },
+  { x:0.858, y:0.58 },
+  { x:0.852, y:0.71 }
 
 ];
 
@@ -84,18 +63,15 @@ function preencherDataAtual(){
 
   const hoje = new Date();
 
-  const data =
-    hoje.toISOString().split("T")[0];
-
   document.getElementById(
     "dataPreenchimento"
-  ).value = data;
+  ).value =
+    hoje.toISOString().split("T")[0];
 }
 
 function configurarCanvas(){
 
   const largura = 700;
-
   const altura = 842;
 
   canvasBase.width = largura;
@@ -117,53 +93,77 @@ function criarCampos(){
 
   formulario.innerHTML = "";
 
-  areasTexto.forEach(area=>{
+  grupos.forEach(grupo=>{
 
-    let campo;
+    const box =
+      document.createElement("div");
 
-    if(area.tipo === "D"){
+    box.classList.add(
+      "grupoCampos"
+    );
 
-      campo =
-        document.createElement("input");
+    box.style.left =
+      (grupo.x * 100) + "%";
 
-      campo.type = "date";
+    box.style.top =
+      (grupo.y * 100) + "%";
 
-      campo.classList.add(
-        "campoMapa",
-        "campoData"
-      );
+    // D
+
+    const linhaD =
+      document.createElement("div");
+
+    linhaD.classList.add(
+      "linhaCampo"
+    );
+
+    linhaD.innerHTML =
+      `
+      <strong>D:</strong>
+      <input
+        type="date"
+        class="campoMapa campoData"
+      >
+      `;
+
+    // I
+
+    const linhaI =
+      document.createElement("div");
+
+    linhaI.classList.add(
+      "linhaCampo"
+    );
+
+    const select =
+      document.createElement("select");
+
+    select.classList.add(
+      "campoMapa",
+      "campoIntensidade"
+    );
+
+    for(let i=0;i<=10;i++){
+
+      const opt =
+        document.createElement("option");
+
+      opt.value = i;
+      opt.textContent = i;
+
+      select.appendChild(opt);
     }
 
-    if(area.tipo === "I"){
+    linhaI.innerHTML =
+      `<strong>I:</strong>`;
 
-      campo =
-        document.createElement("select");
+    linhaI.appendChild(select);
 
-      campo.classList.add(
-        "campoMapa",
-        "campoIntensidade"
-      );
+    box.appendChild(linhaD);
 
-      for(let i=0;i<=10;i++){
+    box.appendChild(linhaI);
 
-        const opt =
-          document.createElement("option");
-
-        opt.value = i;
-
-        opt.textContent = i;
-
-        campo.appendChild(opt);
-      }
-    }
-
-    campo.style.left =
-      (area.x * 100) + "%";
-
-    campo.style.top =
-      (area.y * 100) + "%";
-
-    formulario.appendChild(campo);
+    formulario.appendChild(box);
   });
 }
 
