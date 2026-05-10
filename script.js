@@ -15,7 +15,7 @@ const grupos = [
   { x:0.852, y:0.71 }
 ];
 
-// ================= ELEMENTOS =================
+// ELEMENTOS
 const canvasBase = document.getElementById("canvasBase");
 const canvasPaint = document.getElementById("canvasPaint");
 const formulario = document.getElementById("formulario");
@@ -24,28 +24,27 @@ const container = document.getElementById("mapaContainer");
 const ctxBase = canvasBase.getContext("2d");
 const ctxPaint = canvasPaint.getContext("2d");
 
-// ================= ESTADO =================
+// ESTADO
 let desenhando = false;
 let ultimoX = 0;
 let ultimoY = 0;
 let modo = "pintar";
 let zoom = 1;
 
-// ================= IMAGEM =================
+// IMAGEM
 const imagem = new Image();
 imagem.src = "/mapadador/img/pessoa.png";
 
-// ================= INIT =================
+// INIT
 window.addEventListener("load", init);
 
 function init() {
   configurarCanvas();
   criarCampos();
   definirModo("pintar");
-  preencherDataAtual();
 }
 
-// ================= CANVAS =================
+// CANVAS
 function configurarCanvas() {
   const w = 700;
   const h = 842;
@@ -54,8 +53,6 @@ function configurarCanvas() {
   canvasBase.height = h;
   canvasPaint.width = w;
   canvasPaint.height = h;
-
-  ctxBase.clearRect(0, 0, w, h);
 
   if (imagem.complete) {
     ctxBase.drawImage(imagem, 0, 0, w, h);
@@ -66,7 +63,7 @@ function configurarCanvas() {
   }
 }
 
-// ================= CAMPOS =================
+// CAMPOS
 function criarCampos() {
   formulario.innerHTML = "";
 
@@ -80,11 +77,11 @@ function criarCampos() {
     box.innerHTML = `
       <div class="linhaCampo">
         <strong>D:</strong>
-        <input type="date" class="campoMapa campoData">
+        <input type="date">
       </div>
       <div class="linhaCampo">
         <strong>I:</strong>
-        <select class="campoMapa campoIntensidade">
+        <select>
           ${Array.from({length:11},(_,i)=>`<option>${i}</option>`).join("")}
         </select>
       </div>
@@ -94,132 +91,70 @@ function criarCampos() {
   });
 }
 
-// ================= DATA =================
-function preencherDataAtual() {
-  const el = document.getElementById("dataPreenchimento");
-  if (el) el.value = new Date().toISOString().split("T")[0];
-}
-
-// ================= MODO =================
+// MODOS
 function definirModo(m) {
   modo = m;
-
-  document.querySelectorAll(".botoes button")
-    .forEach(b => b.classList.remove("botaoAtivo"));
-
-  const btn = document.getElementById(
-    m === "pintar" ? "btnPintar" : "btnApagar"
-  );
-
-  if (btn) btn.classList.add("botaoAtivo");
 }
 
-// ================= ZOOM =================
-function zoomMais() {
-  zoom += 0.1;
-  container.style.transform = `scale(${zoom})`;
+// LIMPAR
+function limparTudo() {
+  ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
 
-function zoomMenos() {
-  zoom = Math.max(0.5, zoom - 0.1);
-  container.style.transform = `scale(${zoom})`;
-}
-
-// ================= POSIÇÃO =================
+// DESENHO
 function pos(e) {
   const r = canvasPaint.getBoundingClientRect();
-
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
 
   return {
-    x: (x - r.left) * (canvasPaint.width / r.width),
-    y: (y - r.top) * (canvasPaint.height / r.height)
+    x:(x-r.left)*(canvasPaint.width/r.width),
+    y:(y-r.top)*(canvasPaint.height/r.height)
   };
 }
 
-// ================= DESENHO =================
-function down(e) {
-  e.preventDefault();
+function down(e){
   desenhando = true;
-
   const p = pos(e);
   ultimoX = p.x;
   ultimoY = p.y;
 }
 
-function move(e) {
-  if (!desenhando) return;
-  e.preventDefault();
+function move(e){
+  if(!desenhando) return;
 
   const p = pos(e);
 
-  ctxPaint.strokeStyle = "#000";
-  ctxPaint.lineWidth = 3;
-  ctxPaint.lineCap = "round";
+  ctxPaint.strokeStyle="#000";
+  ctxPaint.lineWidth=3;
+  ctxPaint.lineCap="round";
 
-  if (modo === "pintar") {
+  if(modo==="pintar"){
     ctxPaint.beginPath();
-    ctxPaint.moveTo(ultimoX, ultimoY);
-    ctxPaint.lineTo(p.x, p.y);
+    ctxPaint.moveTo(ultimoX,ultimoY);
+    ctxPaint.lineTo(p.x,p.y);
     ctxPaint.stroke();
   } else {
-    ctxPaint.clearRect(p.x - 10, p.y - 10, 20, 20);
+    ctxPaint.clearRect(p.x-10,p.y-10,20,20);
   }
 
-  ultimoX = p.x;
-  ultimoY = p.y;
+  ultimoX=p.x;
+  ultimoY=p.y;
 }
 
-function up() {
-  desenhando = false;
+function up(){
+  desenhando=false;
 }
 
-// eventos
-canvasPaint.addEventListener("mousedown", down);
-canvasPaint.addEventListener("mousemove", move);
-window.addEventListener("mouseup", up);
+canvasPaint.addEventListener("mousedown",down);
+canvasPaint.addEventListener("mousemove",move);
+window.addEventListener("mouseup",up);
 
-canvasPaint.addEventListener("touchstart", down, { passive:false });
-canvasPaint.addEventListener("touchmove", move, { passive:false });
-window.addEventListener("touchend", up);
+canvasPaint.addEventListener("touchstart",down,{passive:false});
+canvasPaint.addEventListener("touchmove",move,{passive:false});
+window.addEventListener("touchend",up);
 
-// ================= LIMPAR =================
-function limparTudo() {
-  ctxPaint.clearRect(0, 0, canvasPaint.width, canvasPaint.height);
+// PDF (placeholder seguro)
+async function salvarPDF(){
+  alert("Função OK (implementar Apps Script aqui)");
 }
-
-// ================= SALVAR =================
-async function salvarPDF() {
-  try {
-
-    const dados = {
-      nome: document.getElementById("nome")?.value || "",
-      data: new Date().toISOString()
-    };
-
-    const resposta = await fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain"
-      },
-      body: JSON.stringify(dados)
-    });
-
-    const texto = await resposta.text();
-    const resultado = JSON.parse(texto);
-
-    console.log(resultado);
-
-    if (resultado.status === "ok") {
-      alert("Salvo com sucesso!");
-    } else {
-      alert("Erro: " + resultado.message);
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Falha de comunicação com o servidor");
-  }
-}
-
