@@ -185,7 +185,7 @@ async function salvarPDF() {
     link.click();
 
     // envio para Drive
-    const URL = "https://script.google.com/macros/s/SEU_ID/exec";
+    const URL = "https://script.google.com/macros/s/1Iq-DhhPyML0pWeOOpL3gyQEGBHvuV6oJY_AqE0YFl16P2ATchb7ACDze/exec";
 
     const resposta = await fetch(URL, {
       method: "POST",
