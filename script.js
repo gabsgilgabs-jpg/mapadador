@@ -203,7 +203,67 @@ function limparTudo() {
 async function salvarPDF() {
 
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p","mm","a4");
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  // ================================
+  // 1. esconder campos vazios
+  // ================================
+  const inputsData = document.querySelectorAll(".campoData");
+  const selectsInt = document.querySelectorAll(".campoIntensidade");
+
+  const ocultos = [];
+
+  function esconderSeVazio(el) {
+    if (!el.value || el.value === "0") {
+      ocultos.push(el);
+      el.dataset.oldDisplay = el.style.display;
+      el.style.display = "none";
+    }
+  }
+
+  inputsData.forEach(esconderSeVazio);
+  selectsInt.forEach(esconderSeVazio);
+
+  // ================================
+  // 2. captura do mapa
+  // ================================
+  const captura = await html2canvas(container, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: "#fff",
+    scrollX: 0,
+    scrollY: 0
+  });
+
+  // ================================
+  // 3. restaurar campos
+  // ================================
+  ocultos.forEach(el => {
+    el.style.display = el.dataset.oldDisplay || "";
+  });
+
+  // ================================
+  // 4. gerar PDF
+  // ================================
+  const largura = 190;
+  const altura = (captura.height * largura) / captura.width;
+
+  pdf.addImage(
+    captura.toDataURL("image/png"),
+    "PNG",
+    10,
+    10,
+    largura,
+    altura
+  );
+
+  const nome =
+    document.getElementById("nomePaciente")?.value || "paciente";
+
+  const data = new Date().toISOString().replace(/[:.]/g, "-");
+
+  pdf.save(`${nome}_mapa_${data}.pdf`);
+}
 
  const captura = await html2canvas(container, {
   scale: 3,
