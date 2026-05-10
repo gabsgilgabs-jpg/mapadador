@@ -21,7 +21,7 @@ body{
 
   width:100%;
 
-  max-width:900px;
+  max-width:1000px;
 }
 
 h1{
@@ -68,6 +68,8 @@ button{
   cursor:pointer;
 
   font-size:15px;
+
+  transition:0.2s;
 }
 
 .botaoAtivo{
@@ -79,17 +81,28 @@ button{
   font-weight:bold;
 }
 
+#mapaWrapper{
+
+  width:100%;
+
+  overflow:auto;
+
+  border:1px solid #ccc;
+
+  background:white;
+
+  padding:10px;
+}
+
 #mapaContainer{
 
   position:relative;
 
-  width:100%;
-
-  max-width:700px;
+  width:700px;
 
   margin:auto;
 
-  overflow:hidden;
+  transform-origin:top center;
 }
 
 #canvasBase,
