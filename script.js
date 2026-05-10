@@ -208,3 +208,9 @@ window.addEventListener("touchend", finalizarDesenho);
 function limparTudo() {
   ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
+const captura = await html2canvas(container, {
+  scale: 3,
+  useCORS: true,
+  allowTaint: true,
+  backgroundColor: "#ffffff"
+});
