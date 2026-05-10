@@ -160,19 +160,6 @@ function desativarModo() {
 
 }
 
-// ================= DESATIVAR =================
-function desativarModo() {
-
-  modo = "";
-
-  document
-    .querySelectorAll(".botoes button")
-    .forEach(b =>
-      b.classList.remove("botaoAtivo")
-    );
-
-}
-
 // ================= LIMPAR =================
 function limparTudo() {
 
