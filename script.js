@@ -74,9 +74,11 @@ function criarCampos() {
     div.style.top = (g.y * 100) + "%";
 
     div.innerHTML = `
-      <div>D: <input type="date"></div>
-      <div>I: <select>${Array.from({length:11},(_,i)=>`<option>${i}</option>`).join("")}</select></div>
-    `;
+  <div>D: <input type="date"></div>
+  <div>I: <select>
+    ${Array.from({length:11},(_,i)=>`<option>${i}</option>`).join("")}
+  </select></div>
+`;
 
     formulario.appendChild(div);
   });
