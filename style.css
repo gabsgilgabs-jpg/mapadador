@@ -100,6 +100,8 @@ button{
 
   width:700px;
 
+  height:1100px;
+
   margin:auto;
 
   transform-origin:top center;
@@ -116,7 +118,7 @@ button{
 
   width:100%;
 
-  height:100%;
+  height:842px;
 }
 
 #canvasBase{
@@ -141,7 +143,7 @@ button{
 
   width:100%;
 
-  height:100%;
+  height:842px;
 
   z-index:10;
 
@@ -173,4 +175,52 @@ button{
 .campoIntensidade{
 
   width:55px;
+}
+
+#rodapeInfo{
+
+  position:absolute;
+
+  right:20px;
+
+  bottom:20px;
+
+  width:280px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:18px;
+
+  z-index:30;
+}
+
+.linhaRodape{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:5px;
+
+  font-size:14px;
+}
+
+.linhaRodape input{
+
+  padding:8px;
+
+  border:none;
+
+  border-bottom:1px solid #000;
+
+  background:transparent;
+
+  font-size:14px;
+}
+
+.assinatura input{
+
+  margin-top:10px;
 }
