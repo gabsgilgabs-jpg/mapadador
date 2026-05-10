@@ -151,14 +151,48 @@ function move(e){
 function up(){
   desenhando = false;
 }
-function salvarGIF() {
-  const gif = new GIF({
-    workers: 2,
-    quality: 10,
-    width: canvasPaint.width,
-    height: canvasPaint.height
-  });
+async function salvarGIF() {
 
+  try {
+
+    const container = document.getElementById("mapaContainer");
+
+    // captura tudo:
+    // imagem + desenho + campos
+    const canvasCaptura = await html2canvas(container, {
+      backgroundColor: "#fff",
+      scale: 2,
+      useCORS: true,
+      logging: false
+    });
+
+    const gif = new GIF({
+      workers: 2,
+      quality: 10,
+      width: canvasCaptura.width,
+      height: canvasCaptura.height
+    });
+
+    gif.addFrame(canvasCaptura, { delay: 700 });
+    gif.addFrame(canvasCaptura, { delay: 700 });
+
+    gif.on("finished", function(blob) {
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mapa_dor.gif";
+      a.click();
+    });
+
+    gif.render();
+
+  } catch(err) {
+    console.error(err);
+    alert("Erro ao gerar GIF");
+  }
+}
   // frame 1: base + desenho
   const temp = document.createElement("canvas");
   temp.width = canvasPaint.width;
