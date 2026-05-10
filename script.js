@@ -177,29 +177,46 @@ async function salvarPDF() {
 
     const img = finalCanvas.toDataURL("image/png");
 
-    // download local (não bloqueia nada)
+    // download local (não trava nada)
     const link = document.createElement("a");
     link.href = img;
     link.download = `mapa_dor_${nome}.png`;
     link.click();
 
-    // upload seguro (não trava interface)
+    // 🔥 IMPORTANTE: coloque sua URL real aqui
+    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+
     const resposta = await fetch(URL, {
-  method: "POST",
-  body: JSON.stringify({
-    nome,
-    data,
-    imagem: img
-  })
-});
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nome,
+        data,
+        imagem: img
+      })
+    });
 
-const texto = await resposta.text();
+    const texto = await resposta.text();
 
-let resultado;
-try {
-  resultado = JSON.parse(texto);
-} catch (e) {
-  console.log("Resposta bruta:", texto);
-  alert("Servidor respondeu, mas não em JSON");
-  return;
+    let resultado;
+    try {
+      resultado = JSON.parse(texto);
+    } catch (e) {
+      console.log("Resposta bruta:", texto);
+      alert("Servidor respondeu, mas não em JSON");
+      return;
+    }
+
+    if (resultado.status === "ok") {
+      alert("Salvo no Drive com sucesso!");
+    } else {
+      alert("Erro no servidor");
+    }
+
+  } catch (err) {
+    console.error("Erro PDF:", err);
+    alert("Erro ao gerar PDF");
+  }
 }
