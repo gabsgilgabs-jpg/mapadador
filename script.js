@@ -27,9 +27,11 @@ let desenhando = false;
 let ultimoX = 0;
 let ultimoY = 0;
 let modo = "pintar";
+let zoom = 1;
 
 // ================= IMAGEM =================
 const imagem = new Image();
+imagem.crossOrigin = "anonymous";
 imagem.src = "/mapadador/img/pessoa.png";
 
 // ================= INICIALIZAÇÃO =================
@@ -43,11 +45,13 @@ function init() {
 
 // ================= CANVAS =================
 function configurarCanvas() {
+
   const w = 700;
   const h = 842;
 
   canvasBase.width = w;
   canvasBase.height = h;
+
   canvasPaint.width = w;
   canvasPaint.height = h;
 
@@ -64,70 +68,124 @@ function configurarCanvas() {
 
 // ================= CAMPOS =================
 function criarCampos() {
+
   formulario.innerHTML = "";
 
   grupos.forEach(g => {
+
     const div = document.createElement("div");
+
     div.className = "grupoCampos";
 
     div.style.left = (g.x * 100) + "%";
     div.style.top = (g.y * 100) + "%";
 
     div.innerHTML = `
-  <div>D: <input type="date"></div>
-  <div>I: <select>
-    ${Array.from({length:11},(_,i)=>`<option>${i}</option>`).join("")}
-  </select></div>
-`;
+      <div>
+        D:
+        <input type="date">
+      </div>
+
+      <div>
+        I:
+        <select>
+          ${Array.from(
+            {length:11},
+            (_,i)=>`<option>${i}</option>`
+          ).join("")}
+        </select>
+      </div>
+    `;
 
     formulario.appendChild(div);
+
   });
+
 }
 
 // ================= DATA =================
 function preencherData() {
+
   const el = document.getElementById("dataPreenchimento");
-  if (el) el.value = new Date().toISOString().split("T")[0];
+
+  if(el){
+    el.value = new Date().toISOString().split("T")[0];
+  }
+
 }
 
 // ================= MODO =================
 function definirModo(m) {
+
   modo = m;
 
-  document.querySelectorAll(".botoes button")
+  document
+    .querySelectorAll(".botoes button")
     .forEach(b => b.classList.remove("botaoAtivo"));
 
-  const id = m === "pintar" ? "btnPintar" : "btnApagar";
-  document.getElementById(id)?.classList.add("botaoAtivo");
+  const id =
+    modo === "pintar"
+      ? "btnPintar"
+      : "btnApagar";
+
+  document
+    .getElementById(id)
+    ?.classList.add("botaoAtivo");
+
 }
 
 // ================= LIMPAR =================
 function limparTudo() {
-  ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
+
+  ctxPaint.clearRect(
+    0,
+    0,
+    canvasPaint.width,
+    canvasPaint.height
+  );
+
+}
+
+// ================= POSIÇÃO =================
+function pos(e){
+
+  const r = canvasPaint.getBoundingClientRect();
+
+  const x = e.touches
+    ? e.touches[0].clientX
+    : e.clientX;
+
+  const y = e.touches
+    ? e.touches[0].clientY
+    : e.clientY;
+
+  return {
+
+    x:(x-r.left) * (canvasPaint.width/r.width),
+
+    y:(y-r.top) * (canvasPaint.height/r.height)
+
+  };
+
 }
 
 // ================= DESENHO =================
-function pos(e){
-  const r = canvasPaint.getBoundingClientRect();
-
-  const x = e.touches ? e.touches[0].clientX : e.clientX;
-  const y = e.touches ? e.touches[0].clientY : e.clientY;
-
-  return {
-    x:(x-r.left)*(canvasPaint.width/r.width),
-    y:(y-r.top)*(canvasPaint.height/r.height)
-  };
-}
-
 function down(e){
+
   desenhando = true;
+
   const p = pos(e);
+
   ultimoX = p.x;
   ultimoY = p.y;
+
 }
 
 function move(e){
+
   if(!desenhando) return;
+
+  e.preventDefault();
 
   const p = pos(e);
 
@@ -136,165 +194,272 @@ function move(e){
   ctxPaint.lineCap = "round";
 
   if(modo === "pintar"){
+
     ctxPaint.beginPath();
-    ctxPaint.moveTo(ultimoX, ultimoY);
-    ctxPaint.lineTo(p.x, p.y);
+
+    ctxPaint.moveTo(
+      ultimoX,
+      ultimoY
+    );
+
+    ctxPaint.lineTo(
+      p.x,
+      p.y
+    );
+
     ctxPaint.stroke();
+
   } else {
-    ctxPaint.clearRect(p.x-10,p.y-10,20,20);
+
+    ctxPaint.clearRect(
+      p.x - 10,
+      p.y - 10,
+      20,
+      20
+    );
+
   }
 
   ultimoX = p.x;
   ultimoY = p.y;
+
 }
 
 function up(){
+
   desenhando = false;
+
 }
+
+// ================= EVENTOS =================
+canvasPaint.addEventListener(
+  "mousedown",
+  down
+);
+
+canvasPaint.addEventListener(
+  "mousemove",
+  move
+);
+
+window.addEventListener(
+  "mouseup",
+  up
+);
+
+canvasPaint.addEventListener(
+  "touchstart",
+  down,
+  {passive:false}
+);
+
+canvasPaint.addEventListener(
+  "touchmove",
+  move,
+  {passive:false}
+);
+
+window.addEventListener(
+  "touchend",
+  up
+);
+
+// ================= GIF =================
 async function salvarGIF() {
 
   try {
 
-    const container = document.getElementById("mapaContainer");
+    const container =
+      document.getElementById("mapaContainer");
 
-    // captura tudo:
-    // imagem + desenho + campos
-    const canvasCaptura = await html2canvas(container, {
-      backgroundColor: "#fff",
-      scale: 2,
-      useCORS: true,
-      logging: false
-    });
+    const canvasCaptura =
+      await html2canvas(container, {
+
+        backgroundColor:"#fff",
+        scale:2,
+        useCORS:true,
+        logging:false
+
+      });
 
     const gif = new GIF({
-      workers: 2,
-      quality: 10,
-      width: canvasCaptura.width,
-      height: canvasCaptura.height
+
+      workers:2,
+      quality:10,
+
+      width:canvasCaptura.width,
+      height:canvasCaptura.height
+
     });
 
-    gif.addFrame(canvasCaptura, { delay: 700 });
-    gif.addFrame(canvasCaptura, { delay: 700 });
+    gif.addFrame(
+      canvasCaptura,
+      {delay:700}
+    );
 
-    gif.on("finished", function(blob) {
+    gif.addFrame(
+      canvasCaptura,
+      {delay:700}
+    );
 
-      const url = URL.createObjectURL(blob);
+    gif.on(
+      "finished",
+      function(blob){
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "mapa_dor.gif";
-      a.click();
-    });
+        const url =
+          URL.createObjectURL(blob);
+
+        const a =
+          document.createElement("a");
+
+        a.href = url;
+        a.download = "mapa_dor.gif";
+
+        a.click();
+
+      }
+    );
 
     gif.render();
 
-  } catch(err) {
+  } catch(err){
+
     console.error(err);
+
     alert("Erro ao gerar GIF");
+
   }
+
 }
-  // frame 1: base + desenho
-  const temp = document.createElement("canvas");
-  temp.width = canvasPaint.width;
-  temp.height = canvasPaint.height;
 
-  const ctx = temp.getContext("2d");
-
-  ctx.drawImage(canvasBase, 0, 0);
-  ctx.drawImage(canvasPaint, 0, 0);
-
-  gif.addFrame(temp, { delay: 500 });
-
-  // segundo frame (reforço visual)
-  gif.addFrame(temp, { delay: 500 });
-
-  gif.on('finished', function(blob) {
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mapa_dor.gif";
-    a.click();
-  });
-
-  gif.render();
-}
-// eventos
-canvasPaint.addEventListener("mousedown", down);
-canvasPaint.addEventListener("mousemove", move);
-window.addEventListener("mouseup", up);
-
-canvasPaint.addEventListener("touchstart", down, {passive:false});
-canvasPaint.addEventListener("touchmove", move, {passive:false});
-window.addEventListener("touchend", up);
-
-// ================= PDF (ISOLADO E SEGURO) =================
+// ================= PDF / DRIVE =================
 async function salvarPDF() {
+
   try {
 
-    const nome = document.getElementById("nome")?.value || "sem_nome";
+    const nome =
+      document.getElementById("nome")
+      ?.value || "sem_nome";
 
-    const container = document.getElementById("mapaContainer");
+    const container =
+      document.getElementById("mapaContainer");
 
-    const canvas = await html2canvas(container, {
-      backgroundColor: "#fff",
-      scale: 2,
-      useCORS: true,
-      logging: false
-    });
+    // captura:
+    // imagem + desenho + campos D/I
+    const canvas =
+      await html2canvas(container, {
 
-    const img = canvas.toDataURL("image/png");
+        backgroundColor:"#fff",
+        scale:2,
+        useCORS:true,
+        logging:false
 
-    // download local (não mexe no Drive)
-    const link = document.createElement("a");
+      });
+
+    const img =
+      canvas.toDataURL("image/png");
+
+    // download local
+    const link =
+      document.createElement("a");
+
     link.href = img;
-    link.download = `mapa_dor_${nome}.png`;
+
+    link.download =
+      `mapa_dor_${nome}.png`;
+
     link.click();
 
-    // envio original para Drive (NÃO ALTERADO)
-    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+    // upload drive
+    const URL =
+      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
-    const resposta = await fetch(URL, {
-      method: "POST",
-      body: JSON.stringify({
-        nome,
-        imagem: img
-      })
-    });
+    const resposta =
+      await fetch(URL, {
 
-    const texto = await resposta.text();
-    const resultado = JSON.parse(texto);
+        method:"POST",
 
-    if (resultado.status === "ok") {
-      alert("✔ Salvo no Drive com sucesso");
+        body:JSON.stringify({
+
+          nome,
+          imagem:img
+
+        })
+
+      });
+
+    const texto =
+      await resposta.text();
+
+    const resultado =
+      JSON.parse(texto);
+
+    if(resultado.status === "ok"){
+
+      alert(
+        "✔ Salvo no Drive com sucesso"
+      );
+
+      console.log(
+        resultado.url
+      );
+
+    } else {
+
+      alert(
+        "Erro ao salvar"
+      );
+
     }
 
-  } catch (err) {
+  } catch(err){
+
     console.error(err);
+
     alert("Erro ao salvar");
+
   }
 
 }
 
-let zoom = 1;
+// ================= ZOOM =================
+function aplicarZoom(){
 
-function aplicarZoom() {
-  const mapa = document.getElementById("mapaContainer");
+  const mapa =
+    document.getElementById("mapaContainer");
 
-  mapa.style.transform = `scale(${zoom})`;
+  mapa.style.transform =
+    `scale(${zoom})`;
+
+  mapa.style.transformOrigin =
+    "top center";
+
 }
 
-function zoomMais() {
+function zoomMais(){
+
   zoom += 0.1;
+
   aplicarZoom();
+
 }
 
-function zoomMenos() {
-  zoom = Math.max(0.5, zoom - 0.1);
+function zoomMenos(){
+
+  zoom =
+    Math.max(
+      0.5,
+      zoom - 0.1
+    );
+
   aplicarZoom();
+
 }
 
-function resetZoom() {
+function resetZoom(){
+
   zoom = 1;
+
   aplicarZoom();
+
 }
