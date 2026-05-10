@@ -227,25 +227,18 @@ function pos(e){
 // ================= INICIAR DESENHO =================
 function down(e){
 
-  // bloqueia desenho quando desligado
-  if(
-    modo !== "pintar" &&
-    modo !== "apagar"
-  ){
+  // bloqueia desenho durante pinch zoom
+  if(e.touches && e.touches.length > 1){
     return;
   }
 
-  desenhando = true;
-
-  const p = pos(e);
-
-  ultimoX = p.x;
-  ultimoY = p.y;
-
-}
-
 // ================= MOVIMENTO =================
 function move(e){
+
+  // não desenha durante pinch zoom
+  if(e.touches && e.touches.length > 1){
+    return;
+  }
 
   if(!desenhando) return;
 
