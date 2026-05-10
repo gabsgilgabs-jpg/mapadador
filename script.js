@@ -160,7 +160,7 @@ function move(e){
     ctxPaint.moveTo(ultimoX,ultimoY);
     ctxPaint.lineTo(p.x,p.y);
     ctxPaint.stroke();
-  }else{
+  } else {
     ctxPaint.clearRect(p.x-10,p.y-10,20,20);
   }
 
@@ -223,25 +223,50 @@ async function salvarPDF() {
 
   pdf.addImage(img,"PNG",10,35,largura,altura);
 
-  // ================= RODAPÉ =================
-  const y = 165;
+  // ================= RODAPÉ CORRIGIDO =================
+  const startY = 35 + altura + 10;
 
-  pdf.line(10,y,200,y);
+  pdf.line(10,startY,200,startY);
 
   pdf.setFontSize(11);
+  pdf.setFont("helvetica","normal");
 
-  pdf.text("Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",14,y+10);
-  pdf.text("Marque com círculo o local da principal queixa de dor.",14,y+18);
-  pdf.text("Descreva o que piora ou produz sua dor:",14,y+28);
-  pdf.text("Descreva o que melhora sua dor:",14,y+36);
-  pdf.text("A sua dor é constante? Sim (  ) Não (  )",14,y+46);
+  const addText = (txt, y) => {
+    const lines = pdf.splitTextToSize(txt, 180);
+    pdf.text(lines, 14, y);
+  };
 
-  // ================= SALVAR LOCAL =================
+  addText(
+    "Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",
+    startY + 10
+  );
+
+  addText(
+    "Marque com círculo o local da principal queixa de dor.",
+    startY + 18
+  );
+
+  addText(
+    "Descreva o que piora ou produz sua dor:",
+    startY + 28
+  );
+
+  addText(
+    "Descreva o que melhora sua dor:",
+    startY + 36
+  );
+
+  addText(
+    "A sua dor é constante? Sim (  ) Não (  )",
+    startY + 46
+  );
+
+  // ================= DRIVE =================
   const fileName = `${nome}_mapa_${data}.pdf`;
+
   const base64 = pdf.output("datauristring").split(",")[1];
 
-  // ================= ENVIAR PARA DRIVE =================
-  const response = await fetch(https://script.google.com/macros/s/AKfycbyKEExTAxHEbwM3z18R400ylIkEbCp2se4mbQKuA4c4zjmMm2m6fg5CuOSp4rqIMQlVLA/exec, {
+  const response = await fetch("SUA_URL_DO_APPS_SCRIPT_AQUI", {
     method:"POST",
     body: JSON.stringify({
       nome:nome,
