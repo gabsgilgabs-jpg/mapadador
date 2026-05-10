@@ -144,6 +144,28 @@ function preencherData() {
 }
 
 // ================= MODO =================
+function definirModo(m) {
+
+  modo = m;
+
+  document
+    .querySelectorAll(".botoes button")
+    .forEach(b =>
+      b.classList.remove("botaoAtivo")
+    );
+
+  const id =
+    modo === "pintar"
+      ? "btnPintar"
+      : "btnApagar";
+
+  document
+    .getElementById(id)
+    ?.classList.add("botaoAtivo");
+
+}
+
+
 function desativarModo() {
 
   modo = "";
