@@ -239,4 +239,33 @@ async function salvarPDF() {
     console.error(err);
     alert("Erro ao salvar");
   }
+
+  let zoom = 1;
+
+function zoomMais() {
+  zoom += 0.1;
+
+  document.getElementById("mapaContainer").style.transform =
+    `scale(${zoom})`;
+
+  document.getElementById("mapaContainer").style.transformOrigin =
+    "top center";
+}
+
+function zoomMenos() {
+  zoom = Math.max(0.5, zoom - 0.1);
+
+  document.getElementById("mapaContainer").style.transform =
+    `scale(${zoom})`;
+
+  document.getElementById("mapaContainer").style.transformOrigin =
+    "top center";
+}
+
+function resetZoom() {
+  zoom = 1;
+
+  document.getElementById("mapaContainer").style.transform =
+    "scale(1)";
+}
 }
