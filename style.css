@@ -54,18 +54,13 @@ input, select {
 
 /* CAMPOS */
 #formulario {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .grupoCampos {
-  position: absolute;
-  transform: translate(-50%, -50%);
   pointer-events: auto;
-  font-size: 12px;
+  background: transparent;
+}
 }
 
 /* BOTÕES */
