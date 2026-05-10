@@ -33,7 +33,7 @@ let zoom = 1;
 
 // ================= IMAGEM =================
 const imagem = new Image();
-imagem.src = "./img/pessoa.png";
+imagem.src = "/mapadador/img/pessoa.png";
 
 // ================= INIT =================
 window.addEventListener("load", init);
