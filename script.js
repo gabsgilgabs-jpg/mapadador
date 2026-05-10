@@ -144,9 +144,9 @@ function preencherData() {
 }
 
 // ================= MODO =================
-function definirModo(m) {
+function desativarModo() {
 
-  modo = m;
+  modo = "";
 
   document
     .querySelectorAll(".botoes button")
@@ -154,13 +154,8 @@ function definirModo(m) {
       b.classList.remove("botaoAtivo")
     );
 
-  const id =
-    modo === "pintar"
-      ? "btnPintar"
-      : "btnApagar";
-
   document
-    .getElementById(id)
+    .getElementById("btnParar")
     ?.classList.add("botaoAtivo");
 
 }
