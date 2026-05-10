@@ -8,35 +8,45 @@
 
 <body>
 
-<div id="app">
+<header id="cabecalho">
+  <h2>Mapa de Dor Corporal</h2>
+  <p>Registro clínico de avaliação do paciente</p>
+</header>
 
-  <div id="containerPai">
+<!-- DADOS DO PACIENTE -->
+<div id="dadosPaciente">
 
-    <div id="mapaContainer">
+  <input type="text" id="nome" placeholder="Nome do paciente">
 
-      <canvas id="canvasBase"></canvas>
-      <canvas id="canvasPaint"></canvas>
+  <input type="date" id="dataPreenchimento">
 
-      <div id="formulario"></div>
-
-    </div>
-
-  </div>
-
-  <!-- BOTÕES -->
-  <div class="botoes">
-    <button id="btnPintar" onclick="definirModo('pintar')">Pintar</button>
-    <button id="btnApagar" onclick="definirModo('apagar')">Apagar</button>
-    <button onclick="limparTudo()">Limpar</button>
-    <button onclick="salvarPDF()">PDF</button>
-  </div>
-
-  <!-- RODAPÉ -->
-  <footer id="rodape">
-    Sistema Mapa Dor
-  </footer>
+  <input type="text" id="assinatura" placeholder="Assinatura">
 
 </div>
+
+<div id="containerPai">
+
+  <div id="mapaContainer">
+
+    <canvas id="canvasBase"></canvas>
+    <canvas id="canvasPaint"></canvas>
+
+    <div id="formulario"></div>
+
+  </div>
+
+</div>
+
+<div class="botoes">
+  <button onclick="definirModo('pintar')">Pintar</button>
+  <button onclick="definirModo('apagar')">Apagar</button>
+  <button onclick="limparTudo()">Limpar</button>
+  <button onclick="salvarPDF()">PDF</button>
+</div>
+
+<footer id="rodape">
+  Sistema de Avaliação de Dor • Registro clínico seguro
+</footer>
 
 <script src="script.js"></script>
 
