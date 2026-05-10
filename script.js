@@ -1,3 +1,4 @@
+// ================= DADOS =================
 const grupos = [
   { x:0.12, y:0.31 },
   { x:0.112, y:0.41 },
@@ -13,6 +14,7 @@ const grupos = [
   { x:0.852, y:0.71 }
 ];
 
+// ================= ELEMENTOS =================
 const canvasBase = document.getElementById("canvasBase");
 const canvasPaint = document.getElementById("canvasPaint");
 const formulario = document.getElementById("formulario");
@@ -20,14 +22,17 @@ const formulario = document.getElementById("formulario");
 const ctxBase = canvasBase.getContext("2d");
 const ctxPaint = canvasPaint.getContext("2d");
 
+// ================= ESTADO =================
 let desenhando = false;
 let ultimoX = 0;
 let ultimoY = 0;
 let modo = "pintar";
 
+// ================= IMAGEM =================
 const imagem = new Image();
 imagem.src = "/mapadador/img/pessoa.png";
 
+// ================= INICIALIZAÇÃO =================
 window.addEventListener("load", init);
 
 function init() {
@@ -36,6 +41,7 @@ function init() {
   preencherData();
 }
 
+// ================= CANVAS =================
 function configurarCanvas() {
   const w = 700;
   const h = 842;
@@ -45,15 +51,18 @@ function configurarCanvas() {
   canvasPaint.width = w;
   canvasPaint.height = h;
 
+  ctxBase.clearRect(0,0,w,h);
+
+  imagem.onload = () => {
+    ctxBase.drawImage(imagem, 0, 0, w, h);
+  };
+
   if (imagem.complete) {
     ctxBase.drawImage(imagem, 0, 0, w, h);
-  } else {
-    imagem.onload = () => {
-      ctxBase.drawImage(imagem, 0, 0, w, h);
-    };
   }
 }
 
+// ================= CAMPOS =================
 function criarCampos() {
   formulario.innerHTML = "";
 
@@ -73,11 +82,13 @@ function criarCampos() {
   });
 }
 
+// ================= DATA =================
 function preencherData() {
-  document.getElementById("dataPreenchimento").value =
-    new Date().toISOString().split("T")[0];
+  const el = document.getElementById("dataPreenchimento");
+  if (el) el.value = new Date().toISOString().split("T")[0];
 }
 
+// ================= MODO =================
 function definirModo(m) {
   modo = m;
 
@@ -85,23 +96,18 @@ function definirModo(m) {
     .forEach(b => b.classList.remove("botaoAtivo"));
 
   const id = m === "pintar" ? "btnPintar" : "btnApagar";
-
   document.getElementById(id)?.classList.add("botaoAtivo");
 }
-  if (m === "apagar") {
-    document.querySelector(".botoes button:nth-child(2)")
-      ?.classList.add("botaoAtivo");
-  }
-}
-}
 
+// ================= LIMPAR =================
 function limparTudo() {
   ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
 
-// DESENHO
+// ================= DESENHO =================
 function pos(e){
   const r = canvasPaint.getBoundingClientRect();
+
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -123,91 +129,72 @@ function move(e){
 
   const p = pos(e);
 
-  ctxPaint.strokeStyle="#000";
-  ctxPaint.lineWidth=3;
+  ctxPaint.strokeStyle = "#000";
+  ctxPaint.lineWidth = 3;
+  ctxPaint.lineCap = "round";
 
-  if(modo==="pintar"){
+  if(modo === "pintar"){
     ctxPaint.beginPath();
-    ctxPaint.moveTo(ultimoX,ultimoY);
-    ctxPaint.lineTo(p.x,p.y);
+    ctxPaint.moveTo(ultimoX, ultimoY);
+    ctxPaint.lineTo(p.x, p.y);
     ctxPaint.stroke();
   } else {
     ctxPaint.clearRect(p.x-10,p.y-10,20,20);
   }
 
-  ultimoX=p.x;
-  ultimoY=p.y;
+  ultimoX = p.x;
+  ultimoY = p.y;
 }
 
-function up(){ desenhando=false; }
+function up(){
+  desenhando = false;
+}
 
-canvasPaint.addEventListener("mousedown",down);
-canvasPaint.addEventListener("mousemove",move);
-window.addEventListener("mouseup",up);
+// eventos
+canvasPaint.addEventListener("mousedown", down);
+canvasPaint.addEventListener("mousemove", move);
+window.addEventListener("mouseup", up);
 
-canvasPaint.addEventListener("touchstart",down,{passive:false});
-canvasPaint.addEventListener("touchmove",move,{passive:false});
-window.addEventListener("touchend",up);
+canvasPaint.addEventListener("touchstart", down, {passive:false});
+canvasPaint.addEventListener("touchmove", move, {passive:false});
+window.addEventListener("touchend", up);
 
-// SALVAR (mantido base)
+// ================= PDF (ISOLADO E SEGURO) =================
 async function salvarPDF() {
   try {
 
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // 🔥 garante que canvas está OK
-    const w = canvasBase.width;
-    const h = canvasBase.height;
-
     const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = w;
-    finalCanvas.height = h;
+    finalCanvas.width = canvasBase.width;
+    finalCanvas.height = canvasBase.height;
 
     const ctx = finalCanvas.getContext("2d");
 
-    // base
-    ctx.drawImage(canvasBase, 0, 0, w, h);
+    ctx.drawImage(canvasBase, 0, 0);
+    ctx.drawImage(canvasPaint, 0, 0);
 
-    // desenho
-    ctx.drawImage(canvasPaint, 0, 0, w, h);
-
-    // download local (SEM quebrar nada antes do upload)
     const img = finalCanvas.toDataURL("image/png");
 
+    // download local (não bloqueia nada)
     const link = document.createElement("a");
     link.href = img;
     link.download = `mapa_dor_${nome}.png`;
     link.click();
 
-    // upload (com proteção extra)
-    const resposta = await fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
+    // upload seguro (não trava interface)
+    fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
       method: "POST",
       body: JSON.stringify({
         nome,
         data,
         imagem: img
       })
-    });
-
-    const texto = await resposta.text();
-
-    let resultado;
-    try {
-      resultado = JSON.parse(texto);
-    } catch {
-      console.log("Resposta não JSON:", texto);
-      return;
-    }
-
-    if (resultado.status === "ok") {
-      alert("Salvo com sucesso!");
-    } else {
-      alert("Erro no servidor");
-    }
+    }).catch(err => console.warn("Upload falhou:", err));
 
   } catch (err) {
-    console.error("PDF error:", err);
-    alert("Erro ao gerar PDF (mapa não foi afetado)");
+    console.error(err);
+    alert("Erro ao gerar PDF");
   }
 }
