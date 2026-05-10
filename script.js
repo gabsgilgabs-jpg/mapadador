@@ -371,15 +371,63 @@ function limparTudo(){
 
 async function salvarPDF(){
 
-  const { jsPDF } =
-    window.jspdf;
+  const { jsPDF } = window.jspdf;
 
-  const pdf =
-    new jsPDF(
-      "p",
-      "mm",
-      "a4"
-    );
+  const pdf = new jsPDF("p","mm","a4");
+
+  const captura = await html2canvas(container, {
+    scale:4
+  });
+
+  const larguraPDF = 190;
+
+  const alturaPDF =
+    (captura.height * larguraPDF) / captura.width;
+
+  pdf.addImage(
+    captura.toDataURL("image/png"),
+    "PNG",
+    10,
+    10,
+    larguraPDF,
+    alturaPDF
+  );
+
+  // 🧠 PEGAR NOME DO PACIENTE (AQUI É A MUDANÇA PRINCIPAL)
+  const nomePaciente =
+    document.getElementById("nomePaciente")?.value || "paciente";
+
+  const data = new Date()
+    .toLocaleString("pt-BR")
+    .replace(/[/:]/g, "-");
+
+  const nomeArquivo =
+    `${nomePaciente}_mapa_${data}.pdf`;
+
+  const blob = pdf.output("blob");
+
+  const reader = new FileReader();
+
+  reader.onloadend = async function () {
+
+    const base64 = reader.result.split(",")[1];
+
+    const response = await fetch("SUA_URL_DO_APPS_SCRIPT", {
+      method: "POST",
+      body: JSON.stringify({
+        file: base64,
+        mimeType: "application/pdf",
+        filename: nomeArquivo
+      })
+    });
+
+    const result = await response.json();
+
+    alert("Salvo no Drive:\n" + result.url);
+  };
+
+  reader.readAsDataURL(blob);
+}
 
   const captura =
     await html2canvas(
@@ -407,8 +455,29 @@ async function salvarPDF(){
     alturaPDF
   );
 
-  pdf.save(
-    "mapa-da-dor.pdf"
+  async function salvarPDF(){
+
+  const { jsPDF } = window.jspdf;
+
+  const pdf = new jsPDF("p","mm","a4");
+
+  const captura = await html2canvas(container, {
+    scale:4
+  });
+
+  const larguraPDF = 190;
+
+  const alturaPDF =
+    (captura.height * larguraPDF) / captura.width;
+
+  pdf.addImage(
+    captura.toDataURL("image/png"),
+    "PNG",
+    10,
+    10,
+    larguraPDF,
+    alturaPDF
+  );
   );
 }
 async function salvarGIF(){
