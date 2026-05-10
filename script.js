@@ -412,7 +412,7 @@ async function salvarPDF(){
 
     const base64 = reader.result.split(",")[1];
 
-    const response = await fetch("1Iq-DhhPyML0pWeOOpL3gyQEGBHvuV6oJY_AqE0YFl16P2ATchb7ACDze", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbyKEExTAxHEbwM3z18R400ylIkEbCp2se4mbQKuA4c4zjmMm2m6fg5CuOSp4rqIMQlVLA/exec", {
       method: "POST",
       body: JSON.stringify({
         file: base64,
