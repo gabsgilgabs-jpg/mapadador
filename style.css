@@ -1,26 +1,42 @@
-
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
 }
 
-/* CONTAINER GERAL */
+/* CABEÇALHO */
+#cabecalho {
+  text-align: center;
+  padding: 10px;
+  background: #f5f5f5;
+}
+
+/* DADOS PACIENTE */
+#dadosPaciente {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+#dadosPaciente input {
+  padding: 5px;
+}
+
+/* MAPA */
 #containerPai {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
 }
 
-/* MAPA FIXO (BASE DO SISTEMA) */
 #mapaContainer {
   position: relative;
   width: 700px;
   height: 842px;
   border: 1px solid #ccc;
-  overflow: hidden; /* 🔥 EVITA VAZAMENTO */
+  overflow: hidden;
 }
 
-/* CANVAS ALINHADOS */
+/* CANVAS */
 #canvasBase,
 #canvasPaint {
   position: absolute;
@@ -28,34 +44,23 @@ body {
   left: 0;
 }
 
-/* ordem de camadas */
 #canvasBase { z-index: 1; }
 #canvasPaint { z-index: 2; }
 
-/* FORMULÁRIO POR CIMA */
+/* CAMPOS */
 #formulario {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 700px;
-  height: 842px;
+  width: 100%;
+  height: 100%;
   z-index: 3;
   pointer-events: none;
 }
 
-/* CAMPOS FIXOS NO MAPA */
 .grupoCampos {
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: auto;
   font-size: 12px;
-}
-
-/* LINHAS DOS CAMPOS */
-.linhaCampo {
-  display: flex;
-  gap: 5px;
-  align-items: center;
 }
 
 /* BOTÕES */
@@ -64,12 +69,7 @@ body {
   margin-top: 10px;
 }
 
-.botoes button {
-  margin: 5px;
-  padding: 6px 10px;
-}
-
-/* RODAPÉ SEM INTERFERIR NO MAPA */
+/* RODAPÉ */
 #rodape {
   text-align: center;
   margin-top: 20px;
