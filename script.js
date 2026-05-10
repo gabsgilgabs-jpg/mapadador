@@ -33,12 +33,16 @@ let zoom = 1;
 
 // ================= IMAGEM =================
 const imagem = new Image();
-imagem.crossOrigin = "anonymous";
-
-// fallback seguro (EDGE + mobile)
 imagem.src = "./img/pessoa.png";
 
 // ================= INICIALIZAÇÃO SEGURA =================
+window.addEventListener("load", () => {
+  iniciarSistema();
+});
+
+imagem.onload = iniciarSistema;
+imagem.onerror = iniciarSistema;
+
 function iniciarSistema() {
   configurarCanvas();
   criarCampos();
@@ -46,18 +50,8 @@ function iniciarSistema() {
   preencherDataAtual();
 }
 
-// garante execução em qualquer navegador
-window.addEventListener("load", () => {
-  setTimeout(iniciarSistema, 150);
-});
-
-// fallback caso imagem demore ou falhe
-imagem.onload = iniciarSistema;
-imagem.onerror = iniciarSistema;
-
 // ================= CANVAS =================
 function configurarCanvas() {
-
   const largura = 700;
   const altura = 842;
 
@@ -66,27 +60,25 @@ function configurarCanvas() {
   canvasPaint.width = largura;
   canvasPaint.height = altura;
 
-  ctxBase.clearRect(0,0,largura,altura);
+  ctxBase.clearRect(0, 0, largura, altura);
 
   try {
     ctxBase.drawImage(imagem, 0, 0, largura, altura);
   } catch (e) {
-    console.warn("Imagem não carregou, continuando sem ela");
+    console.warn("Imagem não carregou");
   }
 }
 
 // ================= CAMPOS =================
 function criarCampos() {
-
   formulario.innerHTML = "";
 
-  grupos.forEach(grupo => {
-
+  grupos.forEach(g => {
     const box = document.createElement("div");
     box.className = "grupoCampos";
 
-    box.style.left = (grupo.x * 100) + "%";
-    box.style.top = (grupo.y * 100) + "%";
+    box.style.left = (g.x * 100) + "%";
+    box.style.top = (g.y * 100) + "%";
 
     box.innerHTML = `
       <div class="linhaCampo">
@@ -107,25 +99,24 @@ function criarCampos() {
 
 // ================= DATA =================
 function preencherDataAtual() {
-  const hoje = new Date();
-  const input = document.getElementById("dataPreenchimento");
-  if (input) {
-    input.value = hoje.toISOString().split("T")[0];
+  const el = document.getElementById("dataPreenchimento");
+  if (el) {
+    el.value = new Date().toISOString().split("T")[0];
   }
 }
 
-// ================= MODOS =================
-function definirModo(novoModo) {
-  modo = novoModo;
+// ================= MODO =================
+function definirModo(m) {
+  modo = m;
 
   document.querySelectorAll(".botoes button")
     .forEach(b => b.classList.remove("botaoAtivo"));
 
-  const ativo = document.getElementById(
-    modo === "pintar" ? "btnPintar" : "btnApagar"
+  const btn = document.getElementById(
+    m === "pintar" ? "btnPintar" : "btnApagar"
   );
 
-  if (ativo) ativo.classList.add("botaoAtivo");
+  if (btn) btn.classList.add("botaoAtivo");
 }
 
 // ================= ZOOM =================
@@ -143,35 +134,34 @@ function aplicarZoom() {
   container.style.transform = `scale(${zoom})`;
 }
 
-// ================= POSIÇÃO (MOUSE + TOUCH) =================
+// ================= POSIÇÃO =================
 function pegarPosicao(e) {
-
   const rect = canvasPaint.getBoundingClientRect();
 
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
 
   return {
-    x: (clientX - rect.left) * (canvasPaint.width / rect.width),
-    y: (clientY - rect.top) * (canvasPaint.height / rect.height)
+    x: (x - rect.left) * (canvasPaint.width / rect.width),
+    y: (y - rect.top) * (canvasPaint.height / rect.height)
   };
 }
 
 // ================= DESENHO =================
-function iniciarDesenho(e) {
+function iniciar(e) {
   e.preventDefault();
   desenhando = true;
 
-  const pos = pegarPosicao(e);
-  ultimoX = pos.x;
-  ultimoY = pos.y;
+  const p = pegarPosicao(e);
+  ultimoX = p.x;
+  ultimoY = p.y;
 }
 
-function moverDesenho(e) {
+function mover(e) {
   if (!desenhando) return;
   e.preventDefault();
 
-  const pos = pegarPosicao(e);
+  const p = pegarPosicao(e);
 
   ctxPaint.strokeStyle = "#000";
   ctxPaint.lineWidth = 3;
@@ -180,37 +170,92 @@ function moverDesenho(e) {
   if (modo === "pintar") {
     ctxPaint.beginPath();
     ctxPaint.moveTo(ultimoX, ultimoY);
-    ctxPaint.lineTo(pos.x, pos.y);
+    ctxPaint.lineTo(p.x, p.y);
     ctxPaint.stroke();
   } else {
-    ctxPaint.clearRect(pos.x - 10, pos.y - 10, 20, 20);
+    ctxPaint.clearRect(p.x - 10, p.y - 10, 20, 20);
   }
 
-  ultimoX = pos.x;
-  ultimoY = pos.y;
+  ultimoX = p.x;
+  ultimoY = p.y;
 }
 
-function finalizarDesenho() {
+function finalizar() {
   desenhando = false;
 }
 
 // mouse
-canvasPaint.addEventListener("mousedown", iniciarDesenho);
-canvasPaint.addEventListener("mousemove", moverDesenho);
-window.addEventListener("mouseup", finalizarDesenho);
+canvasPaint.addEventListener("mousedown", iniciar);
+canvasPaint.addEventListener("mousemove", mover);
+window.addEventListener("mouseup", finalizar);
 
-// touch (mobile)
-canvasPaint.addEventListener("touchstart", iniciarDesenho, { passive:false });
-canvasPaint.addEventListener("touchmove", moverDesenho, { passive:false });
-window.addEventListener("touchend", finalizarDesenho);
+// touch
+canvasPaint.addEventListener("touchstart", iniciar, { passive:false });
+canvasPaint.addEventListener("touchmove", mover, { passive:false });
+window.addEventListener("touchend", finalizar);
 
 // ================= LIMPAR =================
 function limparTudo() {
   ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
-const captura = await html2canvas(container, {
-  scale: 3,
-  useCORS: true,
-  allowTaint: true,
-  backgroundColor: "#ffffff"
-});
+
+// ================= PDF =================
+async function salvarPDF() {
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p","mm","a4");
+
+  const captura = await html2canvas(container, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: "#fff"
+  });
+
+  const largura = 190;
+  const altura = (captura.height * largura) / captura.width;
+
+  pdf.addImage(
+    captura.toDataURL("image/png"),
+    "PNG",
+    10,
+    10,
+    largura,
+    altura
+  );
+
+  const nome =
+    document.getElementById("nomePaciente")?.value || "paciente";
+
+  const data = new Date().toISOString().replace(/[:.]/g,"-");
+
+  pdf.save(`${nome}_mapa_${data}.pdf`);
+}
+
+// ================= GIF =================
+async function salvarGIF() {
+
+  const btn = document.getElementById("btnGIF");
+  btn.classList.add("botaoAtivo");
+
+  const captura = await html2canvas(container, {
+    scale: 2,
+    useCORS: true
+  });
+
+  gifshot.createGIF({
+    images: [captura.toDataURL("image/png")],
+    gifWidth: captura.width,
+    gifHeight: captura.height,
+    interval: 1
+  }, (obj) => {
+
+    if (!obj.error) {
+      const a = document.createElement("a");
+      a.href = obj.image;
+      a.download = "mapa-da-dor.gif";
+      a.click();
+    }
+
+    btn.classList.remove("botaoAtivo");
+  });
+}
