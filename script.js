@@ -149,7 +149,40 @@ function move(e){
 function up(){
   desenhando = false;
 }
+function salvarGIF() {
+  const gif = new GIF({
+    workers: 2,
+    quality: 10,
+    width: canvasPaint.width,
+    height: canvasPaint.height
+  });
 
+  // frame 1: base + desenho
+  const temp = document.createElement("canvas");
+  temp.width = canvasPaint.width;
+  temp.height = canvasPaint.height;
+
+  const ctx = temp.getContext("2d");
+
+  ctx.drawImage(canvasBase, 0, 0);
+  ctx.drawImage(canvasPaint, 0, 0);
+
+  gif.addFrame(temp, { delay: 500 });
+
+  // segundo frame (reforço visual)
+  gif.addFrame(temp, { delay: 500 });
+
+  gif.on('finished', function(blob) {
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mapa_dor.gif";
+    a.click();
+  });
+
+  gif.render();
+}
 // eventos
 canvasPaint.addEventListener("mousedown", down);
 canvasPaint.addEventListener("mousemove", move);
