@@ -536,6 +536,7 @@ function resetZoom(){
 
 let distanciaInicial = 0;
 let zoomInicial = 1;
+let pinchZoomAtivo = false;
 
 function distanciaToque(t1, t2) {
 
@@ -546,11 +547,12 @@ function distanciaToque(t1, t2) {
 
 }
 
-canvasPaint.addEventListener("touchstart", function(e){
+// inicia pinch zoom
+window.addEventListener("touchstart", function(e){
 
   if(e.touches.length === 2){
 
-    e.preventDefault();
+    pinchZoomAtivo = true;
 
     distanciaInicial = distanciaToque(
       e.touches[0],
@@ -563,9 +565,14 @@ canvasPaint.addEventListener("touchstart", function(e){
 
 }, { passive:false });
 
-canvasPaint.addEventListener("touchmove", function(e){
+// movimento pinch
+window.addEventListener("touchmove", function(e){
 
-  if(e.touches.length === 2){
+  // só ativa com 2 dedos
+  if(
+    pinchZoomAtivo &&
+    e.touches.length === 2
+  ){
 
     e.preventDefault();
 
@@ -574,15 +581,28 @@ canvasPaint.addEventListener("touchmove", function(e){
       e.touches[1]
     );
 
-    zoom = zoomInicial * (
-      novaDistancia / distanciaInicial
-    );
+    zoom =
+      zoomInicial *
+      (novaDistancia / distanciaInicial);
 
-    // limite mínimo e máximo
-    zoom = Math.max(0.5, Math.min(3, zoom));
+    zoom = Math.max(
+      0.5,
+      Math.min(3, zoom)
+    );
 
     aplicarZoom();
 
   }
 
 }, { passive:false });
+
+// finaliza pinch
+window.addEventListener("touchend", function(e){
+
+  if(e.touches.length < 2){
+
+    pinchZoomAtivo = false;
+
+  }
+
+});
