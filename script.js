@@ -162,11 +162,10 @@ window.addEventListener("touchend", up);
 // ================= PDF (ISOLADO E SEGURO) =================
 async function salvarPDF() {
   try {
-
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // monta canvas final
+    // 🔥 canvas final
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = canvasBase.width;
     finalCanvas.height = canvasBase.height;
@@ -176,46 +175,34 @@ async function salvarPDF() {
     ctx.drawImage(canvasBase, 0, 0);
     ctx.drawImage(canvasPaint, 0, 0);
 
-    const img = finalCanvas.toDataURL("image/png");
+    // 🔥 CONVERTE PARA BLOB (NÃO BASE64)
+    finalCanvas.toBlob(async (blob) => {
 
-    // download local imediato
-    const link = document.createElement("a");
-    link.href = img;
-    link.download = `mapa_dor_${nome}.png`;
-    link.click();
+      const formData = new FormData();
 
-    // envio para Drive
-    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+      formData.append("file", blob, `mapa_${nome}.png`);
+      formData.append("nome", nome);
+      formData.append("data", data);
 
-    const resposta = await fetch(URL, {
-      method: "POST",
-      body: JSON.stringify({
-        nome,
-        data,
-        imagem: img
-      })
-    });
+      const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
-    const texto = await resposta.text();
+      const resposta = await fetch(URL, {
+        method: "POST",
+        body: formData
+      });
 
-    let resultado;
-    try {
-      resultado = JSON.parse(texto);
-    } catch {
-      console.log("Resposta não JSON:", texto);
-      alert("Servidor respondeu, mas não conseguiu processar");
-      return;
-    }
+      const resultado = await resposta.json();
 
-    if (resultado.status === "ok") {
-      alert("✔ Salvo no Drive com sucesso!\n\nArquivo: " + resultado.arquivo);
-      console.log("URL do arquivo:", resultado.url);
-    } else {
-      alert("Erro: " + resultado.message);
-    }
+      if (resultado.status === "ok") {
+        alert("✔ Salvo com sucesso!\n" + resultado.url);
+      } else {
+        alert("Erro ao salvar");
+      }
+
+    }, "image/png");
 
   } catch (err) {
-    console.error("Erro salvarPDF:", err);
-    alert("Falha ao salvar (ver console)");
+    console.error(err);
+    alert("Falha ao salvar");
   }
 }
