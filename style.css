@@ -3,6 +3,27 @@
   padding:0;
   box-sizing:border-box;
 }
+.grupoCampos {
+  min-width: 90px;
+  min-height: 55px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.linhaCampo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 3px;
+}
+
+.linhaCampo strong {
+  font-size: 12px;
+}
+
+.campoMapa {
+  font-size: 12px;
+}
 
 .instrucaoMapa {
   font-size: 14px;
