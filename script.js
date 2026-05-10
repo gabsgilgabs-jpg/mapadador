@@ -198,13 +198,13 @@ async function salvarPDF() {
       data: new Date().toISOString()
     };
 
-    const resposta = await fetch(
-      "https://script.google.com/macros/s/AKfycby0hGiR5yqtYf3sxiLahAoV2w9NeW8aaF_GnSuDYgOK/exec",
-      {
-        method: "POST",
-        body: JSON.stringify(dados)
-      }
-    );
+    const resposta = await fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify(dados)
+    });
 
     const texto = await resposta.text();
     const resultado = JSON.parse(texto);
@@ -219,6 +219,7 @@ async function salvarPDF() {
 
   } catch (err) {
     console.error(err);
-    alert("Falha de conexão com servidor");
+    alert("Falha de comunicação com o servidor");
   }
+}
 }
