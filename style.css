@@ -2,7 +2,12 @@ body {
   margin: 0;
   font-family: Arial;
 }
-
+grupoCampos {
+  background: transparent;
+}
+input, select {
+  background: transparent;
+}
 /* CABEÇALHO */
 #cabecalho {
   text-align: center;
