@@ -168,12 +168,13 @@ async function salvarPDF() {
 
     const canvas = await html2canvas(container, {
       backgroundColor: null,
-      scale: 2
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
     });
 
     const img = canvas.toDataURL("image/png");
 
-    // download local
     const link = document.createElement("a");
     link.href = img;
     link.download = `mapa_dor_${nome}.png`;
@@ -193,11 +194,13 @@ async function salvarPDF() {
     const resultado = JSON.parse(texto);
 
     if (resultado.status === "ok") {
-      alert("✔ Salvo com sucesso!");
+      alert("✔ PDF gerado com sucesso");
+    } else {
+      alert("Erro ao salvar");
     }
 
   } catch (err) {
     console.error(err);
-    alert("Erro ao gerar PDF");
+    alert("Falha ao gerar PDF");
   }
 }
