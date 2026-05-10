@@ -32,7 +32,7 @@ let zoom = 1;
 // ================= IMAGEM =================
 const imagem = new Image();
 imagem.crossOrigin = "anonymous";
-imagem.src = "/mapadador/img/pessoa.png";
+imagem.src = "./img/pessoa.png";
 
 // ================= INICIALIZAÇÃO =================
 window.addEventListener("load", init);
