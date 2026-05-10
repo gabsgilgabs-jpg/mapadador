@@ -156,49 +156,58 @@ async function salvarPDF() {
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // 🔥 1. CAPTURAR MAPA (canvas + desenho)
-    const canvasFinal = document.createElement("canvas");
-    canvasFinal.width = canvasBase.width;
-    canvasFinal.height = canvasBase.height;
+    // 🔥 garante que canvas está OK
+    const w = canvasBase.width;
+    const h = canvasBase.height;
 
-    const ctx = canvasFinal.getContext("2d");
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = w;
+    finalCanvas.height = h;
 
-    // base (imagem)
-    ctx.drawImage(canvasBase, 0, 0);
+    const ctx = finalCanvas.getContext("2d");
 
-    // desenho do usuário
-    ctx.drawImage(canvasPaint, 0, 0);
+    // base
+    ctx.drawImage(canvasBase, 0, 0, w, h);
 
-    // 🔥 2. GERAR IMAGEM (PNG)
-    const imagemBase64 = canvasFinal.toDataURL("image/png");
+    // desenho
+    ctx.drawImage(canvasPaint, 0, 0, w, h);
 
-    // 🔥 3. DOWNLOAD LOCAL
+    // download local (SEM quebrar nada antes do upload)
+    const img = finalCanvas.toDataURL("image/png");
+
     const link = document.createElement("a");
-    link.href = imagemBase64;
+    link.href = img;
     link.download = `mapa_dor_${nome}.png`;
     link.click();
 
-    // 🔥 4. ENVIAR PARA GOOGLE DRIVE
+    // upload (com proteção extra)
     const resposta = await fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
       method: "POST",
       body: JSON.stringify({
         nome,
         data,
-        imagem: imagemBase64
+        imagem: img
       })
     });
 
     const texto = await resposta.text();
-    const resultado = JSON.parse(texto);
+
+    let resultado;
+    try {
+      resultado = JSON.parse(texto);
+    } catch {
+      console.log("Resposta não JSON:", texto);
+      return;
+    }
 
     if (resultado.status === "ok") {
-      alert("PDF salvo localmente e enviado ao Drive!");
+      alert("Salvo com sucesso!");
     } else {
-      alert("Erro ao enviar ao Drive: " + resultado.message);
+      alert("Erro no servidor");
     }
 
   } catch (err) {
-    console.error(err);
-    alert("Erro ao gerar PDF");
+    console.error("PDF error:", err);
+    alert("Erro ao gerar PDF (mapa não foi afetado)");
   }
 }
