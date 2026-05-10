@@ -187,16 +187,13 @@ async function salvarPDF() {
     const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
     const resposta = await fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        nome,
-        data,
-        imagem: img
-      })
-    });
+  method: "POST",
+  body: JSON.stringify({
+    nome,
+    data,
+    imagem: img
+  })
+});
 
     const texto = await resposta.text();
 
