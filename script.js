@@ -495,15 +495,13 @@ async function salvarPDF() {
 function aplicarZoom(){
 
   const mapa =
-    document.getElementById(
-      "mapaContainer"
-    );
+    document.getElementById("mapaContainer");
 
   mapa.style.transform =
     `scale(${zoom})`;
 
   mapa.style.transformOrigin =
-    "top center";
+    "center top";
 
 }
 
