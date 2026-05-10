@@ -102,3 +102,9 @@ input, select {
   transform-origin: top center;
   transition: transform 0.2s ease;
 }
+
+#btnParar.botaoAtivo {
+  color: red;
+  font-weight: bold;
+  border: 1px solid red;
+}
