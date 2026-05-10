@@ -195,16 +195,26 @@ window.addEventListener("touchend", up);
 // ================= PDF (ISOLADO E SEGURO) =================
 async function salvarPDF() {
   try {
+
     const nome = document.getElementById("nome")?.value || "sem_nome";
 
     const container = document.getElementById("mapaContainer");
 
-    const canvas = await html2canvas(container, {
-      backgroundColor: null,
+    // 🔥 clona o container só para export (não mexe na tela)
+    const clone = container.cloneNode(true);
+
+    clone.style.position = "absolute";
+    clone.style.left = "-9999px";
+    clone.style.top = "0";
+    document.body.appendChild(clone);
+
+    const canvas = await html2canvas(clone, {
+      backgroundColor: "#ffffff",
       scale: 2,
-      useCORS: true,
-      allowTaint: true
+      useCORS: true
     });
+
+    document.body.removeChild(clone);
 
     const img = canvas.toDataURL("image/png");
 
@@ -213,27 +223,8 @@ async function salvarPDF() {
     link.download = `mapa_dor_${nome}.png`;
     link.click();
 
-    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
-
-    const resposta = await fetch(URL, {
-      method: "POST",
-      body: JSON.stringify({
-        nome,
-        imagem: img
-      })
-    });
-
-    const texto = await resposta.text();
-    const resultado = JSON.parse(texto);
-
-    if (resultado.status === "ok") {
-      alert("✔ PDF gerado com sucesso");
-    } else {
-      alert("Erro ao salvar");
-    }
-
   } catch (err) {
     console.error(err);
-    alert("Falha ao gerar PDF");
+    alert("Erro ao gerar PDF");
   }
 }
