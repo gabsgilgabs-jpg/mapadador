@@ -162,10 +162,11 @@ window.addEventListener("touchend", up);
 // ================= PDF (ISOLADO E SEGURO) =================
 async function salvarPDF() {
   try {
+
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // canvas final
+    // cria canvas final
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = canvasBase.width;
     finalCanvas.height = canvasBase.height;
@@ -174,6 +175,7 @@ async function salvarPDF() {
     ctx.drawImage(canvasBase, 0, 0);
     ctx.drawImage(canvasPaint, 0, 0);
 
+    // transforma em arquivo (SEM base64)
     const blob = await new Promise(resolve =>
       finalCanvas.toBlob(resolve, "image/png")
     );
@@ -186,29 +188,30 @@ async function salvarPDF() {
     const URL = "https://script.google.com/macros/s/SEU_DEPLOY_ID/exec";
 
     const resposta = await fetch(URL, {
-    method: "POST",
-    body: formData,
-    redirect: "follow"
-  });
+      method: "POST",
+      body: formData,
+      redirect: "follow"
+    });
 
     const texto = await resposta.text();
 
-let resultado;
-try {
-  resultado = JSON.parse(texto);
-} catch (e) {
-  console.log("Resposta bruta:", texto);
-  throw new Error("Resposta não JSON");
-}
+    let resultado;
+    try {
+      resultado = JSON.parse(texto);
+    } catch {
+      console.log("Resposta bruta:", texto);
+      throw new Error("Servidor não retornou JSON válido");
+    }
+
     if (resultado.status === "ok") {
-      alert("✔ Salvo no Drive!");
-      console.log(resultado.url);
+      alert("✔ Salvo com sucesso!");
+      console.log("Arquivo:", resultado.url);
     } else {
       alert("Erro: " + resultado.message);
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("Erro salvarPDF:", err);
     alert("Falha ao salvar");
   }
 }
