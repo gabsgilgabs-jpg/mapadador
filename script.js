@@ -187,95 +187,34 @@ function limparTudo(){
 
 // ================= PDF + DRIVE =================
 async function salvarPDF() {
+  try {
 
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p","mm","a4");
+    const dados = {
+      nome: document.getElementById("nome")?.value,
+      data: new Date().toISOString(),
+      // adicione mais campos se quiser
+    };
 
-  const nome =
-    document.getElementById("nomePaciente")?.value || "Paciente";
+    const resposta = await fetch("https://script.google.com/macros/s/SEU_ID/exec", {
+      method: "POST",
+      body: JSON.stringify(dados),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
 
-  const data =
-    document.getElementById("dataPreenchimento")?.value || "";
+    const resultado = await resposta.json();
 
-  // ================= CABEÇALHO =================
-  pdf.setFont("helvetica","bold");
-  pdf.setFontSize(16);
-  pdf.text("MAPA DA DOR",105,15,{align:"center"});
+    console.log("Resposta do servidor:", resultado);
 
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica","normal");
-  pdf.text(`Paciente: ${nome}`,14,25);
-  pdf.text(`Data: ${data}`,160,25);
+    if (resultado.status === "ok") {
+      alert("Salvo com sucesso!");
+    } else {
+      alert("Erro ao salvar: " + resultado.message);
+    }
 
-  pdf.line(10,30,200,30);
-
-  // ================= MAPA =================
-  const captura = await html2canvas(container,{
-    scale:3,
-    useCORS:true,
-    backgroundColor:"#fff"
-  });
-
-  const img = captura.toDataURL("image/png");
-
-  const largura = 190;
-  const altura = (captura.height*largura)/captura.width;
-
-  pdf.addImage(img,"PNG",10,35,largura,altura);
-
-  // ================= RODAPÉ CORRIGIDO =================
-  const startY = 35 + altura + 10;
-
-  pdf.line(10,startY,200,startY);
-
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica","normal");
-
-  const addText = (txt, y) => {
-    const lines = pdf.splitTextToSize(txt, 180);
-    pdf.text(lines, 14, y);
-  };
-
-  addText(
-    "Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",
-    startY + 10
-  );
-
-  addText(
-    "Marque com círculo o local da principal queixa de dor.",
-    startY + 18
-  );
-
-  addText(
-    "Descreva o que piora ou produz sua dor:",
-    startY + 28
-  );
-
-  addText(
-    "Descreva o que melhora sua dor:",
-    startY + 36
-  );
-
-  addText(
-    "A sua dor é constante? Sim (  ) Não (  )",
-    startY + 46
-  );
-
-  // ================= DRIVE =================
-  const fileName = `${nome}_mapa_${data}.pdf`;
-
-  const base64 = pdf.output("datauristring").split(",")[1];
-
-  const response = await fetch("https://script.google.com/macros/s/AKfycby0hGiR5yqtYf3sxiLahAoV2w9NeW8aaF_GnSuDYgOK/exec", {
-    method:"POST",
-    body: JSON.stringify({
-      nome:nome,
-      fileName:fileName,
-      file:base64
-    })
-  });
-
-  const result = await response.json();
-
-  alert("Salvo no Drive!\n" + result.url);
-}
+  } catch (err) {
+    console.error("Erro fetch:", err);
+    alert("Falha de conexão com servidor");
+  }
+}}
