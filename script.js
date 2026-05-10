@@ -147,26 +147,19 @@ function limparTudo() {
 }
 
 // ================= POSIÇÃO =================
-function pos(e){
+function down(e){
 
-  const r = canvasPaint.getBoundingClientRect();
+  // só desenha se modo pintar/apagar estiver ativo
+  if(modo !== "pintar" && modo !== "apagar"){
+    return;
+  }
 
-  const x = e.touches
-    ? e.touches[0].clientX
-    : e.clientX;
+  desenhando = true;
 
-  const y = e.touches
-    ? e.touches[0].clientY
-    : e.clientY;
+  const p = pos(e);
 
-  return {
-
-    x:(x-r.left) * (canvasPaint.width/r.width),
-
-    y:(y-r.top) * (canvasPaint.height/r.height)
-
-  };
-
+  ultimoX = p.x;
+  ultimoY = p.y;
 }
 
 // ================= DESENHO =================
@@ -219,7 +212,14 @@ function move(e){
     );
 
   }
+  
+  function desativarModo() {
 
+  modo = "";
+
+  document.querySelectorAll(".botoes button")
+    .forEach(b => b.classList.remove("botaoAtivo"));
+}
   ultimoX = p.x;
   ultimoY = p.y;
 
