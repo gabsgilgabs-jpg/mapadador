@@ -1,5 +1,4 @@
 const grupos = [
-
   { x:0.12, y:0.31 },
   { x:0.112, y:0.41 },
   { x:0.125, y:0.65 },
@@ -14,9 +13,9 @@ const grupos = [
   { x:0.880, y:0.41 },
   { x:0.858, y:0.58 },
   { x:0.852, y:0.71 }
-
 ];
 
+// ================= DOM =================
 const canvasBase = document.getElementById("canvasBase");
 const canvasPaint = document.getElementById("canvasPaint");
 const formulario = document.getElementById("formulario");
@@ -25,21 +24,33 @@ const container = document.getElementById("mapaContainer");
 const ctxBase = canvasBase.getContext("2d");
 const ctxPaint = canvasPaint.getContext("2d");
 
+// ================= STATE =================
 let desenhando = false;
 let ultimoX = 0;
 let ultimoY = 0;
 let modo = "pintar";
 let zoom = 1;
 
+// ================= IMAGE =================
 const imagem = new Image();
 imagem.src = "./img/pessoa.png";
 
-imagem.onload = () => {
+// ================= INIT =================
+window.addEventListener("load", () => {
+  console.log("Sistema carregado");
+
   configurarCanvas();
   criarCampos();
   definirModo("pintar");
   preencherDataAtual();
+});
+
+// fallback caso imagem falhe
+imagem.onload = () => {
+  configurarCanvas();
 };
+
+// ================= FUNCTIONS =================
 
 function preencherDataAtual() {
   const hoje = new Date();
@@ -56,34 +67,32 @@ function configurarCanvas() {
   canvasPaint.width = largura;
   canvasPaint.height = altura;
 
+  ctxBase.clearRect(0,0,largura,altura);
   ctxBase.drawImage(imagem, 0, 0, largura, altura);
 }
 
 function criarCampos() {
-
   formulario.innerHTML = "";
 
   grupos.forEach(grupo => {
-
     const box = document.createElement("div");
-    box.classList.add("grupoCampos");
+    box.className = "grupoCampos";
 
     box.style.left = (grupo.x * 100) + "%";
     box.style.top = (grupo.y * 100) + "%";
 
     const linhaD = document.createElement("div");
-    linhaD.classList.add("linhaCampo");
-
+    linhaD.className = "linhaCampo";
     linhaD.innerHTML = `
       <strong>D:</strong>
       <input type="date" class="campoMapa campoData">
     `;
 
     const linhaI = document.createElement("div");
-    linhaI.classList.add("linhaCampo");
+    linhaI.className = "linhaCampo";
 
     const select = document.createElement("select");
-    select.classList.add("campoMapa", "campoIntensidade");
+    select.className = "campoMapa campoIntensidade";
 
     for (let i = 0; i <= 10; i++) {
       const opt = document.createElement("option");
@@ -108,13 +117,11 @@ function definirModo(novoModo) {
   document.querySelectorAll(".botoes button")
     .forEach(btn => btn.classList.remove("botaoAtivo"));
 
-  if (modo === "pintar") {
-    document.getElementById("btnPintar").classList.add("botaoAtivo");
-  }
+  const btn = document.getElementById(
+    modo === "pintar" ? "btnPintar" : "btnApagar"
+  );
 
-  if (modo === "apagar") {
-    document.getElementById("btnApagar").classList.add("botaoAtivo");
-  }
+  if (btn) btn.classList.add("botaoAtivo");
 }
 
 function zoomMais() {
@@ -133,11 +140,10 @@ function aplicarZoom() {
 }
 
 function pegarPosicao(e) {
-
   const rect = canvasPaint.getBoundingClientRect();
 
-  let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
   return {
     x: (clientX - rect.left) * (canvasPaint.width / rect.width),
@@ -161,7 +167,6 @@ function moverDesenho(e) {
   const pos = pegarPosicao(e);
 
   if (modo === "pintar") {
-
     ctxPaint.strokeStyle = "#000";
     ctxPaint.lineWidth = 3;
     ctxPaint.lineCap = "round";
@@ -170,7 +175,6 @@ function moverDesenho(e) {
     ctxPaint.moveTo(ultimoX, ultimoY);
     ctxPaint.lineTo(pos.x, pos.y);
     ctxPaint.stroke();
-
   } else {
     ctxPaint.clearRect(pos.x - 10, pos.y - 10, 20, 20);
   }
@@ -192,9 +196,10 @@ canvasPaint.addEventListener("touchmove", moverDesenho, { passive:false });
 window.addEventListener("touchend", finalizarDesenho);
 
 function limparTudo() {
-  ctxPaint.clearRect(0, 0, canvasPaint.width, canvasPaint.height);
+  ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
 
+// ================= PDF =================
 async function salvarPDF() {
 
   const { jsPDF } = window.jspdf;
@@ -202,33 +207,35 @@ async function salvarPDF() {
 
   const captura = await html2canvas(container, { scale:4 });
 
-  const larguraPDF = 190;
-  const alturaPDF = (captura.height * larguraPDF) / captura.width;
+  const largura = 190;
+  const altura = (captura.height * largura) / captura.width;
 
   pdf.addImage(
     captura.toDataURL("image/png"),
     "PNG",
     10,
     10,
-    larguraPDF,
-    alturaPDF
+    largura,
+    altura
   );
 
   const nomePaciente =
     document.getElementById("nomePaciente")?.value || "paciente";
 
-  const data = new Date().toLocaleString("pt-BR").replace(/[/:]/g, "-");
+  const data = new Date()
+    .toLocaleString("pt-BR")
+    .replace(/[/:]/g, "-");
 
   const nomeArquivo = `${nomePaciente}_mapa_${data}.pdf`;
 
   const blob = pdf.output("blob");
   const reader = new FileReader();
 
-  reader.onloadend = async function () {
+  reader.onloadend = async () => {
 
     const base64 = reader.result.split(",")[1];
 
-    const response = await fetch("https://script.google.com/macros/s/AKfycbyKEExTAxHEbwM3z18R400ylIkEbCp2se4mbQKuA4c4zjmMm2m6fg5CuOSp4rqIMQlVLA/exec", {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbyKEExTAxHEbwM3z18R400ylIkEbCp2se4mbQKuA4c4zjmMm2m6fg5CuOSp4rqIMQlVLA/exec", {
       method: "POST",
       body: JSON.stringify({
         file: base64,
@@ -237,16 +244,18 @@ async function salvarPDF() {
       })
     });
 
-    const result = await response.json();
+    const result = await res.json();
     alert("Salvo no Drive:\n" + result.url);
   };
 
   reader.readAsDataURL(blob);
 }
 
+// ================= GIF =================
 async function salvarGIF() {
 
-  document.getElementById("btnGIF").classList.add("botaoAtivo");
+  const btn = document.getElementById("btnGIF");
+  btn.classList.add("botaoAtivo");
 
   const captura = await html2canvas(container, {
     scale:2,
@@ -258,8 +267,7 @@ async function salvarGIF() {
     gifWidth:captura.width,
     gifHeight:captura.height,
     interval:1
-
-  }, function(obj) {
+  }, (obj) => {
 
     if (!obj.error) {
       const link = document.createElement("a");
@@ -268,6 +276,6 @@ async function salvarGIF() {
       link.click();
     }
 
-    document.getElementById("btnGIF").classList.remove("botaoAtivo");
+    btn.classList.remove("botaoAtivo");
   });
 }
