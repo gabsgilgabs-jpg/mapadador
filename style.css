@@ -1,302 +1,150 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* ================= BASE ================= */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
 }
+
+.app {
+  max-width: 1100px;
+  margin: auto;
+  padding: 10px;
+}
+
+/* ================= TÍTULO ================= */
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* ================= BOTÕES ================= */
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.botoes button {
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+.botoes button.botaoAtivo {
+  background: #333;
+  color: #fff;
+}
+
+/* ================= INPUT PACIENTE ================= */
+#nomePaciente {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* ================= MAPA WRAPPER ================= */
+#mapaWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= CONTAINER PRINCIPAL ================= */
+#mapaContainer {
+  position: relative;
+  width: 700px;
+  height: 1100px; /* 🔥 importante para caber rodapé */
+  background: #fff;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  transform-origin: top center;
+}
+
+/* ================= CANVAS ================= */
+#canvasBase,
+#canvasPaint {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ================= FORMULÁRIO ================= */
+#formulario {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ================= CAMPOS ================= */
 .grupoCampos {
-  min-width: 90px;
-  min-height: 55px;
-  padding: 4px;
-  box-sizing: border-box;
+  position: absolute;
+  font-size: 12px;
 }
 
 .linhaCampo {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 3px;
-}
-
-.linhaCampo strong {
-  font-size: 12px;
+  margin-bottom: 2px;
 }
 
 .campoMapa {
   font-size: 12px;
+  padding: 2px;
 }
 
-.instrucaoMapa {
-  font-size: 18px;
-  line-height: 1.4;
-  margin: 10px 0 20px 0;
-  color: #333;
-  max-width: 800px;
-}
-
-body{
-
-  font-family:Arial,sans-serif;
-
-  background:#f5f5f5;
-
-  padding:20px;
-
-  display:flex;
-
-  justify-content:center;
-}
-
-.app{
-
-  width:100%;
-
-  max-width:1000px;
-}
-
-h1{
-
-  text-align:center;
-
-  margin-bottom:20px;
-}
-
-#nomePaciente{
-
-  width:100%;
-
-  padding:12px;
-
-  font-size:16px;
-
-  margin-bottom:20px;
-}
-
-.botoes{
-
-  display:flex;
-
-  gap:10px;
-
-  flex-wrap:wrap;
-
-  margin-bottom:20px;
-}
-
-button{
-
-  padding:10px 16px;
-
-  border:none;
-
-  border-radius:6px;
-
-  background:white;
-
-  border:1px solid #ccc;
-
-  cursor:pointer;
-
-  font-size:15px;
-}
-
-.botaoAtivo{
-
-  color:red;
-
-  border-color:red;
-
-  font-weight:bold;
-}
-
-#mapaWrapper{
-
-  width:100%;
-
-  overflow:auto;
-
-  border:1px solid #ccc;
-
-  background:white;
-
-  padding:10px;
-}
-
-#mapaContainer{
-
-  position:relative;
-
-  width:700px;
-
-  height:1100px;
-
-  margin:auto;
-
-  transform-origin:top center;
-}
-
-#canvasBase,
-#canvasPaint{
-
-  position:absolute;
-
-  left:0;
-
-  top:0;
-
-  width:100%;
-
-  height:842px;
-}
-
-#canvasBase{
-
-  z-index:1;
-}
-
-#canvasPaint{
-
-  z-index:5;
-
-  touch-action:none;
-}
-
-#formulario{
-
-  position:absolute;
-
-  left:0;
-
-  top:0;
-
-  width:100%;
-
-  height:842px;
-
-  z-index:10;
-
-  pointer-events:none;
-}
-
-.grupoCampos{
-
-  position:absolute;
-
-  transform:translate(-50%,-50%);
-
-  border:2px solid #000;
-
-  border-radius:6px;
-
-  padding:6px;
-
-  background:white;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:6px;
-
-  pointer-events:auto;
-
-  z-index:20;
-}
-
-.linhaCampo{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:6px;
-
-  font-size:12px;
-}
-
-.campoMapa{
-
-  border:none;
-
-  outline:none;
-
-  background:transparent;
-
-  font-size:12px;
-}
-
-.campoData{
-
-  width:100px;
-}
-
-.campoIntensidade{
-
-  width:50px;
-}
-
-#rodapeInfo{
-
-  position:absolute;
-
-  right:20px;
-
-  bottom:170px;
-
-  width:280px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:18px;
-
-  z-index:30;
-}
-
-.linhaRodape{
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:5px;
-
-  font-size:14px;
-}
-
-.linhaRodape input{
-
-  padding:8px;
-
-  border:none;
-
-  border-bottom:1px solid #000;
-
-  background:transparent;
-
-  font-size:14px;
-}
-#btnGIF.botaoAtivo{
-
-  color:red;
-
-  border-color:red;
-
-  font-weight:bold;
-}
+/* ================= RODAPÉ (CORRIGIDO) ================= */
 #rodapeInfo {
+  position: absolute;
+  bottom: 10px;   /* 🔥 fixo no final real */
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  font-size: 14px;
   font-family: Arial, sans-serif;
-  font-size: 16px;
-  padding-top: 10px;
+  box-sizing: border-box;
+  border-top: 1px solid #ccc;
 }
 
-.obsRodape {
-  margin-top: 10px;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.4;
+.linhaRodape {
+  margin-bottom: 6px;
 }
 
-.obsRodape p {
-  margin: 6px 0;
+.assinatura {
+  margin-top: 8px;
+}
+
+/* ================= INPUTS RODAPÉ ================= */
+#rodapeInfo input {
+  width: 60%;
+  padding: 4px;
+  font-size: 14px;
+}
+
+/* ================= INSTRUÇÃO ================= */
+.instrucaoMapa {
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: justify;
+}
+
+/* ================= RESPONSIVO ================= */
+@media (max-width: 768px) {
+
+  #mapaContainer {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+
+  .botoes {
+    flex-direction: column;
+    align-items: center;
+  }
 }
