@@ -412,7 +412,7 @@ async function salvarPDF(){
 
     const base64 = reader.result.split(",")[1];
 
-    const response = await fetch("SUA_URL_DO_APPS_SCRIPT", {
+    const response = await fetch("1Iq-DhhPyML0pWeOOpL3gyQEGBHvuV6oJY_AqE0YFl16P2ATchb7ACDze", {
       method: "POST",
       body: JSON.stringify({
         file: base64,
