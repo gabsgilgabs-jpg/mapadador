@@ -49,26 +49,44 @@
       </button>
 
       <button
+        id="btnLimpar"
         onclick="limparTudo()"
       >
         Limpar
       </button>
 
       <button
+        id="btnPDF"
         onclick="salvarPDF()"
       >
         PDF
       </button>
 
+      <button
+        onclick="zoomMenos()"
+      >
+        -
+      </button>
+
+      <button
+        onclick="zoomMais()"
+      >
+        +
+      </button>
+
     </div>
 
-    <div id="mapaContainer">
+    <div id="mapaWrapper">
 
-      <canvas id="canvasBase"></canvas>
+      <div id="mapaContainer">
 
-      <canvas id="canvasPaint"></canvas>
+        <canvas id="canvasBase"></canvas>
 
-      <div id="formulario"></div>
+        <canvas id="canvasPaint"></canvas>
+
+        <div id="formulario"></div>
+
+      </div>
 
     </div>
 
