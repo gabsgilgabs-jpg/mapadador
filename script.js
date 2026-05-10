@@ -205,11 +205,15 @@ async function salvarPDF() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF("p","mm","a4");
 
-  const captura = await html2canvas(container, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: "#fff"
-  });
+ const captura = await html2canvas(container, {
+  scale: 3,
+  useCORS: true,
+  backgroundColor: "#fff",
+  scrollX: 0,
+  scrollY: 0,
+  windowWidth: container.scrollWidth,
+  windowHeight: container.scrollHeight
+});
 
   const largura = 190;
   const altura = (captura.height * largura) / captura.width;
