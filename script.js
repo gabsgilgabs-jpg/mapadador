@@ -240,7 +240,7 @@ async function salvarPDF() {
     alert("Erro ao salvar");
   }
 
-  let zoom = 1;
+}
 
 let zoom = 1;
 
@@ -263,5 +263,4 @@ function zoomMenos() {
 function resetZoom() {
   zoom = 1;
   aplicarZoom();
-}
 }
