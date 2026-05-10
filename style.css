@@ -68,8 +68,6 @@ button{
   cursor:pointer;
 
   font-size:15px;
-
-  transition:0.2s;
 }
 
 .botaoAtivo{
@@ -150,31 +148,61 @@ button{
   pointer-events:none;
 }
 
-.campoMapa{
+.grupoCampos{
 
   position:absolute;
 
   transform:translate(-50%,-50%);
 
+  border:2px solid #000;
+
+  border-radius:6px;
+
+  padding:6px;
+
+  background:white;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
   pointer-events:auto;
 
   z-index:20;
+}
+
+.linhaCampo{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
 
   font-size:12px;
+}
 
-  border:1px solid #ccc;
+.campoMapa{
 
-  background:white;
+  border:none;
+
+  outline:none;
+
+  background:transparent;
+
+  font-size:12px;
 }
 
 .campoData{
 
-  width:105px;
+  width:100px;
 }
 
 .campoIntensidade{
 
-  width:55px;
+  width:50px;
 }
 
 #rodapeInfo{
@@ -218,9 +246,4 @@ button{
   background:transparent;
 
   font-size:14px;
-}
-
-.assinatura input{
-
-  margin-top:10px;
 }
