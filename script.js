@@ -186,12 +186,20 @@ async function salvarPDF() {
     const URL = "https://script.google.com/macros/s/SEU_DEPLOY_ID/exec";
 
     const resposta = await fetch(URL, {
-      method: "POST",
-      body: formData
-    });
+    method: "POST",
+    body: formData,
+    redirect: "follow"
+  });
 
-    const resultado = await resposta.json();
+    const texto = await resposta.text();
 
+let resultado;
+try {
+  resultado = JSON.parse(texto);
+} catch (e) {
+  console.log("Resposta bruta:", texto);
+  throw new Error("Resposta não JSON");
+}
     if (resultado.status === "ok") {
       alert("✔ Salvo no Drive!");
       console.log(resultado.url);
