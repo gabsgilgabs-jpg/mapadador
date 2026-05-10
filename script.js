@@ -150,6 +150,55 @@ canvasPaint.addEventListener("touchmove",move,{passive:false});
 window.addEventListener("touchend",up);
 
 // SALVAR (mantido base)
-async function salvarPDF(){
-  alert("Integração pronta para Apps Script");
+async function salvarPDF() {
+  try {
+
+    const nome = document.getElementById("nome")?.value || "sem_nome";
+    const data = document.getElementById("dataPreenchimento")?.value || "";
+
+    // 🔥 1. CAPTURAR MAPA (canvas + desenho)
+    const canvasFinal = document.createElement("canvas");
+    canvasFinal.width = canvasBase.width;
+    canvasFinal.height = canvasBase.height;
+
+    const ctx = canvasFinal.getContext("2d");
+
+    // base (imagem)
+    ctx.drawImage(canvasBase, 0, 0);
+
+    // desenho do usuário
+    ctx.drawImage(canvasPaint, 0, 0);
+
+    // 🔥 2. GERAR IMAGEM (PNG)
+    const imagemBase64 = canvasFinal.toDataURL("image/png");
+
+    // 🔥 3. DOWNLOAD LOCAL
+    const link = document.createElement("a");
+    link.href = imagemBase64;
+    link.download = `mapa_dor_${nome}.png`;
+    link.click();
+
+    // 🔥 4. ENVIAR PARA GOOGLE DRIVE
+    const resposta = await fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        nome,
+        data,
+        imagem: imagemBase64
+      })
+    });
+
+    const texto = await resposta.text();
+    const resultado = JSON.parse(texto);
+
+    if (resultado.status === "ok") {
+      alert("PDF salvo localmente e enviado ao Drive!");
+    } else {
+      alert("Erro ao enviar ao Drive: " + resultado.message);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao gerar PDF");
+  }
 }
