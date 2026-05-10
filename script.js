@@ -184,17 +184,22 @@ async function salvarPDF() {
     link.click();
 
     // upload seguro (não trava interface)
-    fetch("https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec", {
-      method: "POST",
-      body: JSON.stringify({
-        nome,
-        data,
-        imagem: img
-      })
-    }).catch(err => console.warn("Upload falhou:", err));
+    const resposta = await fetch(URL, {
+  method: "POST",
+  body: JSON.stringify({
+    nome,
+    data,
+    imagem: img
+  })
+});
 
-  } catch (err) {
-    console.error(err);
-    alert("Erro ao gerar PDF");
-  }
+const texto = await resposta.text();
+
+let resultado;
+try {
+  resultado = JSON.parse(texto);
+} catch (e) {
+  console.log("Resposta bruta:", texto);
+  alert("Servidor respondeu, mas não em JSON");
+  return;
 }
