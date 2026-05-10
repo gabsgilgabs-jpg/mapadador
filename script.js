@@ -76,34 +76,33 @@ imagem.onload = ()=>{
   criarCampos();
 
   definirModo("pintar");
+
+  preencherDataAtual();
 };
+
+function preencherDataAtual(){
+
+  const hoje = new Date();
+
+  const data =
+    hoje.toISOString().split("T")[0];
+
+  document.getElementById(
+    "dataPreenchimento"
+  ).value = data;
+}
 
 function configurarCanvas(){
 
-  const proporcao =
-    imagem.height /
-    imagem.width;
-
   const largura = 700;
 
-  const altura =
-    largura * proporcao;
-
-  container.style.height =
-    altura + "px";
+  const altura = 842;
 
   canvasBase.width = largura;
   canvasBase.height = altura;
 
   canvasPaint.width = largura;
   canvasPaint.height = altura;
-
-  ctxBase.clearRect(
-    0,
-    0,
-    largura,
-    altura
-  );
 
   ctxBase.drawImage(
     imagem,
@@ -368,25 +367,9 @@ function limparTudo(){
     canvasPaint.width,
     canvasPaint.height
   );
-
-  document
-    .getElementById("btnLimpar")
-    .classList.add("botaoAtivo");
-
-  setTimeout(()=>{
-
-    document
-      .getElementById("btnLimpar")
-      .classList.remove("botaoAtivo");
-
-  },500);
 }
 
 async function salvarPDF(){
-
-  document
-    .getElementById("btnPDF")
-    .classList.add("botaoAtivo");
 
   const { jsPDF } =
     window.jspdf;
@@ -427,12 +410,4 @@ async function salvarPDF(){
   pdf.save(
     "mapa-da-dor.pdf"
   );
-
-  setTimeout(()=>{
-
-    document
-      .getElementById("btnPDF")
-      .classList.remove("botaoAtivo");
-
-  },500);
 }
