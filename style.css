@@ -4,22 +4,23 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* CENTRALIZA MAPA */
+/* CONTAINER GERAL */
 #containerPai {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
 
-/* ÁREA DO MAPA */
+/* MAPA FIXO (BASE DO SISTEMA) */
 #mapaContainer {
   position: relative;
   width: 700px;
   height: 842px;
   border: 1px solid #ccc;
+  overflow: hidden; /* 🔥 EVITA VAZAMENTO */
 }
 
-/* CANVAS */
+/* CANVAS ALINHADOS */
 #canvasBase,
 #canvasPaint {
   position: absolute;
@@ -27,6 +28,7 @@ body {
   left: 0;
 }
 
+/* ordem de camadas */
 #canvasBase { z-index: 1; }
 #canvasPaint { z-index: 2; }
 
@@ -35,13 +37,13 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 700px;
+  height: 842px;
   z-index: 3;
   pointer-events: none;
 }
 
-/* CAMPOS */
+/* CAMPOS FIXOS NO MAPA */
 .grupoCampos {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -49,6 +51,7 @@ body {
   font-size: 12px;
 }
 
+/* LINHAS DOS CAMPOS */
 .linhaCampo {
   display: flex;
   gap: 5px;
@@ -66,7 +69,7 @@ body {
   padding: 6px 10px;
 }
 
-/* RODAPÉ */
+/* RODAPÉ SEM INTERFERIR NO MAPA */
 #rodape {
   text-align: center;
   margin-top: 20px;
