@@ -242,30 +242,26 @@ async function salvarPDF() {
 
   let zoom = 1;
 
+let zoom = 1;
+
+function aplicarZoom() {
+  const mapa = document.getElementById("mapaContainer");
+
+  mapa.style.transform = `scale(${zoom})`;
+}
+
 function zoomMais() {
   zoom += 0.1;
-
-  document.getElementById("mapaContainer").style.transform =
-    `scale(${zoom})`;
-
-  document.getElementById("mapaContainer").style.transformOrigin =
-    "top center";
+  aplicarZoom();
 }
 
 function zoomMenos() {
   zoom = Math.max(0.5, zoom - 0.1);
-
-  document.getElementById("mapaContainer").style.transform =
-    `scale(${zoom})`;
-
-  document.getElementById("mapaContainer").style.transformOrigin =
-    "top center";
+  aplicarZoom();
 }
 
 function resetZoom() {
   zoom = 1;
-
-  document.getElementById("mapaContainer").style.transform =
-    "scale(1)";
+  aplicarZoom();
 }
 }
