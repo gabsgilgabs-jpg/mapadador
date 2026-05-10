@@ -35,12 +35,11 @@ let zoom = 1;
 const imagem = new Image();
 imagem.src = "./img/pessoa.png";
 
-// ================= INIT SEGURO =================
-window.addEventListener("load", iniciarSistema);
+// ================= INIT =================
+window.addEventListener("load", init);
+imagem.onload = init;
 
-imagem.onload = iniciarSistema;
-
-function iniciarSistema() {
+function init() {
   configurarCanvas();
   criarCampos();
   definirModo("pintar");
@@ -57,7 +56,7 @@ function configurarCanvas() {
   canvasPaint.width = w;
   canvasPaint.height = h;
 
-  ctxBase.clearRect(0, 0, w, h);
+  ctxBase.clearRect(0,0,w,h);
 
   if (imagem.complete) {
     ctxBase.drawImage(imagem, 0, 0, w, h);
@@ -83,7 +82,7 @@ function criarCampos() {
       <div class="linhaCampo">
         <strong>I:</strong>
         <select class="campoMapa campoIntensidade">
-          ${Array.from({length:11}, (_,i)=>`<option>${i}</option>`).join("")}
+          ${Array.from({length:11},(_,i)=>`<option>${i}</option>`).join("")}
         </select>
       </div>
     `;
@@ -115,84 +114,78 @@ function definirModo(m) {
 // ================= ZOOM =================
 function zoomMais() {
   zoom += 0.1;
-  aplicarZoom();
+  container.style.transform = `scale(${zoom})`;
 }
 
 function zoomMenos() {
   zoom = Math.max(0.5, zoom - 0.1);
-  aplicarZoom();
-}
-
-function aplicarZoom() {
   container.style.transform = `scale(${zoom})`;
 }
 
 // ================= POSIÇÃO =================
-function pegarPosicao(e) {
-  const rect = canvasPaint.getBoundingClientRect();
+function pos(e) {
+  const r = canvasPaint.getBoundingClientRect();
 
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
 
   return {
-    x: (x - rect.left) * (canvasPaint.width / rect.width),
-    y: (y - rect.top) * (canvasPaint.height / rect.height)
+    x:(x-r.left)*(canvasPaint.width/r.width),
+    y:(y-r.top)*(canvasPaint.height/r.height)
   };
 }
 
 // ================= DESENHO =================
-function iniciar(e) {
+function down(e){
   e.preventDefault();
   desenhando = true;
 
-  const p = pegarPosicao(e);
+  const p = pos(e);
   ultimoX = p.x;
   ultimoY = p.y;
 }
 
-function mover(e) {
-  if (!desenhando) return;
+function move(e){
+  if(!desenhando) return;
   e.preventDefault();
 
-  const p = pegarPosicao(e);
+  const p = pos(e);
 
-  ctxPaint.strokeStyle = "#000";
-  ctxPaint.lineWidth = 3;
-  ctxPaint.lineCap = "round";
+  ctxPaint.strokeStyle="#000";
+  ctxPaint.lineWidth=3;
+  ctxPaint.lineCap="round";
 
-  if (modo === "pintar") {
+  if(modo==="pintar"){
     ctxPaint.beginPath();
-    ctxPaint.moveTo(ultimoX, ultimoY);
-    ctxPaint.lineTo(p.x, p.y);
+    ctxPaint.moveTo(ultimoX,ultimoY);
+    ctxPaint.lineTo(p.x,p.y);
     ctxPaint.stroke();
-  } else {
-    ctxPaint.clearRect(p.x - 10, p.y - 10, 20, 20);
+  }else{
+    ctxPaint.clearRect(p.x-10,p.y-10,20,20);
   }
 
-  ultimoX = p.x;
-  ultimoY = p.y;
+  ultimoX=p.x;
+  ultimoY=p.y;
 }
 
-function finalizar() {
-  desenhando = false;
+function up(){
+  desenhando=false;
 }
 
-// mouse
-canvasPaint.addEventListener("mousedown", iniciar);
-canvasPaint.addEventListener("mousemove", mover);
-window.addEventListener("mouseup", finalizar);
+canvasPaint.addEventListener("mousedown",down);
+canvasPaint.addEventListener("mousemove",move);
+window.addEventListener("mouseup",up);
 
-// touch
-canvasPaint.addEventListener("touchstart", iniciar, { passive:false });
-canvasPaint.addEventListener("touchmove", mover, { passive:false });
-window.addEventListener("touchend", finalizar);
+canvasPaint.addEventListener("touchstart",down,{passive:false});
+canvasPaint.addEventListener("touchmove",move,{passive:false});
+window.addEventListener("touchend",up);
 
 // ================= LIMPAR =================
-function limparTudo() {
-  ctxPaint.clearRect(0, 0, canvasPaint.width, canvasPaint.height);
+function limparTudo(){
+  ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
 
-// ================= PDF PROFISSIONAL ESTÁVEL =================
+// ================= PDF + DRIVE =================
 async function salvarPDF() {
 
   const { jsPDF } = window.jspdf;
@@ -205,102 +198,59 @@ async function salvarPDF() {
     document.getElementById("dataPreenchimento")?.value || "";
 
   // ================= CABEÇALHO =================
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont("helvetica","bold");
   pdf.setFontSize(16);
-  pdf.text("MAPA DA DOR", 105, 15, { align: "center" });
+  pdf.text("MAPA DA DOR",105,15,{align:"center"});
 
   pdf.setFontSize(11);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`Paciente: ${nome}`, 14, 25);
-  pdf.text(`Data: ${data}`, 160, 25);
+  pdf.setFont("helvetica","normal");
+  pdf.text(`Paciente: ${nome}`,14,25);
+  pdf.text(`Data: ${data}`,160,25);
 
-  pdf.line(10, 30, 200, 30);
+  pdf.line(10,30,200,30);
 
-  // ================= CAPTURA ESTÁVEL =================
-  const captura = await html2canvas(container, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: "#fff",
-    scrollX: 0,
-    scrollY: 0,
-    windowWidth: container.scrollWidth,
-    windowHeight: container.scrollHeight
+  // ================= MAPA =================
+  const captura = await html2canvas(container,{
+    scale:3,
+    useCORS:true,
+    backgroundColor:"#fff"
   });
 
   const img = captura.toDataURL("image/png");
 
   const largura = 190;
-  const altura = (captura.height * largura) / captura.width;
+  const altura = (captura.height*largura)/captura.width;
 
-  pdf.addImage(img, "PNG", 10, 35, largura, altura);
+  pdf.addImage(img,"PNG",10,35,largura,altura);
 
-  // ================= RODAPÉ CLÍNICO =================
+  // ================= RODAPÉ =================
   const y = 165;
 
-  pdf.line(10, y, 200, y);
+  pdf.line(10,y,200,y);
 
   pdf.setFontSize(11);
 
-  pdf.text(
-    "Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",
-    14,
-    y + 10
-  );
+  pdf.text("Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",14,y+10);
+  pdf.text("Marque com círculo o local da principal queixa de dor.",14,y+18);
+  pdf.text("Descreva o que piora ou produz sua dor:",14,y+28);
+  pdf.text("Descreva o que melhora sua dor:",14,y+36);
+  pdf.text("A sua dor é constante? Sim (  ) Não (  )",14,y+46);
 
-  pdf.text(
-    "Marque com círculo o local da principal queixa de dor.",
-    14,
-    y + 18
-  );
+  // ================= SALVAR LOCAL =================
+  const fileName = `${nome}_mapa_${data}.pdf`;
+  const base64 = pdf.output("datauristring").split(",")[1];
 
-  pdf.text(
-    "Descreva o que piora ou produz sua dor:",
-    14,
-    y + 28
-  );
-
-  pdf.text(
-    "Descreva o que melhora sua dor:",
-    14,
-    y + 36
-  );
-
-  pdf.text(
-    "A sua dor é constante? Sim (  ) Não (  )",
-    14,
-    y + 46
-  );
-
-  // ================= SALVAR =================
-  const file = new Date().toISOString().replace(/[:.]/g,"-");
-  pdf.save(`${nome}_mapa_${file}.pdf`);
-}
-
-// ================= GIF =================
-async function salvarGIF() {
-
-  const btn = document.getElementById("btnGIF");
-  btn.classList.add("botaoAtivo");
-
-  const captura = await html2canvas(container, {
-    scale: 2,
-    useCORS: true
+  // ================= ENVIAR PARA DRIVE =================
+  const response = await fetch("SUA_URL_DO_APPS_SCRIPT_AQUI", {
+    method:"POST",
+    body: JSON.stringify({
+      nome:nome,
+      fileName:fileName,
+      file:base64
+    })
   });
 
-  gifshot.createGIF({
-    images: [captura.toDataURL("image/png")],
-    gifWidth: captura.width,
-    gifHeight: captura.height,
-    interval: 1
-  }, (obj) => {
+  const result = await response.json();
 
-    if (!obj.error) {
-      const a = document.createElement("a");
-      a.href = obj.image;
-      a.download = "mapa-da-dor.gif";
-      a.click();
-    }
-
-    btn.classList.remove("botaoAtivo");
-  });
+  alert("Salvo no Drive!\n" + result.url);
 }
