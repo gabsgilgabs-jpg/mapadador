@@ -163,20 +163,17 @@ window.addEventListener("touchend", up);
 async function salvarPDF() {
   try {
     const nome = document.getElementById("nome")?.value || "sem_nome";
-    const data = document.getElementById("dataPreenchimento")?.value || "";
 
-    // canvas final
-    const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = canvasBase.width;
-    finalCanvas.height = canvasBase.height;
+    const container = document.getElementById("mapaContainer");
 
-    const ctx = finalCanvas.getContext("2d");
-    ctx.drawImage(canvasBase, 0, 0);
-    ctx.drawImage(canvasPaint, 0, 0);
+    const canvas = await html2canvas(container, {
+      backgroundColor: null,
+      scale: 2
+    });
 
-    const img = finalCanvas.toDataURL("image/png");
+    const img = canvas.toDataURL("image/png");
 
-    // download local imediato
+    // download local
     const link = document.createElement("a");
     link.href = img;
     link.download = `mapa_dor_${nome}.png`;
@@ -188,30 +185,19 @@ async function salvarPDF() {
       method: "POST",
       body: JSON.stringify({
         nome,
-        data,
         imagem: img
       })
     });
-const texto = await resposta.text();
 
-    console.log("Resposta raw:", texto);
-
-    let resultado;
-    try {
-      resultado = JSON.parse(texto);
-    } catch (e) {
-      throw new Error("Resposta inválida do servidor");
-    }
+    const texto = await resposta.text();
+    const resultado = JSON.parse(texto);
 
     if (resultado.status === "ok") {
-      alert("✔ Salvo no Drive com sucesso!");
-      console.log("Arquivo:", resultado.url);
-    } else {
-      throw new Error(resultado.message || "Erro desconhecido");
+      alert("✔ Salvo com sucesso!");
     }
 
   } catch (err) {
-    console.error("SALVAR ERRO:", err);
-    alert("Falha ao salvar no Drive");
+    console.error(err);
+    alert("Erro ao gerar PDF");
   }
 }
