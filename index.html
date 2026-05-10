@@ -5,10 +5,7 @@
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Mapa da Dor</title>
 
@@ -21,88 +18,72 @@
 </head>
 
 <body>
-  
+
 <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
-  
-  <div class="app">
 
-    <h1>Mapa da Dor</h1>
+<div class="app">
 
-    <input
-      type="text"
-      id="nomePaciente"
-      placeholder="Nome do paciente"
-    >
+  <h1>Mapa da Dor</h1>
 
-    <div class="botoes">
-<button
-  id="btnGIF"
-  onclick="salvarGIF()"
-     >
-       GIF
-      </button>
-      
-      <button
-        id="btnPintar"
-        onclick="definirModo('pintar')"
-      >
-        Pintar
-      </button>
+  <!-- ✅ CAMPO CORRETO DO PACIENTE (USADO NO JS) -->
+  <input
+    type="text"
+    id="nomePaciente"
+    placeholder="Nome do paciente"
+  >
 
-      <button
-        id="btnApagar"
-        onclick="definirModo('apagar')"
-      >
-        Apagar
-      </button>
+  <div class="botoes">
 
-      <button
-        id="btnLimpar"
-        onclick="limparTudo()"
-      >
-        Limpar
-      </button>
+    <button id="btnGIF" onclick="salvarGIF()">GIF</button>
 
-      <button
-        id="btnPDF"
-        onclick="salvarPDF()"
-      >
-        PDF
-      </button>
+    <button id="btnPintar" onclick="definirModo('pintar')">
+      Pintar
+    </button>
 
-      <button onclick="zoomMenos()">-</button>
+    <button id="btnApagar" onclick="definirModo('apagar')">
+      Apagar
+    </button>
 
-      <button onclick="zoomMais()">+</button>
+    <button id="btnLimpar" onclick="limparTudo()">
+      Limpar
+    </button>
 
-    </div>
+    <button id="btnPDF" onclick="salvarPDF()">
+      PDF
+    </button>
 
-    <div id="mapaWrapper">
+    <button onclick="zoomMenos()">-</button>
 
-      <div id="mapaContainer">
+    <button onclick="zoomMais()">+</button>
 
-        <canvas id="canvasBase"></canvas>
+  </div>
 
-        <canvas id="canvasPaint"></canvas>
+  <div id="mapaWrapper">
 
-        <div id="formulario"></div>
+    <div id="mapaContainer">
 
-        <div id="rodapeInfo">
+      <canvas id="canvasBase"></canvas>
 
-          <div class="linhaRodape">
-            <strong>Data:</strong>
-            <input type="date" id="dataPreenchimento">
-          </div>
+      <canvas id="canvasPaint"></canvas>
 
-          <div class="linhaRodape">
-            <strong>Paciente:</strong>
-            <input type="text" id="nomeRodape">
-          </div>
+      <div id="formulario"></div>
 
-          <div class="linhaRodape assinatura">
-            <strong>Assinatura:</strong>
-            <input type="text" id="assinatura">
-          </div>
+      <!-- 📌 RODAPÉ (NÃO MEXER AQUI) -->
+      <div id="rodapeInfo">
 
+        <div class="linhaRodape">
+          <strong>Data:</strong>
+          <input type="date" id="dataPreenchimento">
+        </div>
+
+        <div class="linhaRodape">
+          <strong>Paciente:</strong>
+          <input type="text" id="nomeRodape">
+        </div>
+
+        <div class="linhaRodape assinatura">
+          <strong>Assinatura:</strong>
+          <input type="text" id="assinatura">
         </div>
 
       </div>
@@ -110,8 +91,10 @@
     </div>
 
   </div>
- 
-  <script src="script.js"></script>
+
+</div>
+
+<script src="script.js"></script>
 
 </body>
 </html>
