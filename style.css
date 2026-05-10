@@ -2,12 +2,7 @@ body {
   margin: 0;
   font-family: Arial;
 }
-.grupoCampos {
-  background: transparent;
-}
-input, select {
-  background: transparent;
-}
+
 /* CABEÇALHO */
 #cabecalho {
   text-align: center;
@@ -27,12 +22,13 @@ input, select {
   padding: 5px;
 }
 
-/* MAPA */
+/* CONTAINER */
 #containerPai {
   display: flex;
   justify-content: center;
 }
 
+/* MAPA */
 #mapaContainer {
   position: relative;
   width: 700px;
@@ -40,7 +36,7 @@ input, select {
   border: 1px solid #ccc;
 }
 
-/* CANVAS SEM BLOQUEIO */
+/* CANVAS (IMPORTANTE: SEM BLOQUEIO) */
 #canvasBase,
 #canvasPaint {
   position: absolute;
@@ -49,7 +45,7 @@ input, select {
   z-index: 1;
 }
 
-/* IMPORTANTE: formulário NÃO pode bloquear eventos do canvas */
+/* FORMULÁRIO SOBRE O MAPA */
 #formulario {
   position: absolute;
   top: 0;
@@ -60,25 +56,30 @@ input, select {
   pointer-events: none;
 }
 
-/* inputs voltam a ser clicáveis */
+/* CAMPOS */
 .grupoCampos {
   position: absolute;
   transform: translate(-50%, -50%);
   font-size: 12px;
   pointer-events: auto;
+  background: transparent;
 }
 
-.grupoCampos {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font-size: 12px;
+/* INPUTS */
+input, select {
+  background: transparent;
 }
-
 
 /* BOTÕES */
 .botoes {
   text-align: center;
   margin-top: 10px;
+}
+
+.botoes button.botaoAtivo {
+  color: red;
+  font-weight: bold;
+  border: 1px solid red;
 }
 
 /* RODAPÉ */
@@ -88,9 +89,4 @@ input, select {
   padding: 10px;
   font-size: 12px;
   color: #666;
-}
-.botoes button.botaoAtivo {
-  color: red;
-  font-weight: bold;
-  border: 1px solid red;
 }
