@@ -35,11 +35,8 @@ let zoom = 1;
 const imagem = new Image();
 imagem.src = "./img/pessoa.png";
 
-// ================= INICIALIZAÇÃO SEGURA =================
-window.addEventListener("load", () => {
-  iniciarSistema();
-});
-
+// ================= INICIALIZAÇÃO =================
+window.addEventListener("load", iniciarSistema);
 imagem.onload = iniciarSistema;
 imagem.onerror = iniciarSistema;
 
@@ -100,9 +97,7 @@ function criarCampos() {
 // ================= DATA =================
 function preencherDataAtual() {
   const el = document.getElementById("dataPreenchimento");
-  if (el) {
-    el.value = new Date().toISOString().split("T")[0];
-  }
+  if (el) el.value = new Date().toISOString().split("T")[0];
 }
 
 // ================= MODO =================
@@ -199,100 +194,87 @@ function limparTudo() {
   ctxPaint.clearRect(0,0,canvasPaint.width,canvasPaint.height);
 }
 
-// ================= PDF =================
+// ================= PDF PROFISSIONAL =================
 async function salvarPDF() {
 
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  // ================================
-  // 1. esconder campos vazios
-  // ================================
-  const inputsData = document.querySelectorAll(".campoData");
-  const selectsInt = document.querySelectorAll(".campoIntensidade");
-
-  const ocultos = [];
-
-  function esconderSeVazio(el) {
-    if (!el.value || el.value === "0") {
-      ocultos.push(el);
-      el.dataset.oldDisplay = el.style.display;
-      el.style.display = "none";
-    }
-  }
-
-  inputsData.forEach(esconderSeVazio);
-  selectsInt.forEach(esconderSeVazio);
-
-  // ================================
-  // 2. captura do mapa
-  // ================================
-  const captura = await html2canvas(container, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: "#fff",
-    scrollX: 0,
-    scrollY: 0
-  });
-
-  // ================================
-  // 3. restaurar campos
-  // ================================
-  ocultos.forEach(el => {
-    el.style.display = el.dataset.oldDisplay || "";
-  });
-
-  // ================================
-  // 4. gerar PDF
-  // ================================
-  const largura = 190;
-  const altura = (captura.height * largura) / captura.width;
-
-  pdf.addImage(
-    captura.toDataURL("image/png"),
-    "PNG",
-    10,
-    10,
-    largura,
-    altura
-  );
+  const pdf = new jsPDF("p","mm","a4");
 
   const nome =
-    document.getElementById("nomePaciente")?.value || "paciente";
+    document.getElementById("nomePaciente")?.value || "Paciente";
 
-  const data = new Date().toISOString().replace(/[:.]/g, "-");
+  const data =
+    document.getElementById("dataPreenchimento")?.value || "";
 
-  pdf.save(`${nome}_mapa_${data}.pdf`);
-}
+  // ================= CABEÇALHO =================
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.text("MAPA DA DOR", 105, 15, { align: "center" });
 
- const captura = await html2canvas(container, {
-  scale: 3,
-  useCORS: true,
-  backgroundColor: "#fff",
-  scrollX: 0,
-  scrollY: 0,
-  windowWidth: container.scrollWidth,
-  windowHeight: container.scrollHeight
-});
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Paciente: ${nome}`, 14, 25);
+  pdf.text(`Data: ${data}`, 160, 25);
 
+  pdf.line(10, 30, 200, 30);
+
+  // ================= MAPA =================
   const largura = 190;
-  const altura = (captura.height * largura) / captura.width;
+  const alturaMapa = 120;
 
-  pdf.addImage(
-    captura.toDataURL("image/png"),
-    "PNG",
-    10,
-    10,
-    largura,
-    altura
+  const canvasTemp = document.createElement("canvas");
+  canvasTemp.width = canvasPaint.width;
+  canvasTemp.height = canvasPaint.height;
+
+  const ctxTemp = canvasTemp.getContext("2d");
+
+  ctxTemp.drawImage(canvasBase, 0, 0);
+  ctxTemp.drawImage(canvasPaint, 0, 0);
+
+  const img = canvasTemp.toDataURL("image/png");
+
+  pdf.addImage(img, "PNG", 10, 35, largura, alturaMapa);
+
+  // ================= RODAPÉ =================
+  const y = 165;
+
+  pdf.line(10, y, 200, y);
+
+  pdf.setFontSize(11);
+
+  pdf.text(
+    "Obs.: indique com flechas os locais do início (D) e intensidade (I) da dor.",
+    14,
+    y + 10
   );
 
-  const nome =
-    document.getElementById("nomePaciente")?.value || "paciente";
+  pdf.text(
+    "Marque com círculo o local da principal queixa de dor.",
+    14,
+    y + 18
+  );
 
-  const data = new Date().toISOString().replace(/[:.]/g,"-");
+  pdf.text(
+    "Descreva o que piora ou produz sua dor:",
+    14,
+    y + 28
+  );
 
-  pdf.save(`${nome}_mapa_${data}.pdf`);
+  pdf.text(
+    "Descreva o que melhora sua dor:",
+    14,
+    y + 36
+  );
+
+  pdf.text(
+    "A sua dor é constante? Sim (  ) Não (  )",
+    14,
+    y + 46
+  );
+
+  // ================= SALVAR =================
+  const dataFile = new Date().toISOString().replace(/[:.]/g,"-");
+  pdf.save(`${nome}_mapa_${dataFile}.pdf`);
 }
 
 // ================= GIF =================
