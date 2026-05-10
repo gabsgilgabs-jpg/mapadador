@@ -411,3 +411,51 @@ async function salvarPDF(){
     "mapa-da-dor.pdf"
   );
 }
+async function salvarGIF(){
+
+  document
+    .getElementById("btnGIF")
+    .classList.add("botaoAtivo");
+
+  const captura =
+    await html2canvas(
+      container,
+      {
+        scale:2,
+        useCORS:true
+      }
+    );
+
+  const imagemBase64 =
+    captura.toDataURL("image/png");
+
+  gifshot.createGIF({
+
+    images:[imagemBase64],
+
+    gifWidth:captura.width,
+
+    gifHeight:captura.height,
+
+    interval:1
+
+  },function(obj){
+
+    if(!obj.error){
+
+      const link =
+        document.createElement("a");
+
+      link.href = obj.image;
+
+      link.download =
+        "mapa-da-dor.gif";
+
+      link.click();
+    }
+
+    document
+      .getElementById("btnGIF")
+      .classList.remove("botaoAtivo");
+  });
+}
