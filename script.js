@@ -166,6 +166,7 @@ async function salvarPDF() {
     const nome = document.getElementById("nome")?.value || "sem_nome";
     const data = document.getElementById("dataPreenchimento")?.value || "";
 
+    // monta canvas final
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = canvasBase.width;
     finalCanvas.height = canvasBase.height;
@@ -177,43 +178,44 @@ async function salvarPDF() {
 
     const img = finalCanvas.toDataURL("image/png");
 
-    // download local (não trava nada)
+    // download local imediato
     const link = document.createElement("a");
     link.href = img;
     link.download = `mapa_dor_${nome}.png`;
     link.click();
 
-    // 🔥 IMPORTANTE: coloque sua URL real aqui
-    const URL = "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+    // envio para Drive
+    const URL = "https://script.google.com/macros/s/SEU_ID/exec";
 
     const resposta = await fetch(URL, {
-  method: "POST",
-  body: JSON.stringify({
-    nome,
-    data,
-    imagem: img
-  })
-});
+      method: "POST",
+      body: JSON.stringify({
+        nome,
+        data,
+        imagem: img
+      })
+    });
 
     const texto = await resposta.text();
 
     let resultado;
     try {
       resultado = JSON.parse(texto);
-    } catch (e) {
-      console.log("Resposta bruta:", texto);
-      alert("Servidor respondeu, mas não em JSON");
+    } catch {
+      console.log("Resposta não JSON:", texto);
+      alert("Servidor respondeu, mas não conseguiu processar");
       return;
     }
 
     if (resultado.status === "ok") {
-      alert("Salvo no Drive com sucesso!");
+      alert("✔ Salvo no Drive com sucesso!\n\nArquivo: " + resultado.arquivo);
+      console.log("URL do arquivo:", resultado.url);
     } else {
-      alert("Erro no servidor");
+      alert("Erro: " + resultado.message);
     }
 
   } catch (err) {
-    console.error("Erro PDF:", err);
-    alert("Erro ao gerar PDF");
+    console.error("Erro salvarPDF:", err);
+    alert("Falha ao salvar (ver console)");
   }
 }
