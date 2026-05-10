@@ -534,3 +534,57 @@ function resetZoom(){
   aplicarZoom();
 
 }
+// ================= ZOOM TOUCH =================
+
+let distanciaInicial = 0;
+let zoomInicial = 1;
+
+function distanciaToque(t1, t2) {
+
+  const dx = t1.clientX - t2.clientX;
+  const dy = t1.clientY - t2.clientY;
+
+  return Math.sqrt(dx * dx + dy * dy);
+
+}
+
+canvasPaint.addEventListener("touchstart", function(e){
+
+  if(e.touches.length === 2){
+
+    e.preventDefault();
+
+    distanciaInicial = distanciaToque(
+      e.touches[0],
+      e.touches[1]
+    );
+
+    zoomInicial = zoom;
+
+  }
+
+}, { passive:false });
+
+canvasPaint.addEventListener("touchmove", function(e){
+
+  if(e.touches.length === 2){
+
+    e.preventDefault();
+
+    const novaDistancia = distanciaToque(
+      e.touches[0],
+      e.touches[1]
+    );
+
+    zoom = zoomInicial * (
+      novaDistancia / distanciaInicial
+    );
+
+    // limite mínimo e máximo
+    zoom = Math.max(0.5, Math.min(3, zoom));
+
+    aplicarZoom();
+
+  }
+
+}, { passive:false });
