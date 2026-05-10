@@ -192,3 +192,26 @@ async function salvarPDF() {
         imagem: img
       })
     });
+const texto = await resposta.text();
+
+    console.log("Resposta raw:", texto);
+
+    let resultado;
+    try {
+      resultado = JSON.parse(texto);
+    } catch (e) {
+      throw new Error("Resposta inválida do servidor");
+    }
+
+    if (resultado.status === "ok") {
+      alert("✔ Salvo no Drive com sucesso!");
+      console.log("Arquivo:", resultado.url);
+    } else {
+      throw new Error(resultado.message || "Erro desconhecido");
+    }
+
+  } catch (err) {
+    console.error("SALVAR ERRO:", err);
+    alert("Falha ao salvar no Drive");
+  }
+}
