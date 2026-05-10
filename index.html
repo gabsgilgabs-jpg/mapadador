@@ -1,118 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-br">
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Mapa da Dor</title>
-
+  <meta charset="UTF-8" />
+  <title>Mapa Dor</title>
   <link rel="stylesheet" href="style.css">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 </head>
 
 <body>
 
-<script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+<div id="containerPai">
 
-<div class="app">
+  <div id="mapaContainer">
 
- <h1>Mapa da Dor</h1>
+    <canvas id="canvasBase"></canvas>
+    <canvas id="canvasPaint"></canvas>
 
-
-
-  <!-- ✅ CAMPO CORRETO DO PACIENTE (USADO NO JS) -->
-  <input
-    type="text"
-    id="nomePaciente"
-    placeholder="Nome do paciente"
-  >
-
-  <div class="botoes">
-
-    <button id="btnGIF" onclick="salvarGIF()">GIF</button>
-
-    <button id="btnPintar" onclick="definirModo('pintar')">
-      Pintar
-    </button>
-
-    <button id="btnApagar" onclick="definirModo('apagar')">
-      Apagar
-    </button>
-
-    <button id="btnLimpar" onclick="limparTudo()">
-      Limpar
-    </button>
-
-    <button id="btnPDF" onclick="salvarPDF()">
-      PDF
-    </button>
-
-    <button onclick="zoomMenos()">-</button>
-
-    <button onclick="zoomMais()">+</button>
-
-  </div>
-  <p class="instrucaoMapa">
-  Pinte no interior dos diagramas abaixo o(s) local(is) onde você sente dor atualmente. Nos quadros ao lado da figura escreva a data (D) de início da dor, em meses (m) ou anos (a) e a intensidade (I) segundo a escala abaixo:
-</p>
-  
-  <div id="mapaWrapper">
-
-    <div id="mapaContainer">
-
-      <canvas id="canvasBase"></canvas>
-
-      <canvas id="canvasPaint"></canvas>
-
-      <div id="formulario"></div>
-
-      <!-- 📌 RODAPÉ (NÃO MEXER AQUI) -->
-      <div id="rodapeInfo">
-
-        <div class="linhaRodape">
-          <strong>Data:</strong>
-          <input type="date" id="dataPreenchimento">
-        </div>
-
-        <div class="linhaRodape">
-          <strong>Paciente:</strong>
-          <input type="text" id="nomeRodape">
-        </div>
-
-        <div class="linhaRodape assinatura">
-          <strong>Assinatura:</strong>
-          <input type="text" id="assinatura">
-
-           <!-- 📌 NOVO TEXTO (OBSERVAÇÕES PDF) -->
-  <div class="obsRodape">
-    <p>
-      Obs.: indique com flechas os locais a que se referem o início (D) e a intensidade (I) das dores acima. Marque com um círculo o local da sua principal queixa de dor.
-    <p>
-      Descreva o que piora ou produz a sua dor:
-    
-    <p>
-      Descreva o que melhora a sua dor:
-    
-    <p>
-      A sua dor é constante? Sim (  ) Não (  )
-    </p>
-  </div>
-        </div>
-
-      </div>
-
-    </div>
+    <div id="formulario"></div>
 
   </div>
 
 </div>
+
+<!-- BOTÕES (se tiver) -->
+<div class="botoes">
+  <button id="btnPintar" onclick="definirModo('pintar')">Pintar</button>
+  <button id="btnApagar" onclick="definirModo('apagar')">Apagar</button>
+  <button onclick="limparTudo()">Limpar</button>
+  <button onclick="salvarPDF()">PDF</button>
+</div>
+
+<!-- RODAPÉ FORA DO MAPA -->
+<footer id="rodape">
+  Sistema Mapa Dor
+</footer>
 
 <script src="script.js"></script>
 
