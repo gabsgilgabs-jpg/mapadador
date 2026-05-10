@@ -63,6 +63,8 @@ let ultimoY = 0;
 
 let modo = "pintar";
 
+let zoom = 1;
+
 const imagem = new Image();
 
 imagem.src = "./img/pessoa.png";
@@ -76,44 +78,13 @@ imagem.onload = ()=>{
   definirModo("pintar");
 };
 
-window.addEventListener(
-  "resize",
-  ()=>{
-
-    const desenhoAtual =
-      canvasPaint.toDataURL();
-
-    configurarCanvas();
-
-    criarCampos();
-
-    const imgTemp =
-      new Image();
-
-    imgTemp.onload = ()=>{
-
-      ctxPaint.drawImage(
-        imgTemp,
-        0,
-        0,
-        canvasPaint.width,
-        canvasPaint.height
-      );
-    };
-
-    imgTemp.src =
-      desenhoAtual;
-  }
-);
-
 function configurarCanvas(){
 
   const proporcao =
     imagem.height /
     imagem.width;
 
-  const largura =
-    container.clientWidth;
+  const largura = 700;
 
   const altura =
     largura * proporcao;
@@ -128,13 +99,6 @@ function configurarCanvas(){
   canvasPaint.height = altura;
 
   ctxBase.clearRect(
-    0,
-    0,
-    largura,
-    altura
-  );
-
-  ctxPaint.clearRect(
     0,
     0,
     largura,
@@ -209,12 +173,13 @@ function definirModo(novoModo){
   modo = novoModo;
 
   document
-    .getElementById("btnPintar")
-    .classList.remove("botaoAtivo");
+    .querySelectorAll(".botoes button")
+    .forEach(btn=>{
 
-  document
-    .getElementById("btnApagar")
-    .classList.remove("botaoAtivo");
+      btn.classList.remove(
+        "botaoAtivo"
+      );
+    });
 
   if(modo === "pintar"){
 
@@ -229,6 +194,31 @@ function definirModo(novoModo){
       .getElementById("btnApagar")
       .classList.add("botaoAtivo");
   }
+}
+
+function zoomMais(){
+
+  zoom += 0.1;
+
+  aplicarZoom();
+}
+
+function zoomMenos(){
+
+  zoom -= 0.1;
+
+  if(zoom < 0.5){
+
+    zoom = 0.5;
+  }
+
+  aplicarZoom();
+}
+
+function aplicarZoom(){
+
+  container.style.transform =
+    `scale(${zoom})`;
 }
 
 function pegarPosicao(e){
@@ -378,9 +368,25 @@ function limparTudo(){
     canvasPaint.width,
     canvasPaint.height
   );
+
+  document
+    .getElementById("btnLimpar")
+    .classList.add("botaoAtivo");
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("btnLimpar")
+      .classList.remove("botaoAtivo");
+
+  },500);
 }
 
 async function salvarPDF(){
+
+  document
+    .getElementById("btnPDF")
+    .classList.add("botaoAtivo");
 
   const { jsPDF } =
     window.jspdf;
@@ -421,4 +427,12 @@ async function salvarPDF(){
   pdf.save(
     "mapa-da-dor.pdf"
   );
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("btnPDF")
+      .classList.remove("botaoAtivo");
+
+  },500);
 }
