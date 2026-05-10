@@ -80,6 +80,19 @@ function preencherData() {
 
 function definirModo(m) {
   modo = m;
+
+  document.querySelectorAll(".botoes button")
+    .forEach(b => b.classList.remove("botaoAtivo"));
+
+  const id = m === "pintar" ? "btnPintar" : "btnApagar";
+
+  document.getElementById(id)?.classList.add("botaoAtivo");
+}
+  if (m === "apagar") {
+    document.querySelector(".botoes button:nth-child(2)")
+      ?.classList.add("botaoAtivo");
+  }
+}
 }
 
 function limparTudo() {
