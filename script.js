@@ -26,11 +26,13 @@ const ctxPaint = canvasPaint.getContext("2d");
 let desenhando = false;
 let ultimoX = 0;
 let ultimoY = 0;
-let modo = "pintar";
+
+let modo = ""; // começa desligado
 let zoom = 1;
 
 // ================= IMAGEM =================
 const imagem = new Image();
+
 imagem.crossOrigin = "anonymous";
 imagem.src = "./img/pessoa.png";
 
@@ -38,9 +40,11 @@ imagem.src = "./img/pessoa.png";
 window.addEventListener("load", init);
 
 function init() {
+
   configurarCanvas();
   criarCampos();
   preencherData();
+
 }
 
 // ================= CANVAS =================
@@ -58,12 +62,29 @@ function configurarCanvas() {
   ctxBase.clearRect(0,0,w,h);
 
   imagem.onload = () => {
-    ctxBase.drawImage(imagem, 0, 0, w, h);
+
+    ctxBase.drawImage(
+      imagem,
+      0,
+      0,
+      w,
+      h
+    );
+
   };
 
-  if (imagem.complete) {
-    ctxBase.drawImage(imagem, 0, 0, w, h);
+  if(imagem.complete){
+
+    ctxBase.drawImage(
+      imagem,
+      0,
+      0,
+      w,
+      h
+    );
+
   }
+
 }
 
 // ================= CAMPOS =================
@@ -106,10 +127,18 @@ function criarCampos() {
 // ================= DATA =================
 function preencherData() {
 
-  const el = document.getElementById("dataPreenchimento");
+  const el =
+    document.getElementById(
+      "dataPreenchimento"
+    );
 
   if(el){
-    el.value = new Date().toISOString().split("T")[0];
+
+    el.value =
+      new Date()
+      .toISOString()
+      .split("T")[0];
+
   }
 
 }
@@ -121,7 +150,9 @@ function definirModo(m) {
 
   document
     .querySelectorAll(".botoes button")
-    .forEach(b => b.classList.remove("botaoAtivo"));
+    .forEach(b =>
+      b.classList.remove("botaoAtivo")
+    );
 
   const id =
     modo === "pintar"
@@ -131,6 +162,19 @@ function definirModo(m) {
   document
     .getElementById(id)
     ?.classList.add("botaoAtivo");
+
+}
+
+// ================= DESATIVAR =================
+function desativarModo() {
+
+  modo = "";
+
+  document
+    .querySelectorAll(".botoes button")
+    .forEach(b =>
+      b.classList.remove("botaoAtivo")
+    );
 
 }
 
@@ -147,10 +191,43 @@ function limparTudo() {
 }
 
 // ================= POSIÇÃO =================
+function pos(e){
+
+  const r =
+    canvasPaint.getBoundingClientRect();
+
+  const x =
+    e.touches
+      ? e.touches[0].clientX
+      : e.clientX;
+
+  const y =
+    e.touches
+      ? e.touches[0].clientY
+      : e.clientY;
+
+  return {
+
+    x:
+      (x-r.left) *
+      (canvasPaint.width/r.width),
+
+    y:
+      (y-r.top) *
+      (canvasPaint.height/r.height)
+
+  };
+
+}
+
+// ================= INICIAR DESENHO =================
 function down(e){
 
-  // só desenha se modo pintar/apagar estiver ativo
-  if(modo !== "pintar" && modo !== "apagar"){
+  // bloqueia desenho quando desligado
+  if(
+    modo !== "pintar" &&
+    modo !== "apagar"
+  ){
     return;
   }
 
@@ -160,20 +237,10 @@ function down(e){
 
   ultimoX = p.x;
   ultimoY = p.y;
-}
-
-// ================= DESENHO =================
-function down(e){
-
-  desenhando = true;
-
-  const p = pos(e);
-
-  ultimoX = p.x;
-  ultimoY = p.y;
 
 }
 
+// ================= MOVIMENTO =================
 function move(e){
 
   if(!desenhando) return;
@@ -202,7 +269,7 @@ function move(e){
 
     ctxPaint.stroke();
 
-  } else {
+  } else if(modo === "apagar") {
 
     ctxPaint.clearRect(
       p.x - 10,
@@ -212,19 +279,13 @@ function move(e){
     );
 
   }
-  
-  function desativarModo() {
 
-  modo = "";
-
-  document.querySelectorAll(".botoes button")
-    .forEach(b => b.classList.remove("botaoAtivo"));
-}
   ultimoX = p.x;
   ultimoY = p.y;
 
 }
 
+// ================= FINALIZAR =================
 function up(){
 
   desenhando = false;
@@ -270,7 +331,9 @@ async function salvarGIF() {
   try {
 
     const container =
-      document.getElementById("mapaContainer");
+      document.getElementById(
+        "mapaContainer"
+      );
 
     const canvasCaptura =
       await html2canvas(container, {
@@ -313,7 +376,9 @@ async function salvarGIF() {
           document.createElement("a");
 
         a.href = url;
-        a.download = "mapa_dor.gif";
+
+        a.download =
+          "mapa_dor.gif";
 
         a.click();
 
@@ -342,10 +407,10 @@ async function salvarPDF() {
       ?.value || "sem_nome";
 
     const container =
-      document.getElementById("mapaContainer");
+      document.getElementById(
+        "mapaContainer"
+      );
 
-    // captura:
-    // imagem + desenho + campos D/I
     const canvas =
       await html2canvas(container, {
 
@@ -426,7 +491,9 @@ async function salvarPDF() {
 function aplicarZoom(){
 
   const mapa =
-    document.getElementById("mapaContainer");
+    document.getElementById(
+      "mapaContainer"
+    );
 
   mapa.style.transform =
     `scale(${zoom})`;
