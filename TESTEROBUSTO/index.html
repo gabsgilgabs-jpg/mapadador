@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mapa de Dor - Online</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Dependências (CDN) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
+  <!-- App script -->
+  <script defer src="script.js"></script>
+</head>
+<body>
+
+  <div class="topControls" role="region" aria-label="Controles principais">
+    <label class="fileLabel">
+      <span>Imagem base</span>
+      <input type="file" id="fileImage" accept="image/*">
+    </label>
+
+    <label class="colorLabel">
+      <span>Cor</span>
+      <input type="color" id="colorPicker" value="#000000" title="Cor do traço">
+    </label>
+
+    <label class="sizeLabel">
+      <span>Espessura</span>
+      <input type="range" id="lineWidth" min="1" max="40" value="4">
+    </label>
+
+    <button id="btnSetD" title="Adicionar seta D (início)">Adicionar D</button>
+    <button id="btnSetI" title="Adicionar seta I (intensidade)">Adicionar I</button>
+    <button id="btnCircle" title="Adicionar círculo (principal queixa)">Adicionar Círculo</button>
+
+    <button id="btnSavePDF" title="Salvar PDF (download)">Salvar PDF</button>
+    <button id="btnSaveGIF" title="Salvar GIF (download)">Salvar GIF</button>
+  </div>
+
+  <header id="cabecalho">
+    <h2>Mapa de Dor Corporal</h2>
+    <p>Registro clínico de avaliação do paciente</p>
+  </header>
+
+  <div id="dadosPaciente" aria-label="Dados do paciente">
+    <input type="text" id="nome" placeholder="Nome do paciente" class="campoNome" autocomplete="name" />
+    <input type="date" id="dataPreenchimento" class="campoData" />
+    <input type="text" id="assinatura" placeholder="Assinatura" class="campoAssinatura" autocomplete="off" />
+  </div>
+
+  <div id="containerPai">
+    <div id="mapaContainer" role="application" aria-label="Mapa para desenho">
+      <canvas id="canvasBase" aria-hidden="true"></canvas>
+      <canvas id="canvasPaint" aria-label="Área de desenho"></canvas>
+
+      <!-- Preserve seus campos posicionados aqui -->
+      <div id="formulario" aria-hidden="false"></div>
+    </div>
+  </div>
+
+  <div class="botoes" role="toolbar" aria-label="Controles">
+    <button id="btnParar" class="botaoAtivo" type="button">Parar desenho</button>
+    <button id="btnPintar" type="button">Pintar</button>
+    <button id="btnApagar" type="button">Apagar</button>
+    <button id="btnLimpar" type="button">Limpar</button>
+    <button id="btnZoomMais" type="button">+</button>
+    <button id="btnZoomMenos" type="button">-</button>
+    <button id="btnResetZoom" type="button">100%</button>
+  </div>
+
+  <section id="observacoes">
+    <p class="textoObs">
+      Obs.: indique com flechas os locais a que se referem o início (D) e a intensidade (I) das dores acima.
+      Marque com um círculo o local da sua principal queixa de dor.
+    </p>
+
+    <div class="pergunta">
+      <label>1. Descreva o que piora ou produz a sua dor:</label>
+      <textarea rows="5" placeholder="Digite aqui..." aria-label="O que piora a dor"></textarea>
+    </div>
+
+    <div class="pergunta">
+      <label>2. Descreva o que melhora a sua dor:</label>
+      <textarea rows="5" placeholder="Digite aqui..." aria-label="O que melhora a dor"></textarea>
+    </div>
+
+    <div class="pergunta">
+      <label>3. A sua dor é constante?</label>
+      <div class="opcoes">
+        <label><input type="radio" name="dorConstante" value="sim"> Sim</label>
+        <label><input type="radio" name="dorConstante" value="nao"> Não</label>
+      </div>
+    </div>
+  </section>
+
+  <footer id="rodape">
+    <div class="rodapeCampos">
+      <div class="rodapeItem">
+        <label>Data:</label>
+        <input type="date" id="rodapeData">
+      </div>
+      <div class="rodapeItem nomeRodape">
+        <label>Nome:</label>
+        <input type="text" id="rodapeNome" autocomplete="name">
+      </div>
+      <div class="rodapeItem assinaturaRodape">
+        <label>Assinatura:</label>
+        <input type="text" id="rodapeAssinatura" autocomplete="off">
+      </div>
+    </div>
+    <p class="textoRodape">Sistema de Avaliação de Dor • Registro clínico seguro</p>
+  </footer>
+
+</body>
+</html>
