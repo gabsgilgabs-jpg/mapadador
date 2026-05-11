@@ -593,6 +593,7 @@ async function salvarGIF(){
 }
 
 // ================= PDF =================
+// ================= PDF + GOOGLE DRIVE =================
 async function salvarPDF(){
 
   try{
@@ -603,12 +604,15 @@ async function salvarPDF(){
       ?.value ||
       "sem_nome";
 
+    // captura página inteira
     const canvas =
       await html2canvas(
         document.body,
         {
           backgroundColor:"#fff",
-          scale:2
+          scale:2,
+          useCORS:true,
+          logging:false
         }
       );
 
@@ -617,6 +621,7 @@ async function salvarPDF(){
         "image/png"
       );
 
+    // ================= PDF LOCAL =================
     const pdf =
       new jspdf.jsPDF({
 
@@ -644,11 +649,63 @@ async function salvarPDF(){
       `mapa_dor_${nome}.pdf`
     );
 
+    // ================= ENVIO GOOGLE DRIVE =================
+    const URL_SCRIPT =
+      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+
+    const resposta =
+      await fetch(
+        URL_SCRIPT,
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+
+            nome,
+            imagem:img
+
+          })
+
+        }
+      );
+
+    const texto =
+      await resposta.text();
+
+    const resultado =
+      JSON.parse(texto);
+
+    if(
+      resultado.status === "ok"
+    ){
+
+      alert(
+        "✔ PDF salvo e enviado ao Google Drive"
+      );
+
+      console.log(
+        resultado.url
+      );
+
+    }
+
+    else {
+
+      alert(
+        "PDF salvo localmente, mas erro no Drive"
+      );
+
+    }
+
   }
 
   catch(err){
 
-    alert("Erro PDF");
+    console.error(err);
+
+    alert(
+      "Erro ao gerar PDF"
+    );
 
   }
 
