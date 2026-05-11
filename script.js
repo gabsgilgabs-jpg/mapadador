@@ -1,17 +1,21 @@
 // ================= DADOS =================
 const grupos = [
+
   { x:0.12, y:0.31 },
   { x:0.112, y:0.41 },
   { x:0.125, y:0.65 },
   { x:0.125, y:0.78 },
+
   { x:0.47, y:0.31 },
   { x:0.468, y:0.44 },
   { x:0.486, y:0.56 },
   { x:0.440, y:0.67 },
+
   { x:0.868, y:0.30 },
   { x:0.880, y:0.41 },
   { x:0.858, y:0.58 },
   { x:0.852, y:0.71 }
+
 ];
 
 // ================= ELEMENTOS =================
@@ -46,8 +50,6 @@ let zoom = 1;
 // ================= IMAGEM =================
 const imagem = new Image();
 
-imagem.crossOrigin = "anonymous";
-
 imagem.src = "./img/pessoa.png";
 
 // ================= INICIALIZAÇÃO =================
@@ -78,9 +80,14 @@ function configurarCanvas() {
   canvasPaint.width = w;
   canvasPaint.height = h;
 
-  ctxBase.clearRect(0,0,w,h);
+  function desenharImagem() {
 
-  imagem.onload = () => {
+    ctxBase.clearRect(
+      0,
+      0,
+      w,
+      h
+    );
 
     ctxBase.drawImage(
       imagem,
@@ -90,17 +97,14 @@ function configurarCanvas() {
       h
     );
 
-  };
+  }
+
+  imagem.onload =
+    desenharImagem;
 
   if(imagem.complete){
 
-    ctxBase.drawImage(
-      imagem,
-      0,
-      0,
-      w,
-      h
-    );
+    desenharImagem();
 
   }
 
@@ -116,7 +120,8 @@ function criarCampos() {
     const div =
       document.createElement("div");
 
-    div.className = "grupoCampos";
+    div.className =
+      "grupoCampos";
 
     div.style.left =
       (g.x * 100) + "%";
@@ -125,6 +130,7 @@ function criarCampos() {
       (g.y * 100) + "%";
 
     div.innerHTML = `
+
       <div>
         D:
         <input type="date">
@@ -141,6 +147,7 @@ function criarCampos() {
           ).join("")}
         </select>
       </div>
+
     `;
 
     formulario.appendChild(div);
@@ -269,10 +276,9 @@ function pos(e){
 
 }
 
-// ================= INICIAR DESENHO =================
+// ================= DESENHO =================
 function down(e){
 
-  // bloqueia desenho durante pinch zoom
   if(
     e.touches &&
     e.touches.length > 1
@@ -280,7 +286,6 @@ function down(e){
     return;
   }
 
-  // bloqueia desenho desligado
   if(
     modo !== "pintar" &&
     modo !== "apagar"
@@ -297,10 +302,8 @@ function down(e){
 
 }
 
-// ================= MOVIMENTO =================
 function move(e){
 
-  // não desenha com 2 dedos
   if(
     e.touches &&
     e.touches.length > 1
@@ -316,11 +319,13 @@ function move(e){
 
   const p = pos(e);
 
-  ctxPaint.strokeStyle = "#000";
+  ctxPaint.strokeStyle =
+    "#000";
 
   ctxPaint.lineWidth = 3;
 
-  ctxPaint.lineCap = "round";
+  ctxPaint.lineCap =
+    "round";
 
   if(modo === "pintar"){
 
@@ -340,7 +345,9 @@ function move(e){
 
   }
 
-  else if(modo === "apagar") {
+  else if(
+    modo === "apagar"
+  ){
 
     ctxPaint.clearRect(
       p.x - 10,
@@ -356,7 +363,6 @@ function move(e){
 
 }
 
-// ================= FINALIZAR =================
 function up(){
 
   desenhando = false;
@@ -396,206 +402,11 @@ window.addEventListener(
   up
 );
 
-// ================= GIF =================
-async function salvarGIF() {
-
-  try {
-
-    const container =
-      document.getElementById(
-        "mapaContainer"
-      );
-
-    const canvasCaptura =
-      await html2canvas(
-        container,
-        {
-          backgroundColor:"#fff",
-          scale:2,
-          useCORS:true,
-          logging:false
-        }
-      );
-
-    const gif = new GIF({
-
-      workers:2,
-
-      quality:10,
-
-      width:
-        canvasCaptura.width,
-
-      height:
-        canvasCaptura.height
-
-    });
-
-    gif.addFrame(
-      canvasCaptura,
-      { delay:700 }
-    );
-
-    gif.addFrame(
-      canvasCaptura,
-      { delay:700 }
-    );
-
-    gif.on(
-      "finished",
-      function(blob){
-
-        const url =
-          URL.createObjectURL(
-            blob
-          );
-
-        const a =
-          document.createElement(
-            "a"
-          );
-
-        a.href = url;
-
-        a.download =
-          "mapa_dor.gif";
-
-        a.click();
-
-      }
-    );
-
-    gif.render();
-
-  }
-
-  catch(err){
-
-    console.error(err);
-
-    alert(
-      "Erro ao gerar GIF"
-    );
-
-  }
-
-}
-
-// ================= PDF / DRIVE =================
-async function salvarPDF() {
-
-  try {
-
-    const nome =
-      document
-      .getElementById("nome")
-      ?.value ||
-      "sem_nome";
-
-    const container =
-      document.getElementById(
-        "mapaContainer"
-      );
-
-    const canvas =
-      await html2canvas(
-        container,
-        {
-          backgroundColor:"#fff",
-          scale:2,
-          useCORS:true,
-          logging:false
-        }
-      );
-
-    const img =
-      canvas.toDataURL(
-        "image/png"
-      );
-
-    // download local
-    const link =
-      document.createElement(
-        "a"
-      );
-
-    link.href = img;
-
-    link.download =
-      `mapa_dor_${nome}.png`;
-
-    link.click();
-
-    // upload drive
-    const URL_SCRIPT =
-      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
-
-    const resposta =
-      await fetch(
-        URL_SCRIPT,
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-
-            nome,
-            imagem:img
-
-          })
-
-        }
-      );
-
-    const texto =
-      await resposta.text();
-
-    const resultado =
-      JSON.parse(texto);
-
-    if(
-      resultado.status === "ok"
-    ){
-
-      alert(
-        "✔ Salvo no Drive com sucesso"
-      );
-
-      console.log(
-        resultado.url
-      );
-
-    }
-
-    else {
-
-      alert(
-        "Erro ao salvar"
-      );
-
-    }
-
-  }
-
-  catch(err){
-
-    console.error(err);
-
-    alert(
-      "Erro ao salvar"
-    );
-
-  }
-
-}
-
 // ================= ZOOM =================
 function aplicarZoom(){
 
   mapaContainer.style.transform =
     `scale(${zoom})`;
-
-  mapaContainer.style.transformOrigin =
-    "center top";
 
 }
 
@@ -627,14 +438,14 @@ function resetZoom(){
 
 }
 
-// ================= ZOOM TOUCH =================
+// ================= PINCH ZOOM =================
 let distanciaInicial = 0;
 
 let zoomInicial = 1;
 
 let pinchZoomAtivo = false;
 
-function distanciaToque(t1, t2) {
+function distanciaToque(t1, t2){
 
   const dx =
     t1.clientX - t2.clientX;
@@ -649,12 +460,10 @@ function distanciaToque(t1, t2) {
 
 }
 
-// inicia pinch
 mapaContainer.addEventListener(
   "touchstart",
   function(e){
 
-    // ignora inputs
     if(
       e.target.tagName === "INPUT" ||
       e.target.tagName === "SELECT" ||
@@ -681,12 +490,10 @@ mapaContainer.addEventListener(
   { passive:false }
 );
 
-// movimento pinch
 mapaContainer.addEventListener(
   "touchmove",
   function(e){
 
-    // ignora inputs
     if(
       e.target.tagName === "INPUT" ||
       e.target.tagName === "SELECT" ||
@@ -728,7 +535,6 @@ mapaContainer.addEventListener(
   { passive:false }
 );
 
-// finaliza pinch
 mapaContainer.addEventListener(
   "touchend",
   function(e){
