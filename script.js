@@ -604,7 +604,7 @@ async function salvarPDF(){
       ?.value ||
       "sem_nome";
 
-    // captura página inteira
+    // captura tela completa
     const canvas =
       await html2canvas(
         document.body,
@@ -616,12 +616,43 @@ async function salvarPDF(){
         }
       );
 
+    // imagem base64
     const img =
       canvas.toDataURL(
         "image/png"
       );
 
-    // ================= PDF LOCAL =================
+    // ================= ENVIA AO DRIVE PRIMEIRO =================
+    const URL_SCRIPT =
+      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+
+    const resposta =
+      await fetch(
+        URL_SCRIPT,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+
+            nome:nome,
+
+            imagem:img
+
+          })
+
+        }
+      );
+
+    const texto =
+      await resposta.text();
+
+    console.log(texto);
+
+    // ================= GERA PDF LOCAL =================
     const pdf =
       new jspdf.jsPDF({
 
@@ -649,50 +680,40 @@ async function salvarPDF(){
       `mapa_dor_${nome}.pdf`
     );
 
-    // ================= ENVIO GOOGLE DRIVE =================
-    const URL_SCRIPT =
-      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+    // ================= RESULTADO =================
+    try{
 
-    const resposta =
-      await fetch(
-        URL_SCRIPT,
-        {
-          method:"POST",
+      const resultado =
+        JSON.parse(texto);
 
-          body:JSON.stringify({
+      if(
+        resultado.status === "ok"
+      ){
 
-            nome,
-            imagem:img
+        alert(
+          "✔ Salvo no Google Drive com sucesso"
+        );
 
-          })
+        console.log(
+          resultado.url
+        );
 
-        }
-      );
+      }
 
-    const texto =
-      await resposta.text();
+      else{
 
-    const resultado =
-      JSON.parse(texto);
+        alert(
+          "PDF salvo localmente, mas houve erro no Drive"
+        );
 
-    if(
-      resultado.status === "ok"
-    ){
-
-      alert(
-        "✔ PDF salvo e enviado ao Google Drive"
-      );
-
-      console.log(
-        resultado.url
-      );
+      }
 
     }
 
-    else {
+    catch{
 
       alert(
-        "PDF salvo localmente, mas erro no Drive"
+        "PDF salvo localmente, mas resposta inválida do Drive"
       );
 
     }
