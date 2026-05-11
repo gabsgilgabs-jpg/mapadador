@@ -34,7 +34,7 @@
 
   </header>
 
-  <!-- DADOS -->
+  <!-- DADOS PACIENTE -->
   <div id="dadosPaciente">
 
     <input
@@ -42,6 +42,7 @@
       id="nome"
       placeholder="Nome do paciente"
       class="campoNome"
+      autocomplete="off"
     >
 
     <input
@@ -55,6 +56,7 @@
       id="assinatura"
       placeholder="Assinatura"
       class="campoAssinatura"
+      autocomplete="off"
     >
 
   </div>
@@ -64,10 +66,13 @@
 
     <div id="mapaContainer">
 
+      <!-- IMAGEM -->
       <canvas id="canvasBase"></canvas>
 
+      <!-- DESENHO -->
       <canvas id="canvasPaint"></canvas>
 
+      <!-- CAMPOS -->
       <div id="formulario"></div>
 
     </div>
@@ -81,6 +86,7 @@
       id="btnParar"
       class="botaoAtivo"
       onclick="desativarModo()"
+      type="button"
     >
       Parar desenho
     </button>
@@ -88,6 +94,7 @@
     <button
       id="btnPintar"
       onclick="definirModo('pintar')"
+      type="button"
     >
       Pintar
     </button>
@@ -95,65 +102,95 @@
     <button
       id="btnApagar"
       onclick="definirModo('apagar')"
+      type="button"
     >
       Apagar
     </button>
 
-    <button onclick="limparTudo()">
+    <button
+      onclick="limparTudo()"
+      type="button"
+    >
       Limpar
     </button>
 
-    <button onclick="salvarPDF()">
+    <button
+      onclick="salvarPDF()"
+      type="button"
+    >
       PDF
     </button>
 
-    <button onclick="salvarGIF()">
+    <button
+      onclick="salvarGIF()"
+      type="button"
+    >
       GIF
     </button>
 
-    <button onclick="zoomMais()">
+    <button
+      onclick="zoomMais()"
+      type="button"
+    >
       +
     </button>
 
-    <button onclick="zoomMenos()">
+    <button
+      onclick="zoomMenos()"
+      type="button"
+    >
       -
     </button>
 
-    <button onclick="resetZoom()">
+    <button
+      onclick="resetZoom()"
+      type="button"
+    >
       100%
     </button>
 
   </div>
 
-  <!-- OBS -->
-  <div id="observacoes">
+  <!-- OBSERVAÇÕES -->
+  <section id="observacoes">
 
-    <p>
+    <p class="textoObs">
+
       Obs.: indique com flechas os locais a que se referem o início (D)
       e a intensidade (I) das dores acima.
       Marque com um círculo o local da sua principal queixa de dor.
+
     </p>
 
+    <!-- PERGUNTA 1 -->
     <div class="pergunta">
 
       <label>
         1. Descreva o que piora ou produz a sua dor:
       </label>
 
-      <textarea></textarea>
+      <textarea
+        rows="5"
+        placeholder="Digite aqui..."
+      ></textarea>
 
     </div>
 
+    <!-- PERGUNTA 2 -->
     <div class="pergunta">
 
       <label>
         2. Descreva o que melhora a sua dor:
       </label>
 
-      <textarea></textarea>
+      <textarea
+        rows="5"
+        placeholder="Digite aqui..."
+      ></textarea>
 
     </div>
 
+    <!-- PERGUNTA 3 -->
     <div class="pergunta">
 
       <label>
@@ -163,65 +200,90 @@
       <div class="opcoes">
 
         <label>
-          <input type="radio" name="dorConstante">
+
+          <input
+            type="radio"
+            name="dorConstante"
+          >
+
           Sim
+
         </label>
 
         <label>
-          <input type="radio" name="dorConstante">
+
+          <input
+            type="radio"
+            name="dorConstante"
+          >
+
           Não
+
         </label>
 
       </div>
 
     </div>
 
-  </div>
+  </section>
 
   <!-- RODAPÉ -->
   <footer id="rodape">
 
     <div class="rodapeCampos">
 
-      <div>
+      <div class="rodapeItem">
 
-        <label>Data:</label>
+        <label>
+          Data:
+        </label>
 
         <input type="date">
 
       </div>
 
-      <div>
+      <div class="rodapeItem nomeRodape">
 
-        <label>Nome:</label>
+        <label>
+          Nome:
+        </label>
 
-        <input type="text">
+        <input
+          type="text"
+          autocomplete="off"
+        >
 
       </div>
 
-      <div>
+      <div class="rodapeItem assinaturaRodape">
 
-        <label>Assinatura:</label>
+        <label>
+          Assinatura:
+        </label>
 
-        <input type="text">
+        <input
+          type="text"
+          autocomplete="off"
+        >
 
       </div>
 
     </div>
 
-    <p>
+    <p class="textoRodape">
       Sistema de Avaliação de Dor • Registro clínico seguro
     </p>
 
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- LIBS -->
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <!-- SCRIPT -->
   <script src="script.js"></script>
 
 </body>
