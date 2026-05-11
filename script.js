@@ -50,6 +50,8 @@ let zoom = 1;
 // ================= IMAGEM =================
 const imagem = new Image();
 
+imagem.crossOrigin = "anonymous";
+
 imagem.src = "./img/pessoa.png";
 
 // ================= INIT =================
@@ -102,7 +104,10 @@ function configurarCanvas(){
   imagem.onload =
     desenharImagem;
 
-  if(imagem.complete){
+  if(
+    imagem.complete &&
+    imagem.naturalWidth > 0
+  ){
 
     desenharImagem();
 
@@ -279,6 +284,7 @@ function pos(e){
 // ================= DESENHO =================
 function down(e){
 
+  // bloqueia pinch
   if(
     e.touches &&
     e.touches.length > 1
@@ -286,6 +292,7 @@ function down(e){
     return;
   }
 
+  // bloqueia se desligado
   if(
     modo !== "pintar" &&
     modo !== "apagar"
@@ -304,6 +311,7 @@ function down(e){
 
 function move(e){
 
+  // bloqueia pinch
   if(
     e.touches &&
     e.touches.length > 1
@@ -350,10 +358,10 @@ function move(e){
   ){
 
     ctxPaint.clearRect(
-      p.x - 10,
-      p.y - 10,
-      20,
-      20
+      p.x - 12,
+      p.y - 12,
+      24,
+      24
     );
 
   }
@@ -408,11 +416,16 @@ function aplicarZoom(){
   mapaContainer.style.transform =
     `scale(${zoom})`;
 
+  mapaContainer.style.transformOrigin =
+    "center top";
+
 }
 
 function zoomMais(){
 
   zoom += 0.1;
+
+  zoom = Math.min(3, zoom);
 
   aplicarZoom();
 
@@ -463,6 +476,15 @@ mapaContainer.addEventListener(
   "touchstart",
   function(e){
 
+    // ignora inputs
+    if(
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "SELECT" ||
+      e.target.tagName === "TEXTAREA"
+    ){
+      return;
+    }
+
     if(e.touches.length === 2){
 
       pinchZoomAtivo = true;
@@ -484,6 +506,15 @@ mapaContainer.addEventListener(
 mapaContainer.addEventListener(
   "touchmove",
   function(e){
+
+    // ignora campos
+    if(
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "SELECT" ||
+      e.target.tagName === "TEXTAREA"
+    ){
+      return;
+    }
 
     if(
       pinchZoomAtivo &&
@@ -541,7 +572,9 @@ async function salvarGIF(){
         document.body,
         {
           backgroundColor:"#fff",
-          scale:2
+          scale:2,
+          useCORS:true,
+          logging:false
         }
       );
 
@@ -554,6 +587,11 @@ async function salvarGIF(){
       height:canvas.height
 
     });
+
+    gif.addFrame(
+      canvas,
+      {delay:700}
+    );
 
     gif.addFrame(
       canvas,
@@ -586,13 +624,14 @@ async function salvarGIF(){
 
   catch(err){
 
-    alert("Erro GIF");
+    console.error(err);
+
+    alert("Erro ao gerar GIF");
 
   }
 
 }
 
-// ================= PDF =================
 // ================= PDF + GOOGLE DRIVE =================
 async function salvarPDF(){
 
@@ -604,7 +643,7 @@ async function salvarPDF(){
       ?.value ||
       "sem_nome";
 
-    // captura tela completa
+    // captura página completa
     const canvas =
       await html2canvas(
         document.body,
@@ -612,7 +651,8 @@ async function salvarPDF(){
           backgroundColor:"#fff",
           scale:2,
           useCORS:true,
-          logging:false
+          logging:false,
+          scrollY:-window.scrollY
         }
       );
 
@@ -622,7 +662,7 @@ async function salvarPDF(){
         "image/png"
       );
 
-    // ================= ENVIA AO DRIVE PRIMEIRO =================
+    // ================= ENVIO DRIVE =================
     const URL_SCRIPT =
       "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
@@ -652,7 +692,7 @@ async function salvarPDF(){
 
     console.log(texto);
 
-    // ================= GERA PDF LOCAL =================
+    // ================= PDF =================
     const pdf =
       new jspdf.jsPDF({
 
@@ -691,7 +731,7 @@ async function salvarPDF(){
       ){
 
         alert(
-          "✔ Salvo no Google Drive com sucesso"
+          "✔ PDF salvo localmente e enviado ao Google Drive"
         );
 
         console.log(
