@@ -784,28 +784,3 @@ async function salvarPDF(){
   }
 
 }
-
-// ================= ENVIO DRIVE =================
-    const URL_SCRIPT =
-      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
-
-    const resposta =
-      await fetch(
-        URL_SCRIPT,
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":"application/json"
-          },
-
-          body:JSON.stringify({
-
-            nome:nome,
-
-            imagem:img
-
-          })
-
-        }
-      );
