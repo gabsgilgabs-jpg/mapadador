@@ -809,8 +809,3 @@ async function salvarPDF(){
 
         }
       );
-
-    const texto =
-      await resposta.text();
-
-    console.log(texto);
