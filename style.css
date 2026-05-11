@@ -38,6 +38,32 @@ body {
   flex-wrap: wrap;
 }
 
+/* INPUT PADRÃO */
+#dadosPaciente input {
+
+  padding: 8px;
+
+  font-size: 14px;
+}
+
+/* NOME MAIOR */
+#nome {
+
+  width: 420px;
+}
+
+/* DATA MENOR */
+#dataPreenchimento {
+
+  width: 150px;
+}
+
+/* ASSINATURA */
+#assinatura {
+
+  width: 250px;
+}
+
 #dadosPaciente input {
 
   padding: 8px;
