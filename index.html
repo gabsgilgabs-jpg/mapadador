@@ -12,267 +12,202 @@
 
   <title>Mapa Dor</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
 </head>
 
 <body>
 
-<header id="cabecalho">
+  <!-- CABEÇALHO -->
+  <header id="cabecalho">
 
-  <h2>Mapa de Dor Corporal</h2>
+    <h2>
+      Mapa de Dor Corporal
+    </h2>
 
-  <p>
-    Registro clínico de avaliação do paciente
-  </p>
+    <p>
+      Registro clínico de avaliação do paciente
+    </p>
 
-</header>
+  </header>
 
-<!-- DADOS DO PACIENTE -->
-<div id="dadosPaciente">
+  <!-- DADOS PACIENTE -->
+  <div id="dadosPaciente">
 
-  <input
-    type="text"
-    id="nome"
-    placeholder="Nome do paciente"
-  >
+    <input
+      type="text"
+      id="nome"
+      placeholder="Nome do paciente"
+    >
 
-  <input
-    type="date"
-    id="dataPreenchimento"
-  >
+    <input
+      type="date"
+      id="dataPreenchimento"
+    >
 
-  <input
-    type="text"
-    id="assinatura"
-    placeholder="Assinatura"
-  >
-
-</div>
-
-<!-- MAPA -->
-<div id="containerPai">
-
-  <div id="mapaContainer">
-
-    <canvas id="canvasBase"></canvas>
-
-    <canvas id="canvasPaint"></canvas>
-
-    <div id="formulario"></div>
+    <input
+      type="text"
+      id="assinatura"
+      placeholder="Assinatura"
+    >
 
   </div>
 
-</div>
+  <!-- MAPA -->
+  <div id="containerPai">
 
-<!-- BOTÕES -->
-<div class="botoes">
+    <div id="mapaContainer">
 
-  <button
-    id="btnParar"
-    class="botaoAtivo"
-    onclick="desativarModo()"
-  >
-    Parar desenho
-  </button>
+      <canvas id="canvasBase"></canvas>
 
-  <button
-    id="btnPintar"
-    onclick="definirModo('pintar')"
-  >
-    Pintar
-  </button>
+      <canvas id="canvasPaint"></canvas>
 
-  <button
-    id="btnApagar"
-    onclick="definirModo('apagar')"
-  >
-    Apagar
-  </button>
+      <div id="formulario"></div>
 
-  <button onclick="limparTudo()">
-    Limpar
-  </button>
-
-  <button onclick="salvarPDF()">
-    PDF
-  </button>
-
-  <button onclick="salvarGIF()">
-    GIF
-  </button>
-
-  <button onclick="zoomMais()">
-    +
-  </button>
-
-  <button onclick="zoomMenos()">
-    -
-  </button>
-
-  <button onclick="resetZoom()">
-    100%
-  </button>
-
-</div>
-
-<!-- OBSERVAÇÕES -->
-<div id="observacoes">
-
-  <p>
-    <strong>Obs.:</strong>
-    indique com flechas os locais a que se referem
-    o início (D) e a intensidade (I) das dores acima.
-    Marque com um círculo o local da sua principal
-    queixa de dor.
-  </p>
-
-  <div class="campoTexto">
-
-    <label>
-      1. Descreva o que piora ou produz a sua dor:
-    </label>
-
-    <textarea></textarea>
+    </div>
 
   </div>
 
-  <div class="campoTexto">
+  <!-- BOTÕES -->
+  <div class="botoes">
 
-    <label>
-      2. Descreva o que melhora a sua dor:
-    </label>
+    <button
+      id="btnParar"
+      class="botaoAtivo"
+      onclick="desativarModo()"
+    >
+      Parar desenho
+    </button>
 
-    <textarea></textarea>
+    <button
+      id="btnPintar"
+      onclick="definirModo('pintar')"
+    >
+      Pintar
+    </button>
 
-  </div>
+    <button
+      id="btnApagar"
+      onclick="definirModo('apagar')"
+    >
+      Apagar
+    </button>
 
-  <div class="campoTexto">
+    <button onclick="limparTudo()">
+      Limpar
+    </button>
 
-    <label>
-      3. A sua dor é constante?
-    </label>
+    <button onclick="zoomMais()">
+      +
+    </button>
 
-    <label class="radioOpcao">
-      <input
-        type="radio"
-        name="dorConstante"
-      >
-      Sim
-    </label>
+    <button onclick="zoomMenos()">
+      -
+    </button>
 
-    <label class="radioOpcao">
-      <input
-        type="radio"
-        name="dorConstante"
-      >
-      Não
-    </label>
-
-  </div>
-
-</div>
-
-<!-- RODAPÉ -->
-<div id="observacoes">
-
-  <p>
-    <strong>Obs.:</strong>
-    indique com flechas os locais a que se referem o início (D)
-    e a intensidade (I) das dores acima.
-    Marque com um círculo o local da sua principal queixa de dor.
-  </p>
-
-  <div>
-    <label>
-      1. Descreva o que piora ou produz a sua dor:
-    </label>
-
-    <textarea></textarea>
-  </div>
-
-  <br>
-
-  <div>
-    <label>
-      2. Descreva o que melhora a sua dor:
-    </label>
-
-    <textarea></textarea>
-  </div>
-
-  <br>
-
-  <div>
-    <label>
-      3. A sua dor é constante?
-    </label>
-
-    <label>
-      <input type="radio" name="dorConstante">
-      Sim
-    </label>
-
-    <label>
-      <input type="radio" name="dorConstante">
-      Não
-    </label>
-  </div>
-
-  <div id="rodapeCampos">
-
-    <input type="date" placeholder="Data">
-
-    <input type="text" placeholder="Nome">
-
-    <input type="text" placeholder="Assinatura">
+    <button onclick="resetZoom()">
+      100%
+    </button>
 
   </div>
 
-</div>
-  
+  <!-- OBSERVAÇÕES -->
+  <section id="informacoes">
+
+    <div class="blocoPergunta">
+
+      <label>
+        Obs.: indique com flechas os locais a que se referem o início (D)
+        e a intensidade (I) das dores acima.
+        Marque com um círculo o local da sua principal queixa de dor.
+      </label>
+
+    </div>
+
+    <div class="blocoPergunta">
+
+      <label>
+        1. Descreva o que piora ou produz a sua dor:
+      </label>
+
+      <textarea></textarea>
+
+    </div>
+
+    <div class="blocoPergunta">
+
+      <label>
+        2. Descreva o que melhora a sua dor:
+      </label>
+
+      <textarea></textarea>
+
+    </div>
+
+    <div class="blocoPergunta">
+
+      <label>
+        3. A sua dor é constante?
+      </label>
+
+      <div class="opcoes">
+
+        <label>
+          <input
+            type="radio"
+            name="dorConstante"
+          >
+          Sim
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="dorConstante"
+          >
+          Não
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- RODAPÉ -->
   <footer id="rodape">
 
-  <div id="rodapeCampos">
+    <div id="rodapeCampos">
 
-    <div class="rodapeCampo">
+      <input
+        type="text"
+        placeholder="Data"
+      >
 
-      <label>Data:</label>
+      <input
+        type="text"
+        placeholder="Nome"
+      >
 
-      <input type="date">
-
-    </div>
-
-    <div class="rodapeCampo">
-
-      <label>Nome:</label>
-
-      <input type="text">
-
-    </div>
-
-    <div class="rodapeCampo">
-
-      <label>Assinatura:</label>
-
-      <input type="text">
+      <input
+        type="text"
+        placeholder="Assinatura"
+      >
 
     </div>
 
-  </div>
+    <div>
+      Sistema de Avaliação de Dor • Registro clínico seguro
+    </div>
 
-  <p>
-    Sistema de Avaliação de Dor • Registro clínico seguro
-  </p>
+  </footer>
 
-</footer>
-
-<!-- SCRIPTS -->
-<script src="script.js"></script>
-
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+  <!-- SCRIPTS -->
+  <script src="script.js"></script>
 
 </body>
+
 </html>
