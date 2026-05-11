@@ -1,7 +1,11 @@
 body {
+
   margin: 0;
+
   font-family: Arial;
+
   background: #fff;
+
 }
 
 /* CABEÇALHO */
@@ -9,22 +13,13 @@ body {
 
   text-align: center;
 
-  padding: 15px;
+  padding: 10px;
 
   background: #f5f5f5;
 
-  border-bottom: 1px solid #ddd;
 }
 
-#cabecalho h2{
-  margin: 0;
-}
-
-#cabecalho p{
-  margin-top: 5px;
-}
-
-/* DADOS PACIENTE */
+/* DADOS */
 #dadosPaciente {
 
   display: flex;
@@ -33,35 +28,28 @@ body {
 
   gap: 10px;
 
-  padding: 15px;
+  padding: 10px;
 
   flex-wrap: wrap;
+
 }
 
-/* INPUT PADRÃO */
-#dadosPaciente input {
+.campoNome {
 
-  padding: 8px;
+  width: 320px;
 
-  font-size: 14px;
 }
 
-/* NOME MAIOR */
-#nome {
+.campoData {
 
-  width: 420px;
+  width: 140px;
+
 }
 
-/* DATA MENOR */
-#dataPreenchimento {
+.campoAssinatura {
 
-  width: 150px;
-}
+  width: 220px;
 
-/* ASSINATURA */
-#assinatura {
-
-  width: 250px;
 }
 
 #dadosPaciente input {
@@ -70,7 +58,6 @@ body {
 
   font-size: 14px;
 
-  min-width: 220px;
 }
 
 /* CONTAINER */
@@ -83,6 +70,7 @@ body {
   overflow: auto;
 
   padding: 20px;
+
 }
 
 /* MAPA */
@@ -96,13 +84,12 @@ body {
 
   border: 1px solid #ccc;
 
-  background: white;
-
   transform-origin: top center;
 
   transition: transform 0.2s ease;
 
   touch-action: pan-x pan-y;
+
 }
 
 /* CANVAS */
@@ -114,28 +101,25 @@ body {
   top: 0;
   left: 0;
 
-  width: 100%;
-  height: 100%;
-
-  display: block;
 }
 
-#canvasBase{
+#canvasBase {
+
   z-index: 1;
+
 }
 
 #canvasPaint {
 
   z-index: 3;
 
-  pointer-events: auto;
-
   cursor: crosshair;
 
   touch-action: pinch-zoom;
+
 }
 
-/* FORMULÁRIO */
+/* FORM */
 #formulario {
 
   position: absolute;
@@ -150,95 +134,27 @@ body {
 
   pointer-events: none;
 
-  touch-action: auto;
 }
 
-/* CAMPOS */
 .grupoCampos {
 
   position: absolute;
 
   transform: translate(-50%, -50%);
 
-  font-size: 14px;
-
-  background: transparent;
-
   pointer-events: auto;
-}
-
-.grupoCampos div{
-  margin-bottom: 3px;
-}
-
-/* INPUTS */
-input,
-select,
-textarea {
-
-  background: rgba(255,255,255,0.85);
-
-  border: 1px solid #999;
-
-  padding: 5px;
 
   font-size: 14px;
 
-  border-radius: 4px;
-
-  box-sizing: border-box;
 }
 
-textarea {
-
-  width: 100%;
-
-  min-height: 110px;
-
-  resize: vertical;
-
-  margin-top: 5px;
-}
-
-/* ÁREA RESPOSTAS */
-#informacoes {
-
-  width: 90%;
-
-  max-width: 900px;
-
-  margin: 20px auto;
+.grupoCampos input,
+.grupoCampos select {
 
   font-size: 14px;
-}
 
-.blocoPergunta {
+  padding: 2px;
 
-  margin-bottom: 25px;
-}
-
-.blocoPergunta label {
-
-  display: block;
-
-  margin-bottom: 8px;
-
-  font-weight: bold;
-}
-
-/* SIM / NÃO */
-.opcoes {
-
-  margin-top: 10px;
-
-  font-size: 14px;
-}
-
-.opcoes label {
-
-  margin-right: 20px;
-
-  font-weight: normal;
 }
 
 /* BOTÕES */
@@ -248,101 +164,153 @@ textarea {
 
   margin-top: 10px;
 
-  margin-bottom: 20px;
 }
 
 .botoes button {
 
-  padding: 10px 14px;
+  padding: 8px 12px;
 
-  margin: 4px;
+  margin: 3px;
 
-  cursor: pointer;
-
-  color: black;
+  border-radius: 4px;
 
   border: 1px solid #999;
 
   background: white;
 
-  border-radius: 4px;
+  cursor: pointer;
 
-  font-size: 14px;
 }
 
-/* BOTÃO ATIVO */
-.botoes button.botaoAtivo {
+.botaoAtivo {
 
   color: red;
 
+  border: 1px solid red;
+
   font-weight: bold;
 
-  border: 1px solid red;
 }
 
-/* RODAPÉ */
-#rodape {
-
-  width: 90%;
+/* OBS */
+#observacoes {
 
   max-width: 900px;
 
   margin: 20px auto;
 
-  padding: 20px;
-
-  border-top: 1px solid #ccc;
+  padding: 10px;
 
   font-size: 14px;
+
 }
 
-#rodapeCampos {
+.pergunta {
+
+  margin-top: 20px;
+
+}
+
+.pergunta label {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-weight: bold;
+
+}
+
+textarea {
+
+  width: 100%;
+
+  min-height: 100px;
+
+  resize: vertical;
+
+  padding: 10px;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
+
+}
+
+.opcoes {
 
   display: flex;
 
-  gap: 10px;
+  gap: 20px;
+
+  margin-top: 10px;
+
+}
+
+/* RODAPÉ */
+#rodape {
+
+  margin-top: 30px;
+
+  padding: 20px;
+
+  text-align: center;
+
+  border-top: 1px solid #ccc;
+
+}
+
+.rodapeCampos {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 20px;
 
   flex-wrap: wrap;
 
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+
 }
 
-#rodapeCampos input {
+.rodapeCampos div {
 
-  flex: 1;
+  display: flex;
 
-  min-width: 200px;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+}
+
+.rodapeCampos input {
+
+  width: 220px;
+
+  padding: 8px;
+
 }
 
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width:768px){
 
   #containerPai {
+
     padding: 5px;
-  }
 
-  #mapaContainer {
-
-    width: 700px;
-    height: 842px;
   }
 
   .grupoCampos {
-    font-size: 12px;
+
+    font-size: 11px;
+
   }
 
-  input,
-  select,
   textarea {
 
-    font-size: 14px;
-  }
+    min-height: 120px;
 
-  .botoes button {
-
-    padding: 8px 10px;
-
-    font-size: 13px;
   }
 
 }
