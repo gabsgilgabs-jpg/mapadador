@@ -83,6 +83,7 @@ body {
 
   z-index: 5;
 
+  /* não bloqueia desenho */
   pointer-events: none;
 
   /* mantém inputs funcionando */
@@ -99,13 +100,15 @@ body {
 
   background: transparent;
 
+  /* INPUTS CLICÁVEIS */
   pointer-events: auto;
 }
 
 /* INPUTS */
 input,
 select {
-  background: rgba(255,255,255,0.6);
+
+  background: rgba(255,255,255,0.7);
 
   border: 1px solid #999;
 
@@ -175,11 +178,6 @@ select {
 
   #containerPai {
     padding: 5px;
-  }
-
-  #mapaContainer {
-    width: 700px;
-    height: 842px;
   }
 
   .grupoCampos {
