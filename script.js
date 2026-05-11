@@ -15,34 +15,53 @@ const grupos = [
 ];
 
 // ================= ELEMENTOS =================
-const canvasBase = document.getElementById("canvasBase");
-const canvasPaint = document.getElementById("canvasPaint");
-const formulario = document.getElementById("formulario");
+const canvasBase =
+  document.getElementById("canvasBase");
 
-const ctxBase = canvasBase.getContext("2d");
-const ctxPaint = canvasPaint.getContext("2d");
+const canvasPaint =
+  document.getElementById("canvasPaint");
+
+const formulario =
+  document.getElementById("formulario");
+
+const mapaContainer =
+  document.getElementById("mapaContainer");
+
+const ctxBase =
+  canvasBase.getContext("2d");
+
+const ctxPaint =
+  canvasPaint.getContext("2d");
 
 // ================= ESTADO =================
 let desenhando = false;
+
 let ultimoX = 0;
 let ultimoY = 0;
 
-let modo = ""; // começa desligado
+let modo = "";
+
 let zoom = 1;
 
 // ================= IMAGEM =================
 const imagem = new Image();
 
 imagem.crossOrigin = "anonymous";
+
 imagem.src = "./img/pessoa.png";
 
 // ================= INICIALIZAÇÃO =================
-window.addEventListener("load", init);
+window.addEventListener(
+  "load",
+  init
+);
 
 function init() {
 
   configurarCanvas();
+
   criarCampos();
+
   preencherData();
 
 }
@@ -94,12 +113,16 @@ function criarCampos() {
 
   grupos.forEach(g => {
 
-    const div = document.createElement("div");
+    const div =
+      document.createElement("div");
 
     div.className = "grupoCampos";
 
-    div.style.left = (g.x * 100) + "%";
-    div.style.top = (g.y * 100) + "%";
+    div.style.left =
+      (g.x * 100) + "%";
+
+    div.style.top =
+      (g.y * 100) + "%";
 
     div.innerHTML = `
       <div>
@@ -112,7 +135,9 @@ function criarCampos() {
         <select>
           ${Array.from(
             {length:11},
-            (_,i)=>`<option>${i}</option>`
+            (_,i)=>`
+              <option>${i}</option>
+            `
           ).join("")}
         </select>
       </div>
@@ -143,15 +168,19 @@ function preencherData() {
 
 }
 
-// ================= MODO =================
+// ================= MODOS =================
 function definirModo(m) {
 
   modo = m;
 
   document
-    .querySelectorAll(".botoes button")
+    .querySelectorAll(
+      ".botoes button"
+    )
     .forEach(b =>
-      b.classList.remove("botaoAtivo")
+      b.classList.remove(
+        "botaoAtivo"
+      )
     );
 
   const id =
@@ -161,24 +190,33 @@ function definirModo(m) {
 
   document
     .getElementById(id)
-    ?.classList.add("botaoAtivo");
+    ?.classList.add(
+      "botaoAtivo"
+    );
 
 }
-
 
 function desativarModo() {
 
   modo = "";
 
   document
-    .querySelectorAll(".botoes button")
+    .querySelectorAll(
+      ".botoes button"
+    )
     .forEach(b =>
-      b.classList.remove("botaoAtivo")
+      b.classList.remove(
+        "botaoAtivo"
+      )
     );
 
   document
-    .getElementById("btnParar")
-    ?.classList.add("botaoAtivo");
+    .getElementById(
+      "btnParar"
+    )
+    ?.classList.add(
+      "botaoAtivo"
+    );
 
 }
 
@@ -198,7 +236,8 @@ function limparTudo() {
 function pos(e){
 
   const r =
-    canvasPaint.getBoundingClientRect();
+    canvasPaint
+    .getBoundingClientRect();
 
   const x =
     e.touches
@@ -214,11 +253,17 @@ function pos(e){
 
     x:
       (x-r.left) *
-      (canvasPaint.width/r.width),
+      (
+        canvasPaint.width /
+        r.width
+      ),
 
     y:
       (y-r.top) *
-      (canvasPaint.height/r.height)
+      (
+        canvasPaint.height /
+        r.height
+      )
 
   };
 
@@ -228,26 +273,53 @@ function pos(e){
 function down(e){
 
   // bloqueia desenho durante pinch zoom
-  if(e.touches && e.touches.length > 1){
+  if(
+    e.touches &&
+    e.touches.length > 1
+  ){
     return;
   }
+
+  // bloqueia desenho desligado
+  if(
+    modo !== "pintar" &&
+    modo !== "apagar"
+  ){
+    return;
+  }
+
+  desenhando = true;
+
+  const p = pos(e);
+
+  ultimoX = p.x;
+  ultimoY = p.y;
+
+}
 
 // ================= MOVIMENTO =================
 function move(e){
 
-  // não desenha durante pinch zoom
-  if(e.touches && e.touches.length > 1){
+  // não desenha com 2 dedos
+  if(
+    e.touches &&
+    e.touches.length > 1
+  ){
     return;
   }
 
-  if(!desenhando) return;
+  if(!desenhando){
+    return;
+  }
 
   e.preventDefault();
 
   const p = pos(e);
 
   ctxPaint.strokeStyle = "#000";
+
   ctxPaint.lineWidth = 3;
+
   ctxPaint.lineCap = "round";
 
   if(modo === "pintar"){
@@ -266,7 +338,9 @@ function move(e){
 
     ctxPaint.stroke();
 
-  } else if(modo === "apagar") {
+  }
+
+  else if(modo === "apagar") {
 
     ctxPaint.clearRect(
       p.x - 10,
@@ -308,13 +382,13 @@ window.addEventListener(
 canvasPaint.addEventListener(
   "touchstart",
   down,
-  {passive:false}
+  { passive:false }
 );
 
 canvasPaint.addEventListener(
   "touchmove",
   move,
-  {passive:false}
+  { passive:false }
 );
 
 window.addEventListener(
@@ -333,33 +407,38 @@ async function salvarGIF() {
       );
 
     const canvasCaptura =
-      await html2canvas(container, {
-
-        backgroundColor:"#fff",
-        scale:2,
-        useCORS:true,
-        logging:false
-
-      });
+      await html2canvas(
+        container,
+        {
+          backgroundColor:"#fff",
+          scale:2,
+          useCORS:true,
+          logging:false
+        }
+      );
 
     const gif = new GIF({
 
       workers:2,
+
       quality:10,
 
-      width:canvasCaptura.width,
-      height:canvasCaptura.height
+      width:
+        canvasCaptura.width,
+
+      height:
+        canvasCaptura.height
 
     });
 
     gif.addFrame(
       canvasCaptura,
-      {delay:700}
+      { delay:700 }
     );
 
     gif.addFrame(
       canvasCaptura,
-      {delay:700}
+      { delay:700 }
     );
 
     gif.on(
@@ -367,10 +446,14 @@ async function salvarGIF() {
       function(blob){
 
         const url =
-          URL.createObjectURL(blob);
+          URL.createObjectURL(
+            blob
+          );
 
         const a =
-          document.createElement("a");
+          document.createElement(
+            "a"
+          );
 
         a.href = url;
 
@@ -384,11 +467,15 @@ async function salvarGIF() {
 
     gif.render();
 
-  } catch(err){
+  }
+
+  catch(err){
 
     console.error(err);
 
-    alert("Erro ao gerar GIF");
+    alert(
+      "Erro ao gerar GIF"
+    );
 
   }
 
@@ -400,8 +487,10 @@ async function salvarPDF() {
   try {
 
     const nome =
-      document.getElementById("nome")
-      ?.value || "sem_nome";
+      document
+      .getElementById("nome")
+      ?.value ||
+      "sem_nome";
 
     const container =
       document.getElementById(
@@ -409,21 +498,26 @@ async function salvarPDF() {
       );
 
     const canvas =
-      await html2canvas(container, {
-
-        backgroundColor:"#fff",
-        scale:2,
-        useCORS:true,
-        logging:false
-
-      });
+      await html2canvas(
+        container,
+        {
+          backgroundColor:"#fff",
+          scale:2,
+          useCORS:true,
+          logging:false
+        }
+      );
 
     const img =
-      canvas.toDataURL("image/png");
+      canvas.toDataURL(
+        "image/png"
+      );
 
     // download local
     const link =
-      document.createElement("a");
+      document.createElement(
+        "a"
+      );
 
     link.href = img;
 
@@ -433,22 +527,24 @@ async function salvarPDF() {
     link.click();
 
     // upload drive
-    const URL =
+    const URL_SCRIPT =
       "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
     const resposta =
-      await fetch(URL, {
+      await fetch(
+        URL_SCRIPT,
+        {
+          method:"POST",
 
-        method:"POST",
+          body:JSON.stringify({
 
-        body:JSON.stringify({
+            nome,
+            imagem:img
 
-          nome,
-          imagem:img
+          })
 
-        })
-
-      });
+        }
+      );
 
     const texto =
       await resposta.text();
@@ -456,7 +552,9 @@ async function salvarPDF() {
     const resultado =
       JSON.parse(texto);
 
-    if(resultado.status === "ok"){
+    if(
+      resultado.status === "ok"
+    ){
 
       alert(
         "✔ Salvo no Drive com sucesso"
@@ -466,7 +564,9 @@ async function salvarPDF() {
         resultado.url
       );
 
-    } else {
+    }
+
+    else {
 
       alert(
         "Erro ao salvar"
@@ -474,11 +574,15 @@ async function salvarPDF() {
 
     }
 
-  } catch(err){
+  }
+
+  catch(err){
 
     console.error(err);
 
-    alert("Erro ao salvar");
+    alert(
+      "Erro ao salvar"
+    );
 
   }
 
@@ -487,13 +591,10 @@ async function salvarPDF() {
 // ================= ZOOM =================
 function aplicarZoom(){
 
-  const mapa =
-    document.getElementById("mapaContainer");
-
-  mapa.style.transform =
+  mapaContainer.style.transform =
     `scale(${zoom})`;
 
-  mapa.style.transformOrigin =
+  mapaContainer.style.transformOrigin =
     "center top";
 
 }
@@ -525,99 +626,118 @@ function resetZoom(){
   aplicarZoom();
 
 }
-// ================= ZOOM TOUCH =================
-
-const mapaContainer =
-  document.getElementById("mapaContainer");
 
 // ================= ZOOM TOUCH =================
-
 let distanciaInicial = 0;
+
 let zoomInicial = 1;
+
 let pinchZoomAtivo = false;
 
 function distanciaToque(t1, t2) {
 
-  const dx = t1.clientX - t2.clientX;
-  const dy = t1.clientY - t2.clientY;
+  const dx =
+    t1.clientX - t2.clientX;
 
-  return Math.sqrt(dx * dx + dy * dy);
+  const dy =
+    t1.clientY - t2.clientY;
+
+  return Math.sqrt(
+    dx * dx +
+    dy * dy
+  );
 
 }
 
-// inicia pinch zoom
-mapaContainer.addEventListener("touchstart", function(e){
+// inicia pinch
+mapaContainer.addEventListener(
+  "touchstart",
+  function(e){
 
-  // NÃO ativa zoom em inputs/selects
-  if(
-    e.target.tagName === "INPUT" ||
-    e.target.tagName === "SELECT"
-  ){
-    return;
-  }
+    // ignora inputs
+    if(
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "SELECT" ||
+      e.target.tagName === "TEXTAREA"
+    ){
+      return;
+    }
 
-  if(e.touches.length === 2){
+    if(e.touches.length === 2){
 
-    pinchZoomAtivo = true;
+      pinchZoomAtivo = true;
 
-    distanciaInicial = distanciaToque(
-      e.touches[0],
-      e.touches[1]
-    );
+      distanciaInicial =
+        distanciaToque(
+          e.touches[0],
+          e.touches[1]
+        );
 
-    zoomInicial = zoom;
+      zoomInicial = zoom;
 
-  }
+    }
 
-}, { passive:false });
+  },
+  { passive:false }
+);
 
 // movimento pinch
-mapaContainer.addEventListener("touchmove", function(e){
+mapaContainer.addEventListener(
+  "touchmove",
+  function(e){
 
-  // NÃO interfere em campos
-  if(
-    e.target.tagName === "INPUT" ||
-    e.target.tagName === "SELECT"
-  ){
-    return;
-  }
+    // ignora inputs
+    if(
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "SELECT" ||
+      e.target.tagName === "TEXTAREA"
+    ){
+      return;
+    }
 
-  // pinch zoom somente com 2 dedos
-  if(
-    pinchZoomAtivo &&
-    e.touches.length === 2
-  ){
+    if(
+      pinchZoomAtivo &&
+      e.touches.length === 2
+    ){
 
-    e.preventDefault();
+      e.preventDefault();
 
-    const novaDistancia = distanciaToque(
-      e.touches[0],
-      e.touches[1]
-    );
+      const novaDistancia =
+        distanciaToque(
+          e.touches[0],
+          e.touches[1]
+        );
 
-    zoom =
-      zoomInicial *
-      (novaDistancia / distanciaInicial);
+      zoom =
+        zoomInicial *
+        (
+          novaDistancia /
+          distanciaInicial
+        );
 
-    // limites
-    zoom = Math.max(
-      0.5,
-      Math.min(3, zoom)
-    );
+      zoom = Math.max(
+        0.5,
+        Math.min(3, zoom)
+      );
 
-    aplicarZoom();
+      aplicarZoom();
 
-  }
+    }
 
-}, { passive:false });
+  },
+  { passive:false }
+);
 
 // finaliza pinch
-mapaContainer.addEventListener("touchend", function(e){
+mapaContainer.addEventListener(
+  "touchend",
+  function(e){
 
-  if(e.touches.length < 2){
+    if(e.touches.length < 2){
 
-    pinchZoomAtivo = false;
+      pinchZoomAtivo = false;
+
+    }
 
   }
-
-});
+);
