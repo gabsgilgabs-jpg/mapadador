@@ -563,9 +563,17 @@ mapaContainer.addEventListener(
 );
 
 // ================= GIF =================
+// ================= GIF =================
 async function salvarGIF(){
 
   try{
+
+    // salva zoom atual
+    const zoomAtual = zoom;
+
+    // remove zoom temporariamente
+    mapaContainer.style.transform =
+      "scale(1)";
 
     const canvas =
       await html2canvas(
@@ -577,6 +585,10 @@ async function salvarGIF(){
           logging:false
         }
       );
+
+    // restaura zoom
+    mapaContainer.style.transform =
+      `scale(${zoomAtual})`;
 
     const gif = new GIF({
 
@@ -590,12 +602,7 @@ async function salvarGIF(){
 
     gif.addFrame(
       canvas,
-      {delay:700}
-    );
-
-    gif.addFrame(
-      canvas,
-      {delay:700}
+      { delay:700 }
     );
 
     gif.on(
@@ -626,13 +633,15 @@ async function salvarGIF(){
 
     console.error(err);
 
-    alert("Erro ao gerar GIF");
+    alert(
+      "Erro ao gerar GIF"
+    );
 
   }
 
 }
 
-// ================= PDF + GOOGLE DRIVE =================
+// ================= PDF + DRIVE =================
 async function salvarPDF(){
 
   try{
@@ -643,7 +652,14 @@ async function salvarPDF(){
       ?.value ||
       "sem_nome";
 
-    // captura página completa
+    // salva zoom atual
+    const zoomAtual = zoom;
+
+    // remove zoom temporariamente
+    mapaContainer.style.transform =
+      "scale(1)";
+
+    // captura página
     const canvas =
       await html2canvas(
         document.body,
@@ -651,10 +667,13 @@ async function salvarPDF(){
           backgroundColor:"#fff",
           scale:2,
           useCORS:true,
-          logging:false,
-          scrollY:-window.scrollY
+          logging:false
         }
       );
+
+    // restaura zoom
+    mapaContainer.style.transform =
+      `scale(${zoomAtual})`;
 
     // imagem base64
     const img =
@@ -662,7 +681,111 @@ async function salvarPDF(){
         "image/png"
       );
 
-    // ================= ENVIO DRIVE =================
+    // ================= ENVIA DRIVE =================
+    const URL_SCRIPT =
+      "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
+
+    const resposta =
+      await fetch(
+        URL_SCRIPT,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+
+            nome:nome,
+
+            imagem:img
+
+          })
+
+        }
+      );
+
+    const texto =
+      await resposta.text();
+
+    console.log(texto);
+
+    // ================= PDF =================
+    const pdf =
+      new jspdf.jsPDF({
+
+        orientation:"portrait",
+        unit:"px",
+        format:[
+          canvas.width,
+          canvas.height
+        ]
+
+      });
+
+    pdf.addImage(
+      img,
+      "PNG",
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    pdf.save(
+      `mapa_dor_${nome}.pdf`
+    );
+
+    // ================= RESULTADO =================
+    try{
+
+      const resultado =
+        JSON.parse(texto);
+
+      if(
+        resultado.status === "ok"
+      ){
+
+        alert(
+          "✔ PDF salvo e enviado ao Drive"
+        );
+
+      }
+
+      else{
+
+        alert(
+          "PDF salvo localmente, mas houve erro no Drive"
+        );
+
+      }
+
+    }
+
+    catch{
+
+      alert(
+        "PDF salvo localmente"
+      );
+
+    }
+
+  }
+
+  catch(err){
+
+    console.error(err);
+
+    alert(
+      "Erro ao gerar PDF"
+    );
+
+  }
+
+}
+
+// ================= ENVIO DRIVE =================
     const URL_SCRIPT =
       "https://script.google.com/macros/s/AKfycbxpq8Qca-JEN9ow4uAD4bCLs1TTotxb44ZAVVss9zOqUrzfxG71jE5UtOyPo6_pIOE_zQ/exec";
 
