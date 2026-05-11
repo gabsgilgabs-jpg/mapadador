@@ -42,6 +42,8 @@ body {
 
   transform-origin: top center;
   transition: transform 0.2s ease;
+
+  touch-action: pan-x pan-y;
 }
 
 /* CANVAS BASE */
