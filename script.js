@@ -52,13 +52,13 @@ const imagem = new Image();
 
 imagem.src = "./img/pessoa.png";
 
-// ================= INICIALIZAÇÃO =================
+// ================= INIT =================
 window.addEventListener(
   "load",
   init
 );
 
-function init() {
+function init(){
 
   configurarCanvas();
 
@@ -69,7 +69,7 @@ function init() {
 }
 
 // ================= CANVAS =================
-function configurarCanvas() {
+function configurarCanvas(){
 
   const w = 700;
   const h = 842;
@@ -80,7 +80,7 @@ function configurarCanvas() {
   canvasPaint.width = w;
   canvasPaint.height = h;
 
-  function desenharImagem() {
+  function desenharImagem(){
 
     ctxBase.clearRect(
       0,
@@ -111,7 +111,7 @@ function configurarCanvas() {
 }
 
 // ================= CAMPOS =================
-function criarCampos() {
+function criarCampos(){
 
   formulario.innerHTML = "";
 
@@ -157,7 +157,7 @@ function criarCampos() {
 }
 
 // ================= DATA =================
-function preencherData() {
+function preencherData(){
 
   const el =
     document.getElementById(
@@ -176,7 +176,7 @@ function preencherData() {
 }
 
 // ================= MODOS =================
-function definirModo(m) {
+function definirModo(m){
 
   modo = m;
 
@@ -203,7 +203,7 @@ function definirModo(m) {
 
 }
 
-function desativarModo() {
+function desativarModo(){
 
   modo = "";
 
@@ -228,7 +228,7 @@ function desativarModo() {
 }
 
 // ================= LIMPAR =================
-function limparTudo() {
+function limparTudo(){
 
   ctxPaint.clearRect(
     0,
@@ -239,7 +239,7 @@ function limparTudo() {
 
 }
 
-// ================= POSIÇÃO =================
+// ================= POS =================
 function pos(e){
 
   const r =
@@ -438,14 +438,14 @@ function resetZoom(){
 
 }
 
-// ================= PINCH ZOOM =================
+// ================= PINCH =================
 let distanciaInicial = 0;
 
 let zoomInicial = 1;
 
 let pinchZoomAtivo = false;
 
-function distanciaToque(t1, t2){
+function distanciaToque(t1,t2){
 
   const dx =
     t1.clientX - t2.clientX;
@@ -454,8 +454,7 @@ function distanciaToque(t1, t2){
     t1.clientY - t2.clientY;
 
   return Math.sqrt(
-    dx * dx +
-    dy * dy
+    dx*dx + dy*dy
   );
 
 }
@@ -463,14 +462,6 @@ function distanciaToque(t1, t2){
 mapaContainer.addEventListener(
   "touchstart",
   function(e){
-
-    if(
-      e.target.tagName === "INPUT" ||
-      e.target.tagName === "SELECT" ||
-      e.target.tagName === "TEXTAREA"
-    ){
-      return;
-    }
 
     if(e.touches.length === 2){
 
@@ -495,14 +486,6 @@ mapaContainer.addEventListener(
   function(e){
 
     if(
-      e.target.tagName === "INPUT" ||
-      e.target.tagName === "SELECT" ||
-      e.target.tagName === "TEXTAREA"
-    ){
-      return;
-    }
-
-    if(
       pinchZoomAtivo &&
       e.touches.length === 2
     ){
@@ -524,7 +507,7 @@ mapaContainer.addEventListener(
 
       zoom = Math.max(
         0.5,
-        Math.min(3, zoom)
+        Math.min(3,zoom)
       );
 
       aplicarZoom();
@@ -547,3 +530,126 @@ mapaContainer.addEventListener(
 
   }
 );
+
+// ================= GIF =================
+async function salvarGIF(){
+
+  try{
+
+    const canvas =
+      await html2canvas(
+        document.body,
+        {
+          backgroundColor:"#fff",
+          scale:2
+        }
+      );
+
+    const gif = new GIF({
+
+      workers:2,
+      quality:10,
+
+      width:canvas.width,
+      height:canvas.height
+
+    });
+
+    gif.addFrame(
+      canvas,
+      {delay:700}
+    );
+
+    gif.on(
+      "finished",
+      function(blob){
+
+        const url =
+          URL.createObjectURL(blob);
+
+        const a =
+          document.createElement("a");
+
+        a.href = url;
+
+        a.download =
+          "mapa_dor.gif";
+
+        a.click();
+
+      }
+    );
+
+    gif.render();
+
+  }
+
+  catch(err){
+
+    alert("Erro GIF");
+
+  }
+
+}
+
+// ================= PDF =================
+async function salvarPDF(){
+
+  try{
+
+    const nome =
+      document
+      .getElementById("nome")
+      ?.value ||
+      "sem_nome";
+
+    const canvas =
+      await html2canvas(
+        document.body,
+        {
+          backgroundColor:"#fff",
+          scale:2
+        }
+      );
+
+    const img =
+      canvas.toDataURL(
+        "image/png"
+      );
+
+    const pdf =
+      new jspdf.jsPDF({
+
+        orientation:"portrait",
+
+        unit:"px",
+
+        format:[
+          canvas.width,
+          canvas.height
+        ]
+
+      });
+
+    pdf.addImage(
+      img,
+      "PNG",
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    pdf.save(
+      `mapa_dor_${nome}.pdf`
+    );
+
+  }
+
+  catch(err){
+
+    alert("Erro PDF");
+
+  }
+
+}
